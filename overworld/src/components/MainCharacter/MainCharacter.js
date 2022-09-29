@@ -82,7 +82,7 @@ document.addEventListener('keyup', function(playerWalk) {
 export const playerAnimate = (width, height, ctx, gameSceneLayer, centerX, centerY) => {
   let spriteSrc = main_down[0]
   let spriteIndex = 0
-  const animateDelay = 10 // one animation per this number of frames
+  const animateDelay = 6 // one animation per this number of frames
   let animateCounter = 0 // this counts up to animateDelay
 
   const playerImage = new Image()

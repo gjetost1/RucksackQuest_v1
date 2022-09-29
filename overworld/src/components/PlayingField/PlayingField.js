@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { main_down, main_up, main_left, main_right } from './spriteRef.js'
 
+import swamp_test_1 from '../../assets/backgrounds/test/swamp_test_1.png'
+
 
 let centerX = 0;
 let centerY = 0;
@@ -106,7 +108,7 @@ const PlayingField = ({height, width}) => {
     }}
 // Game Scene Configuration
   const gameScene = new Image();
-    gameScene.src = "https://i.imgur.com/rkxlut8.png";
+    gameScene.src = swamp_test_1;
   const gameSceneLayer = new Sprite({
     position: {
       x: centerX,
