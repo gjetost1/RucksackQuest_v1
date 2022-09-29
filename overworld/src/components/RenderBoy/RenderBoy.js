@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import globalvars from '../../globalvars'
 
 
 import swamp_test_1 from '../../assets/backgrounds/test/swamp_test_1.png'
@@ -16,16 +17,24 @@ let centerY = 0
 
 
 
-const RenderBoy = ({ height, width }) => {
+const RenderBoy = ({ canvas, height, width }) => {
   // let [spriteSrc, setSpriteSrc] = useState(main_down)
 
 
-  const canvas = React.useRef()
+  // const canvas = React.useRef()
 
   useEffect(() => {
     const ctx = canvas.current.getContext('2d')
     // spriteIndex = 0
 
+  class Sprite {
+    constructor({ position, velocity, image }) {
+      this.position = position
+      this.image = image
+    }
+    draw(){
+      ctx.drawImage(this.image, this.position.x, this.position.y, globalvars.scene_width, globalvars.scene_height)
+    }}
 
 
 // Game Scene Configuration

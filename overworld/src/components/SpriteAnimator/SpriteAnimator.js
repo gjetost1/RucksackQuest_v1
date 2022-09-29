@@ -17,12 +17,12 @@ let spriteSrc = main_down[0]
 
 
 
-const SpriteAnimator = ({ gameSceneLayer, centerX, centerY }) => {
+const SpriteAnimator = ({ canvas, gameSceneLayer, centerX, centerY }) => {
 
   const height = globalvars.scene_height
   const width = globalvars.scene_width
 
-  const canvas = React.useRef()
+  // const canvas = React.useRef()
 
   useEffect(() => {
     const ctx = canvas.current.getContext('2d')
@@ -48,7 +48,9 @@ const SpriteAnimator = ({ gameSceneLayer, centerX, centerY }) => {
             img.src = element
         }
 
-        window.requestAnimationFrame(SpriteAnimator);
+        const animate = () => {
+
+        window.requestAnimationFrame(animate);
           const playerImage = new Image()
           playerImage.src = spriteSrc;
 
@@ -181,11 +183,12 @@ const SpriteAnimator = ({ gameSceneLayer, centerX, centerY }) => {
             spriteSrc = main_left[spriteIndex]
           }
         }
+      }
   }, [height, width])
 
       return (
         <canvas ref={canvas} height={height} width={width} />
-      );
+      )
 }
 
 export default SpriteAnimator

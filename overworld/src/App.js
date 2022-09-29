@@ -1,3 +1,4 @@
+import React from 'react';
 import PlayingField from './components/PlayingField';
 import RenderBoy from './components/RenderBoy/RenderBoy';
 import SpriteAnimator from './components/SpriteAnimator';
@@ -11,11 +12,13 @@ import './App.css';
 // const width = window.innerWidth * .99
 
 function App() {
+  const canvas = React.useRef();
+
   return (
     <>
-      {/* <RenderBoy height={globalvars.scene_height} width={globalvars.scene_width} /> */}
-      <PlayingField height={globalvars.scene_height} width={globalvars.scene_width} />
-      {/* <SpriteAnimator height={globalvars.scene_height} width={globalvars.scene_width}/> */}
+      <RenderBoy canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
+      {/* <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
+      <SpriteAnimator canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
     </>
   );
 }

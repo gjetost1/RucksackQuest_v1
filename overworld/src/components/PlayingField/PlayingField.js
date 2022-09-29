@@ -85,21 +85,21 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
-const PlayingField = ({draw, height, width}) => {
+const PlayingField = ({canvas, height, width}) => {
 
-  const context = useContext()
-  console.log(context)
+  // const context = useContext()
+  // console.log(context)
   // let [spriteSrc, setSpriteSrc] = useState(main_down)
   let spriteIndex = 0
   const animateDelay = 10 // one animation per this number of frames
   let animateCounter = 0 // this counts up to animateDelay
   let spriteSrc = main_down[0]
 
-  const canvas = React.useRef();
-
+  // const canvas = React.useRef();
 
   useEffect(() => {
     const ctx = canvas.current.getContext('2d');
+    console.log(ctx)
     spriteIndex = 0
   class Sprite {
     constructor({ position, velocity, image }) {
@@ -289,14 +289,13 @@ function animate() {
     // }
   }
   animate();
-}, [draw, height, width]);
+}, [height, width]);
 
 return (
     <canvas ref={canvas} height={height} width={width} />
   );
 };
 PlayingField.propTypes = {
-  // draw: PropTypes.func.isRequired,
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
 };
