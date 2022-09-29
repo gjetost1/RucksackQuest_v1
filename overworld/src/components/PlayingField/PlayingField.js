@@ -1,9 +1,8 @@
-import './PlayingField.css';
-
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import { main_down, main_up, main_left, main_right } from '../spriteref/SpriteRef.js'
+import { main_down, main_up, main_left, main_right } from './spriteRef.js'
+
 
 let centerX = 0;
 let centerY = 0;
@@ -26,8 +25,6 @@ const keys = {
     pressed:false
   }
 }
-
-
 
 
 let lastKeyDown = '';
@@ -85,7 +82,7 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
-const Canvas = ({draw, height, width}) => {
+const PlayingField = ({height, width}) => {
   // let [spriteSrc, setSpriteSrc] = useState(main_down)
   let spriteIndex = 0
   const animateDelay = 10 // one animation per this number of frames
@@ -286,16 +283,15 @@ function animate() {
     // }
   }
   animate();
-}, [draw, height, width]);
+}, [height, width]);
 
 return (
     <canvas ref={canvas} height={height} width={width} />
   );
 };
-Canvas.propTypes = {
-  draw: PropTypes.func.isRequired,
+PlayingField.propTypes = {
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
 };
 
-export default Canvas;
+export default PlayingField;

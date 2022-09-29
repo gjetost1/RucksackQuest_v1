@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import PlayingField from './components/PlayingField';
 import './App.css';
 
