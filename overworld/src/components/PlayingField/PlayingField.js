@@ -5,6 +5,8 @@ import { main_down, main_up, main_left, main_right } from './spriteRef.js'
 
 import swamp_test_1 from '../../assets/backgrounds/test/swamp_test_1.png'
 
+import InputHandler from '../InputHandler'
+
 
 let centerX = 0;
 let centerY = 0;
@@ -13,76 +15,8 @@ let spriteMiddle = 2;
 
 
 
-const keys = {
-  ArrowUp: {
-    pressed:false
-  },
-  ArrowDown: {
-    pressed:false
-  },
-  ArrowLeft: {
-    pressed:false
-  },
-  ArrowRight: {
-    pressed:false
-  }
-}
 
 
-let lastKeyDown = '';
-document.addEventListener('keydown', function(playerWalk) {
-  switch (playerWalk.key) {
-    case 'ArrowUp':
-      keys.ArrowUp.pressed = true
-      lastKeyDown = 'ArrowUp'
-      // spriteSrc = 'https://neoeononebucket.s3.us-east-2.amazonaws.com/rucksack_quest/up_up.png'
-      console.log('Walk Up')
-      // console.log(spriteSrc)
-    break;
-    case 'ArrowDown':
-      keys.ArrowDown.pressed = true
-      lastKeyDown = 'ArrowDown'
-      console.log('Walk Down')
-      // console.log(spriteSrc)
-    break;
-    case 'ArrowLeft':
-      keys.ArrowLeft.pressed = true
-      lastKeyDown = 'ArrowLeft'
-      console.log('Walk Left')
-      // console.log(spriteSrc)
-    break;
-    case 'ArrowRight':
-      keys.ArrowRight.pressed = true
-      lastKeyDown = 'ArrowRight'
-      console.log('Walk Right')
-      // console.log(spriteSrc)
-    break;
-      default:
-      break;
-  }
-});
-document.addEventListener('keyup', function(playerWalk) {
-  switch (playerWalk.key) {
-    case 'ArrowUp':
-      keys.ArrowUp.pressed = false
-      console.log('Walk Up')
-    break;
-    case 'ArrowDown':
-      keys.ArrowDown.pressed = false
-      console.log('Walk Down')
-    break;
-      case 'ArrowLeft':
-        keys.ArrowLeft.pressed = false
-        console.log('Walk Left')
-      break;
-      case 'ArrowRight':
-        keys.ArrowRight.pressed = false
-        console.log('Walk Right')
-      break;
-      default:
-      break;
-  }
-});
 
 const PlayingField = ({height, width}) => {
   // let [spriteSrc, setSpriteSrc] = useState(main_down)
@@ -117,9 +51,10 @@ const PlayingField = ({height, width}) => {
     image: gameScene
 }) //  End Game Scene Configuration
 
+// this function handles all inputs from the keyboard
+const {keys, lastKeyDown} = InputHandler()
 
 function animate() {
-
   // add any sprites or sprite arrays that you want pre-loaded on the page. This prevents flickering of animations while it is loading them
     for (let element of main_down) {
       const img = new Image()

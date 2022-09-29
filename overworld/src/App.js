@@ -1,8 +1,11 @@
 import PlayingField from './components/PlayingField';
 import './App.css';
 
-const height = 640
-const width = 960
+// const height = 640
+// const width = 960
+
+const height = window.innerHeight * .6
+const width = window.innerWidth * .6
 
 // const height = window.innerHeight * .976
 // const width = window.innerWidth * .99
