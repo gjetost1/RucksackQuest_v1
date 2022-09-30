@@ -16,9 +16,9 @@ function App() {
 
   return (
     <>
-      <RenderBoy canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
-      {/* <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
-      <SpriteAnimator canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
+      {/* <RenderBoy canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
+      <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
+      {/* <SpriteAnimator canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
     </>
   );
 }

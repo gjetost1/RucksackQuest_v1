@@ -1,6 +1,6 @@
 const globalvars = {
-  'scene_height': window.innerHeight * .6,
-  'scene_width': window.innerWidth * .6,
+  'scene_height': window.innerHeight * .8,
+  'scene_width': window.innerWidth * .8,
   'ctx': document.getElementById("root")
 }
 

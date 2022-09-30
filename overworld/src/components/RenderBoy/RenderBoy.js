@@ -50,7 +50,7 @@ const RenderBoy = ({ canvas, height, width }) => {
 }) //  End Game Scene Configuration
 
 
-gameSceneLayer.draw() // Draw Game Scene Layer
+// gameSceneLayer.draw() // Draw Game Scene Layer
 
   // SpriteAnimator(ctx, gameSceneLayer,centerX, centerY, height, width)
 }, [height, width])
