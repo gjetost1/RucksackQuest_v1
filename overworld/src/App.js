@@ -2,6 +2,7 @@ import React from 'react';
 import PlayingField from './components/PlayingField';
 import RenderBoy from './components/RenderBoy/RenderBoy';
 import SpriteAnimator from './components/SpriteAnimator';
+import Background from './components/Rendering Engine';
 import globalvars from './globalvars';
 import './App.css';
 
@@ -16,8 +17,9 @@ function App() {
 
   return (
     <>
+      <Background height={globalvars.scene_height} width={globalvars.scene_width} />
       {/* <RenderBoy canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
-      <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
+      {/* <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
       {/* <SpriteAnimator canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
     </>
   );

@@ -5,3 +5,12 @@
   justify-content: center;
   align-items: center;
 }
+
+#canvas-container {
+  width: 1288px;
+  height: 728px;
+  background-color: rgb(172, 172, 172);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
