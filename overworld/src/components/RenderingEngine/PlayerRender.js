@@ -25,14 +25,15 @@ const PlayerRender = ({ height, width }) => {
     }
 
     const player_1 = new Image()
-    player_1.src = playerSprite
+    // player_1.src = playerSprite
+    player_1.src = "https://i.imgur.com/rkxlut8.png"
 
     const playerLayer = new PlayerSprite({
       position: {
         x: centerX,
         y: centerY
       },
-      image: background_1
+      image: player_1
     })
 
     playerLayer.draw()
