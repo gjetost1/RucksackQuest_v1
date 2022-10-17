@@ -11,6 +11,9 @@ const blockSize = 16
 let moveX = 1.2
 let moveY = 1.2
 
+let xVel = 0
+let yVel = 0
+
 
 
 const outerBoundary = [
@@ -37,6 +40,9 @@ const keys = {
     pressed:false
   },
   ArrowRight: {
+    pressed:false
+  },
+  Space: {
     pressed:false
   }
 }
@@ -69,6 +75,19 @@ document.addEventListener('keydown', function(playerWalk) {
   }
 })
 
+document.addEventListener('keydown', (jump) => {
+  console.log(jump)
+  switch(jump.key) {
+    case ' ':
+      keys.Space.pressed = true
+      setTimeout(() => keys.Space.pressed = false, 30)
+      console.log('jump')
+    break
+    default:
+    break
+  }
+})
+
 document.addEventListener('keyup', function(playerWalk) {
   switch (playerWalk.key) {
     case 'ArrowUp':
@@ -92,7 +111,7 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
-const BasicRender = ({  }) => {
+const BasicRender = ({}) => {
 
   const [collision, setCollision] = useState(false)
 
@@ -165,7 +184,7 @@ const BasicRender = ({  }) => {
             x + coordsExp[j][0] <= br[0] &&
             y + coordsExp[j][1] <= br[1]
             ) {
-              console.log('!!!COLLISION!!!')
+              // console.log('!!!COLLISION!!!')
               return false
             }
           }
@@ -212,33 +231,65 @@ const BasicRender = ({  }) => {
 
       // console.log(playerSprite.position.x, playerSprite.position.y, border)
 
+
+      playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
+      playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
+      const velInterval = setInterval(() => {
+        // console.log(xVel, yVel)
+        if (xVel < 0) {
+          xVel ++
+        }
+        if (xVel > 0) {
+          xVel--
+        }
+        if (yVel < 0) {
+          yVel ++
+        }
+        if (yVel > 0) {
+          yVel--
+        }
+        clearInterval(velInterval)
+      }, 10)
+
+      if (keys.Space.pressed) {
+        playerSprite.position.y = playerSprite.position.y - 20;
+        // console.log('jump!!!!!')
+      }
       if (keys.ArrowDown.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
-        playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
+        // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
       }
       else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
-        playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
+        // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
       }
       else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y + 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
-        playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
+        // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
+        // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
       }
       else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y - 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
-        playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
+        // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
+        // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
       }
       else if (keys.ArrowDown.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
+        // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
       }
       else if (keys.ArrowUp.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y - 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
+        // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
       }
       else if (keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y, border, blockSize)) {
-        playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        xVel = xVel + 2
+        if (xVel > 4) {
+          xVel = 4
+        }
       }
       else if (keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y, border, blockSize)) {
-        playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
+        // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
+        xVel = xVel - 2
+        if (xVel < -4) {
+          xVel = -4
+        }
       }
 
     }
@@ -252,7 +303,7 @@ const BasicRender = ({  }) => {
 
 
     animate();
-  }, [])
+  }, [width, height])
 
 
   return (
