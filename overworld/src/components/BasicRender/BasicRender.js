@@ -3,8 +3,8 @@ import './BasicRender.css'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
-const height = 192
-const width = 256
+const height = 192 * 2
+const width = 256 * 2
 const blockSize = 16
 
 // move rate for character sprite
@@ -44,10 +44,13 @@ const keys = {
   },
   Space: {
     pressed:false
+  },
+  Shift: {
+    pressed:false
   }
 }
 
-let lastKeyDown = '';
+let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
 document.addEventListener('keydown', function(playerWalk) {
   switch (playerWalk.key) {
     case 'ArrowUp':
@@ -75,41 +78,61 @@ document.addEventListener('keydown', function(playerWalk) {
   }
 })
 
-document.addEventListener('keydown', (jump) => {
-  console.log(jump)
-  switch(jump.key) {
+
+document.addEventListener('keyup', function(playerWalk) {
+  switch (playerWalk.key) {
+    case 'ArrowUp':
+      keys.ArrowUp.pressed = false
+      // console.log('Walk Up')
+    break;
+    case 'ArrowDown':
+      keys.ArrowDown.pressed = false
+      // console.log('Walk Down')
+    break;
+      case 'ArrowLeft':
+        keys.ArrowLeft.pressed = false
+        // console.log('Walk Left')
+      break;
+      case 'ArrowRight':
+        keys.ArrowRight.pressed = false
+        // console.log('Walk Right')
+      break;
+      default:
+      break;
+  }
+});
+
+document.addEventListener('keydown', (action) => {
+  // console.log(jump)
+  switch(action.key) {
     case ' ':
       keys.Space.pressed = true
       setTimeout(() => keys.Space.pressed = false, 30)
-      console.log('jump')
+      // console.log('jump')
+    break
+    case 'Shift':
+      keys.Shift.pressed = true
+      // setTimeout(() => keys.Shift.pressed = false, 30)
+      // console.log('dash')
     break
     default:
     break
   }
 })
 
-document.addEventListener('keyup', function(playerWalk) {
-  switch (playerWalk.key) {
-    case 'ArrowUp':
-      keys.ArrowUp.pressed = false
-      console.log('Walk Up')
-    break;
-    case 'ArrowDown':
-      keys.ArrowDown.pressed = false
-      console.log('Walk Down')
-    break;
-      case 'ArrowLeft':
-        keys.ArrowLeft.pressed = false
-        console.log('Walk Left')
-      break;
-      case 'ArrowRight':
-        keys.ArrowRight.pressed = false
-        console.log('Walk Right')
-      break;
-      default:
-      break;
+document.addEventListener('keyup', (action) => {
+  // console.log(jump)
+  switch(action.key) {
+    case ' ':
+      keys.Space.pressed = false
+    break
+    case 'Shift':
+      keys.Shift.pressed = false
+    break
+    default:
+    break
   }
-});
+})
 
 const BasicRender = ({}) => {
 
@@ -171,23 +194,39 @@ const BasicRender = ({}) => {
     const checkCollision = (x, y, bounds, gridSize, corner) => {
       const coords = [x, y]
       // coordsExp is used to check all the corners of the collision object, based on the upper left corner
-      const coordsExp = [[0, 0], [gridSize, 0], [gridSize, gridSize], [0, gridSize]]
+      const coordsExp = [[0, 0], [gridSize, 0], [gridSize, gridSize], [0, gridSize]] // array of coordinates for all 4 corners of colliding object
       // console.log(x, y, bounds)
       for (let i = 0; i < bounds.length; i++) {
-        let {tl, tr, bl, br} = bounds[i]
-        for (let j = 0; j < coordsExp.length; j++) {
-          if (
-            x + coordsExp[j][0] >= tl[0] &&
-            y + coordsExp[j][1] >= tl[1] &&
-            x + coordsExp[j][0] <= tr[0] &&
-            y + coordsExp[j][1] >= tr[1] &&
-            x + coordsExp[j][0] >= bl[0] &&
-            y + coordsExp[j][1] <= bl[1] &&
-            x + coordsExp[j][0] <= br[0] &&
-            y + coordsExp[j][1] <= br[1]
-            ) {
-              // console.log('!!!COLLISION!!!')
-              return false
+        let {tl, tr, bl, br} = bounds[i] //  coordinates of collision object
+        if (corner) { // if there is a specified corner just check collision for that
+            if (
+              x + coordsExp[corner][0] >= tl[0] &&
+              y + coordsExp[corner][1] >= tl[1] &&
+              x + coordsExp[corner][0] <= tr[0] &&
+              y + coordsExp[corner][1] >= tr[1] &&
+              x + coordsExp[corner][0] >= bl[0] &&
+              y + coordsExp[corner][1] <= bl[1] &&
+              x + coordsExp[corner][0] <= br[0] &&
+              y + coordsExp[corner][1] <= br[1]
+              ) {
+                // console.log('!!!COLLISION!!!')
+                return false
+              }
+        } else { // otherwise check all the corners
+          for (let j = 0; j < coordsExp.length; j++) {
+            if (
+              x + coordsExp[j][0] >= tl[0] &&
+              y + coordsExp[j][1] >= tl[1] &&
+              x + coordsExp[j][0] <= tr[0] &&
+              y + coordsExp[j][1] >= tr[1] &&
+              x + coordsExp[j][0] >= bl[0] &&
+              y + coordsExp[j][1] <= bl[1] &&
+              x + coordsExp[j][0] <= br[0] &&
+              y + coordsExp[j][1] <= br[1]
+              ) {
+                // console.log('!!!COLLISION!!!')
+                return false
+              }
             }
           }
         }
@@ -233,36 +272,62 @@ const BasicRender = ({}) => {
 
       // console.log(playerSprite.position.x, playerSprite.position.y, border)
 
-
-      if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y, border, blockSize)) {
-        xVel = -.2
+      // this if chain reverses the velocity of the object on collision and makes sure it doesn't clip into a collision mask
+      if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize, 1) && !checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize, 2)) {
+        playerSprite.position.x -= .5
+        xVel = -xVel
         // yVel = -.2
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y, border, blockSize)) {
-        xVel = .2
+        // console.log('1 & 2')
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize, 0) && !checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize, 3)) {
+        playerSprite.position.x += .5
+        xVel = -xVel
         // yVel = -.2
-      } else if (!checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
+        // console.log('0 & 3')
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize, 2) && !checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize, 3)) {
+        playerSprite.position.y -= .5
         // xVel = .2
-        yVel = -.2
-      } else if (!checkCollision(playerSprite.position.x, playerSprite.position.y - 1, border, blockSize)) {
+        yVel = -yVel
+        // console.log('2 & 3')
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize, 0) && !checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize, 1)) {
+        playerSprite.position.y += .5
         // xVel = .2
-        yVel = .2
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize)) {
-        xVel = .2
-        yVel = .2
-      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize)) {
-        xVel = -.2
-        yVel = -.2
-      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize)) {
-        xVel = -.2
-        yVel = .2
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize)) {
-        xVel = .2
-        yVel = -.2
+        yVel = -yVel
+        // console.log('0 & 1')
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize, 0)) {
+        // playerSprite.position.x += .5
+        // playerSprite.position.y += .5
+        xVel = -xVel
+        yVel = yVel
+        // console.log('0')
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize, 2)) {
+        // playerSprite.position.x -= .5
+        // playerSprite.position.y -= .5
+        xVel = -xVel
+        yVel = yVel
+        // console.log('2')
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize, 1)) {
+        // playerSprite.position.x -= .5
+        // playerSprite.position.y += .5
+        xVel = -xVel
+        yVel = yVel
+        // console.log('1')
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize, 3)) {
+        // playerSprite.position.x += .5
+        // playerSprite.position.y -= .5
+        xVel = xVel
+        yVel = -yVel
+        // console.log('3')
       }
 
-
+      // moves the movement object every frame based on curent velocity
+      const movePlayer = () => {
         playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
         playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
+      }
+      // only runs movement function if any velocity is not zero
+      if (xVel != 0 || yVel != 0) {
+        movePlayer()
+      }
 
 
       // if (checkCollision(playerSprite.position.x, playerSprite.position.y, border, blockSize)) {
@@ -275,88 +340,90 @@ const BasicRender = ({}) => {
 
 
 
-      if (keys.Space.pressed) {
-        playerSprite.position.y = playerSprite.position.y - 20;
-        // console.log('jump!!!!!')
+      // if (keys.Space.pressed) {
+      //   playerSprite.position.y = playerSprite.position.y - 20;
+      //   // console.log('jump!!!!!')
+      // }
+
+      let maxAccel = 1 // max acceleration (pixel movement) of velocity per frame
+      let rateAccel = .1 // rate at which movement object accelerates velocity
+      if (keys.Shift.pressed) {
+        // console.log('################')
+        maxAccel = 2
+        rateAccel = .4
+      } else {
+        maxAccel = 1
+        rateAccel = .1
       }
-      if (keys.ArrowDown.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize)) {
+
+
+      if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        yVel = yVel + .2
-        if (yVel > 2) {
-          yVel = 2
+        if (yVel <= maxAccel) {
+          yVel = yVel + rateAccel
         }
-        xVel = xVel + .2
-        if (xVel > 2) {
-          xVel = 2
+        if (xVel <= maxAccel) {
+          xVel = xVel + rateAccel
         }
       }
-      else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize)) {
+      else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        yVel = yVel - .2
-        if (yVel < -2) {
-          yVel = -2
+        if (yVel >= -maxAccel) {
+          yVel = yVel - rateAccel
         }
-        xVel = xVel + .2
-        if (xVel > 2) {
-          xVel = 2
+        if (xVel <= maxAccel) {
+          xVel = xVel + rateAccel
         }
       }
-      else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y + 1, border, blockSize)) {
+      else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        yVel = yVel + .2
-        if (yVel > 2) {
-          yVel = 2
+        if (yVel <= maxAccel) {
+          yVel = yVel + rateAccel
         }
-        xVel = xVel - .2
-        if (xVel < -2) {
-          xVel = -2
+        if (xVel >= -maxAccel) {
+          xVel = xVel - rateAccel
         }
       }
-      else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y - 1, border, blockSize)) {
+      else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        yVel = yVel - .2
-        if (yVel < -2) {
-          yVel = -2
+        if (yVel >= -maxAccel) {
+          yVel = yVel - rateAccel
         }
-        xVel = xVel - .2
-        if (xVel < -2) {
-          xVel = -2
+        if (xVel >= -maxAccel) {
+          xVel = xVel - rateAccel
         }
       }
-      else if (keys.ArrowDown.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
+      else if (keys.ArrowDown.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
-        yVel = yVel + .2
-        if (yVel > 2) {
-          yVel = 2
+        if (yVel <= maxAccel) {
+          yVel = yVel + rateAccel
         }
       }
-      else if (keys.ArrowUp.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y - 1, border, blockSize)) {
+      else if (keys.ArrowUp.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
-        yVel = yVel - .2
-        if (yVel < -2) {
-          yVel = -2
+        if (yVel >= -maxAccel) {
+          yVel = yVel - rateAccel
         }
       }
-      else if (keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 5, playerSprite.position.y, border, blockSize)) {
+      else if (keys.ArrowRight.pressed) {
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        xVel = xVel + .2
-        if (xVel > 2) {
-          xVel = 2
+        if (xVel <= maxAccel) {
+          xVel = xVel + rateAccel
         }
       }
-      else if (keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 5, playerSprite.position.y, border, blockSize)) {
+      else if (keys.ArrowLeft.pressed) {
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        xVel = xVel - .2
-        if (xVel < -2) {
-          xVel = -2
+        if (xVel >= -maxAccel) {
+          xVel = xVel - rateAccel
         }
       } else {
-        // reduces velocity back to zero for x and y every frame
-        const velReduce = .1
+
+        // reduces velocity back to zero for x and y every frame that input is not given
+        const velReduce = .08 // rate at which velocity decays
         if (xVel < 0) {
           xVel = xVel + velReduce
         }
