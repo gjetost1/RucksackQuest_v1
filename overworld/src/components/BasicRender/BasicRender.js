@@ -5,13 +5,18 @@ import CanvasContext from '../CanvasContext'
 
 const height = 192 * 2
 const width = 256 * 2
-const blockSize = 16
+const blockSize = 16 // size of each grid block in pixels
+let dashDecel = false // triggers special deceleration for dash movement
+let dashBoost = 0
+let maxAccel = 1
 
-// move rate for character sprite
-let moveX = 1.2
-let moveY = 1.2
+const maxStam = 100
 
-let xVel = 0
+// // move rate for character sprite
+// let moveX = 1.2
+// let moveY = 1.2
+
+let xVel = 0 // current velocity for x and y movement
 let yVel = 0
 
 
@@ -51,24 +56,29 @@ const keys = {
 }
 
 let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
+// event listener for directional movement input
 document.addEventListener('keydown', function(playerWalk) {
   switch (playerWalk.key) {
-    case 'ArrowUp':
+    case 'w':
+    case 'W':
       keys.ArrowUp.pressed = true
       lastKeyDown = 'ArrowUp'
       // console.log('Walk Up')
     break;
-    case 'ArrowDown':
+    case 's':
+    case 'S':
       keys.ArrowDown.pressed = true
       lastKeyDown = 'ArrowDown'
       // console.log('Walk Down')
     break;
-    case 'ArrowLeft':
+    case 'a':
+    case 'A':
       keys.ArrowLeft.pressed = true
       lastKeyDown = 'ArrowLeft'
       // console.log('Walk Left')
     break;
-    case 'ArrowRight':
+    case 'd':
+    case 'D':
       keys.ArrowRight.pressed = true
       lastKeyDown = 'ArrowRight'
       // console.log('Walk Right')
@@ -78,22 +88,26 @@ document.addEventListener('keydown', function(playerWalk) {
   }
 })
 
-
+// event listener for directional movement end of input
 document.addEventListener('keyup', function(playerWalk) {
   switch (playerWalk.key) {
-    case 'ArrowUp':
+    case 'w':
+    case 'W':
       keys.ArrowUp.pressed = false
       // console.log('Walk Up')
     break;
-    case 'ArrowDown':
+    case 's':
+    case 'S':
       keys.ArrowDown.pressed = false
       // console.log('Walk Down')
     break;
-      case 'ArrowLeft':
+      case 'a':
+      case 'A':
         keys.ArrowLeft.pressed = false
         // console.log('Walk Left')
       break;
-      case 'ArrowRight':
+      case 'd':
+      case 'D':
         keys.ArrowRight.pressed = false
         // console.log('Walk Right')
       break;
@@ -102,6 +116,7 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
+// event listener for actions other than directional movement
 document.addEventListener('keydown', (action) => {
   // console.log(jump)
   switch(action.key) {
@@ -128,6 +143,10 @@ document.addEventListener('keyup', (action) => {
     break
     case 'Shift':
       keys.Shift.pressed = false
+      dashDecel = true
+      setTimeout(() => {
+        dashDecel = false
+      }, 100)
     break
     default:
     break
@@ -137,6 +156,7 @@ document.addEventListener('keyup', (action) => {
 const BasicRender = ({}) => {
 
   const [collision, setCollision] = useState(false)
+  const [currentStam, setCurrentStam] = useState(maxStam)
 
   const canvasRef = useRef(null)
   // const ctx = useContext(CanvasContext)
@@ -194,7 +214,7 @@ const BasicRender = ({}) => {
     const checkCollision = (x, y, bounds, gridSize, corner) => {
       const coords = [x, y]
       // coordsExp is used to check all the corners of the collision object, based on the upper left corner
-      const coordsExp = [[0, 0], [gridSize, 0], [gridSize, gridSize], [0, gridSize]] // array of coordinates for all 4 corners of colliding object
+      const coordsExp = [[1, 1], [gridSize - 1, 1], [gridSize - 1, gridSize - 1], [1, gridSize - 1]] // array of coordinates for all 4 corners of colliding object
       // console.log(x, y, bounds)
       for (let i = 0; i < bounds.length; i++) {
         let {tl, tr, bl, br} = bounds[i] //  coordinates of collision object
@@ -329,7 +349,6 @@ const BasicRender = ({}) => {
         movePlayer()
       }
 
-
       // if (checkCollision(playerSprite.position.x, playerSprite.position.y, border, blockSize)) {
       //   playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
       //   playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
@@ -347,83 +366,96 @@ const BasicRender = ({}) => {
 
       let maxAccel = 1 // max acceleration (pixel movement) of velocity per frame
       let rateAccel = .1 // rate at which movement object accelerates velocity
-      if (keys.Shift.pressed) {
-        // console.log('################')
+      let velReduce = .2 // rate at which velocity decays
+
+      if (keys.Shift.pressed && currentStam > 0) {
+        // console.log('shift')
         maxAccel = 2
-        rateAccel = .4
+        dashBoost = .2
+        setCurrentStam((prev) => prev - .2)
       } else {
         maxAccel = 1
-        rateAccel = .1
+        dashBoost = 0
+        if (currentStam < maxStam) {
+          setCurrentStam((prev) => prev + .2)
+        }
+        // console.log('deshift')
       }
+      // console.log(currentStam)
+
+      // console.log(xVel, yVel)
 
 
       if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
         if (yVel <= maxAccel) {
-          yVel = yVel + rateAccel
+          yVel = yVel + rateAccel + dashBoost
         }
         if (xVel <= maxAccel) {
-          xVel = xVel + rateAccel
+          xVel = xVel + rateAccel + dashBoost
         }
       }
       else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
         if (yVel >= -maxAccel) {
-          yVel = yVel - rateAccel
+          yVel = yVel - rateAccel - dashBoost
         }
         if (xVel <= maxAccel) {
-          xVel = xVel + rateAccel
+          xVel = xVel + rateAccel + dashBoost
         }
       }
       else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
         if (yVel <= maxAccel) {
-          yVel = yVel + rateAccel
+          yVel = yVel + rateAccel + dashBoost
         }
         if (xVel >= -maxAccel) {
-          xVel = xVel - rateAccel
+          xVel = xVel - rateAccel - dashBoost
         }
       }
       else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
         if (yVel >= -maxAccel) {
-          yVel = yVel - rateAccel
+          yVel = yVel - rateAccel - dashBoost
         }
         if (xVel >= -maxAccel) {
-          xVel = xVel - rateAccel
+          xVel = xVel - rateAccel - dashBoost
         }
       }
       else if (keys.ArrowDown.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         if (yVel <= maxAccel) {
-          yVel = yVel + rateAccel
+          yVel = yVel + rateAccel + dashBoost
         }
+        xVel = 0
       }
       else if (keys.ArrowUp.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         if (yVel >= -maxAccel) {
-          yVel = yVel - rateAccel
+          yVel = yVel - rateAccel - dashBoost
         }
+        xVel = 0
       }
       else if (keys.ArrowRight.pressed) {
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
         if (xVel <= maxAccel) {
-          xVel = xVel + rateAccel
+          xVel = xVel + rateAccel + dashBoost
         }
+        yVel = 0
       }
       else if (keys.ArrowLeft.pressed) {
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
         if (xVel >= -maxAccel) {
-          xVel = xVel - rateAccel
+          xVel = xVel - rateAccel - dashBoost
         }
-      } else {
-
+        yVel = 0
+      }
+      else {
         // reduces velocity back to zero for x and y every frame that input is not given
-        const velReduce = .08 // rate at which velocity decays
         if (xVel < 0) {
           xVel = xVel + velReduce
         }
@@ -450,6 +482,35 @@ const BasicRender = ({}) => {
         }
       }
 
+      if (dashDecel) {
+        let velReduce = .15 // rate at which velocity decays
+        if (xVel < 0) {
+          xVel = xVel + velReduce
+        }
+        if (xVel < 0 && xVel >= -velReduce) {
+          xVel = 0
+        }
+        if (xVel > 0) {
+          xVel = xVel - velReduce
+        }
+        if (xVel > 0 && xVel <= velReduce) {
+          xVel = 0
+        }
+        if (yVel < 0) {
+          yVel = yVel + velReduce
+        }
+        if (yVel < 0 && yVel >= -velReduce) {
+          yVel = 0
+        }
+        if (yVel > 0) {
+          yVel = yVel - velReduce
+        }
+        if (yVel > 0 && yVel <= velReduce) {
+          yVel = 0
+        }
+      }
+
+
     }
 
 
@@ -461,12 +522,37 @@ const BasicRender = ({}) => {
 
 
     animate();
-  }, [width, height])
+  }, [])
+
+  // useEffect(() => {
+  //   if (keys.Shift.pressed && currentStam > 0) {
+  //     // console.log('shift')
+  //     maxAccel = 2
+  //     dashBoost = .2
+  //     setCurrentStam((prev) => prev - .2)
+  //   } else {
+  //     maxAccel = 1
+  //     dashBoost = 0
+  //     if (currentStam < maxStam) {
+  //       setCurrentStam((prev) => prev + .2)
+  //     }
+  //     // console.log('deshift')
+  //   }
+  // },[])
+
+
 
 
   return (
     <div id='main-container'>
       <div id='canvas-container'>
+        <div id='stamina-container'>
+          <div id='stamina-bar'>
+            <div id='stamina-level' style={{
+              width: `${currentStam}%`
+        }}></div>
+          </div>
+        </div>
         <canvas ref={canvasRef} height={height} width={width} />
       </div>
     </div>
