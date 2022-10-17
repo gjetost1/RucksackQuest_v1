@@ -165,8 +165,10 @@ const BasicRender = ({}) => {
     }
 
     // checkCollision takes x and y coords of one thing and a bounds object and returns false if the x,y is inside those bounds
-    // masterSize is the grid size of the object we are checking, not implemented yer
-    const checkCollision = (x, y, bounds, gridSize) => {
+    // gridSize is the grid size in pixels of the object we are checking
+    // corner is which corner we are checking - 0 = tl, 1 = tr, 2 = br, 3 = bl
+
+    const checkCollision = (x, y, bounds, gridSize, corner) => {
       const coords = [x, y]
       // coordsExp is used to check all the corners of the collision object, based on the upper left corner
       const coordsExp = [[0, 0], [gridSize, 0], [gridSize, gridSize], [0, gridSize]]
@@ -232,24 +234,46 @@ const BasicRender = ({}) => {
       // console.log(playerSprite.position.x, playerSprite.position.y, border)
 
 
-      playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
-      playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
-      const velInterval = setInterval(() => {
-        // console.log(xVel, yVel)
-        if (xVel < 0) {
-          xVel ++
-        }
-        if (xVel > 0) {
-          xVel--
-        }
-        if (yVel < 0) {
-          yVel ++
-        }
-        if (yVel > 0) {
-          yVel--
-        }
-        clearInterval(velInterval)
-      }, 10)
+      if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y, border, blockSize)) {
+        xVel = -.2
+        // yVel = -.2
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y, border, blockSize)) {
+        xVel = .2
+        // yVel = -.2
+      } else if (!checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
+        // xVel = .2
+        yVel = -.2
+      } else if (!checkCollision(playerSprite.position.x, playerSprite.position.y - 1, border, blockSize)) {
+        // xVel = .2
+        yVel = .2
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize)) {
+        xVel = .2
+        yVel = .2
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize)) {
+        xVel = -.2
+        yVel = -.2
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize)) {
+        xVel = -.2
+        yVel = .2
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize)) {
+        xVel = .2
+        yVel = -.2
+      }
+
+
+        playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
+        playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
+
+
+      // if (checkCollision(playerSprite.position.x, playerSprite.position.y, border, blockSize)) {
+      //   playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
+      //   playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
+      // } else {
+      //   xVel = 0
+      //   yVel = 0
+      // }
+
+
 
       if (keys.Space.pressed) {
         playerSprite.position.y = playerSprite.position.y - 20;
@@ -258,48 +282,115 @@ const BasicRender = ({}) => {
       if (keys.ArrowDown.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize)) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        yVel = yVel + .2
+        if (yVel > 2) {
+          yVel = 2
+        }
+        xVel = xVel + .2
+        if (xVel > 2) {
+          xVel = 2
+        }
       }
       else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize)) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        yVel = yVel - .2
+        if (yVel < -2) {
+          yVel = -2
+        }
+        xVel = xVel + .2
+        if (xVel > 2) {
+          xVel = 2
+        }
       }
       else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y + 1, border, blockSize)) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
+        yVel = yVel + .2
+        if (yVel > 2) {
+          yVel = 2
+        }
+        xVel = xVel - .2
+        if (xVel < -2) {
+          xVel = -2
+        }
       }
       else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y - 1, border, blockSize)) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
+        yVel = yVel - .2
+        if (yVel < -2) {
+          yVel = -2
+        }
+        xVel = xVel - .2
+        if (xVel < -2) {
+          xVel = -2
+        }
       }
       else if (keys.ArrowDown.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
+        yVel = yVel + .2
+        if (yVel > 2) {
+          yVel = 2
+        }
       }
       else if (keys.ArrowUp.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y - 1, border, blockSize)) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
-      }
-      else if (keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 1, playerSprite.position.y, border, blockSize)) {
-        // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        xVel = xVel + 2
-        if (xVel > 4) {
-          xVel = 4
+        yVel = yVel - .2
+        if (yVel < -2) {
+          yVel = -2
         }
       }
-      else if (keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 1.2, playerSprite.position.y, border, blockSize)) {
+      else if (keys.ArrowRight.pressed && checkCollision(playerSprite.position.x + 5, playerSprite.position.y, border, blockSize)) {
+        // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
+        xVel = xVel + .2
+        if (xVel > 2) {
+          xVel = 2
+        }
+      }
+      else if (keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x - 5, playerSprite.position.y, border, blockSize)) {
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        xVel = xVel - 2
-        if (xVel < -4) {
-          xVel = -4
+        xVel = xVel - .2
+        if (xVel < -2) {
+          xVel = -2
+        }
+      } else {
+        // reduces velocity back to zero for x and y every frame
+        const velReduce = .1
+        if (xVel < 0) {
+          xVel = xVel + velReduce
+        }
+        if (xVel < 0 && xVel >= -velReduce) {
+          xVel = 0
+        }
+        if (xVel > 0) {
+          xVel = xVel - velReduce
+        }
+        if (xVel > 0 && xVel <= velReduce) {
+          xVel = 0
+        }
+        if (yVel < 0) {
+          yVel = yVel + velReduce
+        }
+        if (yVel < 0 && yVel >= -velReduce) {
+          yVel = 0
+        }
+        if (yVel > 0) {
+          yVel = yVel - velReduce
+        }
+        if (yVel > 0 && yVel <= velReduce) {
+          yVel = 0
         }
       }
 
     }
 
 
-    const gravityInterval = setInterval(() => {
-      if (checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
-        playerSprite.position.y = playerSprite.position.y + 1
-      }
-    }, 40)
+    // const gravityInterval = setInterval(() => {
+    //   if (checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
+    //     playerSprite.position.y = playerSprite.position.y + 1
+    //   }
+    // }, 40)
 
 
     animate();
