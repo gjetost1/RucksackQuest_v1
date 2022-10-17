@@ -1,7 +1,18 @@
-#canvas-container {
+#main-container {
   width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#canvas-container {
+  /* width: 100vw;
+  height: 100vh; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid gray;
+  background-color: gray;
+  padding: 0px;
 }
