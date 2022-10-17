@@ -1,17 +1,18 @@
 
 import React, { useRef, useEffect } from 'react'
 import playerSprite from '../../assets/sprites/main_character/down_0.png'
+import './RenderingEngine.css'
 
-let centerX = 0;
-let centerY = 0;
+let centerX = 0
+let centerY = 0
 
-const PlayerRender = ({ height, width }) => {
+const PlayerRender = ({ canvas, height, width }) => {
 
-  const canvasRef = useRef(null)
+  // const canvasRef = useRef(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
+
+    const context = canvas.current.getContext('2d')
 
     // class for rendering the player sprite
     class PlayerSprite {
@@ -25,8 +26,8 @@ const PlayerRender = ({ height, width }) => {
     }
 
     const player_1 = new Image()
-    // player_1.src = playerSprite
-    player_1.src = "https://i.imgur.com/rkxlut8.png"
+    player_1.src = playerSprite
+    // player_1.src = "https://i.imgur.com/rkxlut8.png"
 
     const playerLayer = new PlayerSprite({
       position: {
@@ -41,11 +42,7 @@ const PlayerRender = ({ height, width }) => {
   },[])
 
   return (
-    <div id='main-display-div'>
-      <div id='canvas-container'>
-        <canvas ref={canvasRef} height={height} width={width}/>
-      </div>
-    </div>
+    <canvas id='player-canvas' ref={canvas} height={height} width={width}/>
   )
 }
 

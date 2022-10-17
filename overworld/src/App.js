@@ -13,23 +13,16 @@ import './App.css';
 // const width = window.innerWidth * .99
 
 function App() {
-  // const canvas = React.useRef();
-  const canvasRef = useRef(null)
-
-  const canvas = canvasRef.current
-  const context = canvas.getContext('2d')
-
+  const canvas = React.useRef();
 
   return (
     <>
-      <Renderer canvasRef= {canvasRef} height={globalvars.scene_height} width={globalvars.scene_width} />
-      {/* <RenderBoy canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
+      <Renderer id='background' canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} />
+      {/* <RenderBoy id='player-sprite' canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
       {/* <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
       {/* <SpriteAnimator canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
     </>
   );
 }
-
-export {canvas, context}
 
 export default App;

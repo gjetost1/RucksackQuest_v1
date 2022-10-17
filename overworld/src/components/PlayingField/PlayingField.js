@@ -91,6 +91,8 @@ document.addEventListener('keyup', function(playerWalk) {
 });
 
 const PlayingField = ({ canvas, height, width }) => {
+  console.log('canvas', canvas
+  )
 
   // const context = useContext()
   // console.log(context)
