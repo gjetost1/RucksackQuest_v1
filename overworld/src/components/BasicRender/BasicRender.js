@@ -21,7 +21,8 @@ const outerBoundary = [
 ]
 
 const innerBoundary = [
-  {x: 164, y: 64, xBlocks: 6, yBlocks: 1, gridSize: blockSize}
+  {x: 164, y: 64, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  {x: 0, y: 120, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
 ]
 
 // keeps track of input state
@@ -179,7 +180,8 @@ const BasicRender = ({  }) => {
       getDimension(outerBoundary[1]),
       getDimension(outerBoundary[2]),
       getDimension(outerBoundary[3]),
-      getDimension(innerBoundary[0])
+      getDimension(innerBoundary[0]),
+      getDimension(innerBoundary[1]),
     ]
 
     const animate = () => {
@@ -188,9 +190,11 @@ const BasicRender = ({  }) => {
       ctx.fillStyle = 'rgba(255, 0, 0, 1)'
       ctx.fillRect(0, 0, width, height)
 
-      let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[0]
-      // ctx.fillStyle = 'rgba(255, 1, 1, 0)'
-      ctx.clearRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
+      for (let i = 0; i < innerBoundary.length; i++) {
+        let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[i]
+        // ctx.fillStyle = 'rgba(255, 1, 1, 0)'
+        ctx.clearRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
+      }
 
       playerSprite.draw()
       // moveX = 1.2
@@ -238,8 +242,18 @@ const BasicRender = ({  }) => {
       }
 
     }
+
+
+    const gravityInterval = setInterval(() => {
+      if (checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
+        playerSprite.position.y = playerSprite.position.y + 1
+      }
+    }, 40)
+
+
     animate();
   }, [])
+
 
   return (
     <div id='main-container'>
