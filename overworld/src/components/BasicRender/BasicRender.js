@@ -3,13 +3,25 @@ import './BasicRender.css'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
-const height = 180
-const width = 320
+const height = 192
+const width = 256
+const blockSize = 16
 
 // move rate for character sprite
-let moveX = 1.2
-let moveY = 1.2
+let moveXRight = 1.2
+let moveXLeft = 1.2
+let moveYDown = 1.2
+let moveYUp = 1.2
 
+
+const outerBoundary = [
+  {x: 0, y: -blockSize, xBlocks: width / blockSize, yBlocks: 1, gridSize: blockSize},
+  {x: -blockSize, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize, gridSize: blockSize},
+  {x: width, y: 0, xBlocks: 1, yBlocks: height / blockSize, gridSize: blockSize},
+  {x: 0, y: height, xBlocks: width / blockSize, yBlocks: 1, gridSize: blockSize},
+]
+
+// keeps track of input state
 const keys = {
   ArrowUp: {
     pressed:false
@@ -112,6 +124,41 @@ const BasicRender = ({  }) => {
       }
     })
 
+    // getDimension returns the dimension of a rectangular object for collision detection
+    // x and y are the upper left corner pixel coordinates
+    // xBlocks and yBlocks are the number of 16px (or whatever the grid size is) grid blocks the object spans in each dimension
+    const getDimension = (boundary) => {
+      let {x, y, xBlocks, yBlocks, gridSize} = boundary
+      return (
+        {
+          tl: [x, y],
+          tr: [x + (xBlocks * gridSize), y],
+          bl: [x, y + (yBlocks * gridSize)],
+          br: [x + (xBlocks * gridSize), y + (yBlocks * gridSize)]
+        }
+      )
+    }
+
+    // checkCollision takes x and y coords of one thing and a bounds object and returns true if the x,y is inside those bounds
+    // masterSize is the grid size of the object we are checking, not implemented yer
+    const checkCollision = (x, y, bounds, masterSize) => {
+      const coords = [x, y]
+      let {tl, tr, bl, br} = bounds
+      if (
+        coords[0] >= tl[0] &&
+        coords[1] <= tl[1] &&
+        coords[0] <= tr[0] &&
+        coords[1] <= tr[1] &&
+        coords[0] >= bl[0] &&
+        coords[1] >= bl[1] &&
+        coords[0] <= br[0] &&
+        coords[1] >= br[1]
+        ) {
+          return true
+        }
+        return false
+    }
+
     const checkBounds = (x, y) => {
       if (x <= 0 && y <= 0) {
         return {x: 0, y: 0}
@@ -153,6 +200,15 @@ const BasicRender = ({  }) => {
       playerSprite.draw()
       moveX = 1.2
       moveY = 1.2
+
+      const border = [
+        getDimension(outerBoundary[0]),
+        getDimension(outerBoundary[1]),
+        getDimension(outerBoundary[2]),
+        getDimension(outerBoundary[3]),
+      ]
+
+
       if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
         const {x, y} = checkBounds(playerSprite.position.x + 1, playerSprite.position.y + 1)
         moveX = x
