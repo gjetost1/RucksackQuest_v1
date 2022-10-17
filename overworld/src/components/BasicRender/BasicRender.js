@@ -8,10 +8,9 @@ const width = 256
 const blockSize = 16
 
 // move rate for character sprite
-let moveXRight = 1.2
-let moveXLeft = 1.2
-let moveYDown = 1.2
-let moveYUp = 1.2
+let moveX = 1.2
+let moveY = 1.2
+
 
 
 const outerBoundary = [
@@ -142,19 +141,23 @@ const BasicRender = ({  }) => {
     // checkCollision takes x and y coords of one thing and a bounds object and returns true if the x,y is inside those bounds
     // masterSize is the grid size of the object we are checking, not implemented yer
     const checkCollision = (x, y, bounds, masterSize) => {
+      console.log('bounmds', bounds)
       const coords = [x, y]
-      let {tl, tr, bl, br} = bounds
-      if (
-        coords[0] >= tl[0] &&
-        coords[1] <= tl[1] &&
-        coords[0] <= tr[0] &&
-        coords[1] <= tr[1] &&
-        coords[0] >= bl[0] &&
-        coords[1] >= bl[1] &&
-        coords[0] <= br[0] &&
-        coords[1] >= br[1]
-        ) {
-          return true
+      for (let i = 0; i < bounds.length; i++) {
+        let {tl, tr, bl, br} = bounds
+        if (
+          coords[0] >= tl[0] &&
+          coords[1] <= tl[1] &&
+          coords[0] <= tr[0] &&
+          coords[1] <= tr[1] &&
+          coords[0] >= bl[0] &&
+          coords[1] >= bl[1] &&
+          coords[0] <= br[0] &&
+          coords[1] >= br[1]
+          ) {
+            console.log('!!!COLLISION!!!')
+            return true
+          }
         }
         return false
     }
@@ -198,8 +201,8 @@ const BasicRender = ({  }) => {
       ctx.fillRect(0, 0, width, height)
 
       playerSprite.draw()
-      moveX = 1.2
-      moveY = 1.2
+      // moveX = 1.2
+      // moveY = 1.2
 
       const border = [
         getDimension(outerBoundary[0]),
@@ -208,57 +211,42 @@ const BasicRender = ({  }) => {
         getDimension(outerBoundary[3]),
       ]
 
+      // const checkBorder = (border) => {
+      //   for (let i = 0; i < border.length; i++) {
+      //     if (checkCollision(playerSprite.position.x, playerSprite.position.y, border[i])) {
+      //       return false
+      //     }
+      //     return true
+      //   }
+      // }
 
-      if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
-        const {x, y} = checkBounds(playerSprite.position.x + 1, playerSprite.position.y + 1)
-        moveX = x
-        moveY = y
+
+      if (keys.ArrowDown.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
       }
-      else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
-        const {x, y} = checkBounds(playerSprite.position.x - 1, playerSprite.position.y + 1)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
       }
-      else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed ) {
-        const {x, y} = checkBounds(playerSprite.position.x - 1, playerSprite.position.y - 1)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed  && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
       }
-      else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed ) {
-        const {x, y} = checkBounds(playerSprite.position.x - 1, playerSprite.position.y - 1)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
       }
-      else if (keys.ArrowDown.pressed) {
-        const {x, y} = checkBounds(width / 2, playerSprite.position.y + 1)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowDown.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
       }
-      else if (keys.ArrowUp.pressed) {
-        const {x, y} = checkBounds(width / 2, playerSprite.position.y - 1)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowUp.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
       }
-      else if (keys.ArrowRight.pressed) {
-        const {x, y} = checkBounds(playerSprite.position.x + 1, height / 2)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowRight.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
       }
-      else if (keys.ArrowLeft.pressed) {
-        const {x, y} = checkBounds(playerSprite.position.x - 1, height / 2)
-        moveX = x
-        moveY = y
+      else if (keys.ArrowLeft.pressed && checkCollision(playerSprite.position.x, playerSprite.position.y, border)) {
         playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
       }
 
