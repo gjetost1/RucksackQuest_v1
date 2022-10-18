@@ -329,6 +329,7 @@ const BasicRender = ({}) => {
 
   return (
     <div id='main-container'>
+        <div id='instructions'>WASD to move - SHIFT to dash</div>
       <div id='canvas-container'>
         <canvas ref={canvasRef} height={height} width={width} />
       </div>
