@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
+import MoveEngine from './MoveEngine'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
@@ -12,12 +13,14 @@ let maxAccel = 1
 
 const maxStam = 100
 
+
 // // move rate for character sprite
 // let moveX = 1.2
 // let moveY = 1.2
 
 let xVel = 0 // current velocity for x and y movement
 let yVel = 0
+
 
 
 
@@ -32,6 +35,8 @@ const innerBoundary = [
   {x: 164, y: 64, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
   {x: 0, y: 120, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
 ]
+
+
 
 // keeps track of input state
 const keys = {
