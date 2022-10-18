@@ -288,6 +288,8 @@ const BasicRender = ({}) => {
       // moveY = 1.2
 
 
+
+
       // const checkcMasks = (cMasks) => {
       //   for (let i = 0; i < cMasks.length; i++) {
       //     if (checkCollision(playerSprite.position.x, playerSprite.position.y, cMasks[i])) {

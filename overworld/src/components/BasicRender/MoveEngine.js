@@ -25,7 +25,7 @@ const moveEngine = (moveObj) => {
 // checkCollision checks if x,y coordinates are inside one of the collision masks in cMask
 // returns false if there is a collision and true if there is not
 const checkCollision = (x, y, cMasks, blockSize, corner) => {
-  const colBuffer = 1; // number of pixels away from hero that cause collision
+  const colBuffer = 0; // number of pixels away from hero that cause collision
   const heroColBox = [
     // array of coordinates for all 4 corners of colliding object
     [-colBuffer, -colBuffer],
@@ -58,6 +58,7 @@ const checkCollision = (x, y, cMasks, blockSize, corner) => {
 };
 
 const handleInput = (moveObj) => {
+  // destructure all the values from moveObj
   let {
     x,
     y,
@@ -74,12 +75,28 @@ const handleInput = (moveObj) => {
     blockSize,
   } = moveObj;
 
+  // get boolean values for each corner of hero hitbox - false if it is in collision state
+  // true if it is not in collision state
+  // corners sent to checkCollision must be in an array and are arranged like this:
+  //
+  // tl  0--1  tr
+  //     |  |
+  // bl  3--2  br
+  //
+  const tlCol = checkCollision(x, y, cMasks, blockSize, [0])
+  const trCol = checkCollision(x, y, cMasks, blockSize, [1])
+  const brCol = checkCollision(x, y, cMasks, blockSize, [2])
+  const blCol = checkCollision(x, y, cMasks, blockSize, [3])
 
-  // if shift/dash is active increase the max velocity and adds a boost to acceleration
+
+  // if shift/dash is active increase the max velocity and add a boost to acceleration
   if (keys.Shift.pressed && currentStam > 0) {
     maxVel = 2
     dashBoost = .2
-    currentStam = currentStam - .2
+    // drains stamina if dash is active and there is directional input
+    if (currentStam > 0 && (keys.ArrowDown.pressed || keys.ArrowUp.pressed || keys.ArrowRight.pressed || keys.ArrowLeft.pressed)) {
+      currentStam = currentStam - .2
+    }
   } else {
     maxVel = 1
     dashBoost = 0
@@ -88,22 +105,24 @@ const handleInput = (moveObj) => {
     }
   }
 
-  // if (xVel > maxVel) {
-  //   xVel = xVel - rateDecel
-  // }
-  // if (xVel < -maxVel) {
-  //   xVel = xVel + rateDecel
-  // }
-  // if (yVel > maxVel) {
-  //   yVel = yVel - rateDecel
-  // }
-  // if (yVel < -maxVel) {
-  //   yVel = yVel + rateDecel
-  // }
+  // if x or y velocity is higher than the current maxVel this brings it back down
+  // this handles deceleration when dash is deactivated
+  if (xVel > maxVel) {
+    xVel = xVel - rateDecel
+  }
+  if (xVel < -maxVel) {
+    xVel = xVel + rateDecel
+  }
+  if (yVel > maxVel) {
+    yVel = yVel - rateDecel
+  }
+  if (yVel < -maxVel) {
+    yVel = yVel + rateDecel
+  }
 
-
+// if chain to handle all directional inputs plus collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [0])) {
+    if (tlCol) {
       if (yVel >= -maxVel) {
         yVel = yVel - rateAccel - dashBoost;
       }
@@ -111,17 +130,17 @@ const handleInput = (moveObj) => {
         xVel = xVel - rateAccel - dashBoost;
       }
     } else {
-      if (!checkCollision(x, y, cMasks, blockSize, [1]) && !checkCollision(x, y, cMasks, blockSize, [3])) {
+      if (!trCol && !blCol) {
         xVel = 0
         yVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [1])) {
+      } else if (!trCol) {
         yVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [3])) {
+      } else if (!blCol) {
         xVel = 0
       }
     }
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [1])) {
+    if (trCol) {
       if (yVel >= -maxVel) {
         yVel = yVel - rateAccel - dashBoost;
       }
@@ -129,17 +148,17 @@ const handleInput = (moveObj) => {
         xVel = xVel + rateAccel + dashBoost;
       }
     } else {
-      if (!checkCollision(x, y, cMasks, blockSize, [0]) && !checkCollision(x, y, cMasks, blockSize, [2])) {
+      if (!tlCol && !brCol) {
         xVel = 0
         yVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [0])) {
+      } else if (!tlCol) {
         yVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [2])) {
+      } else if (!brCol) {
         xVel = 0
       }
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [3])) {
+    if (blCol) {
       if (yVel <= maxVel) {
         yVel = yVel + rateAccel + dashBoost;
       }
@@ -147,17 +166,17 @@ const handleInput = (moveObj) => {
         xVel = xVel - rateAccel - dashBoost;
       }
     } else {
-      if (!checkCollision(x, y, cMasks, blockSize, [0]) && !checkCollision(x, y, cMasks, blockSize, [2])) {
+      if (!tlCol && !brCol) {
         xVel = 0
         yVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [0])) {
+      } else if (!tlCol) {
         xVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [2])) {
+      } else if (!brCol) {
         yVel = 0
       }
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [2])) {
+    if (brCol) {
       if (yVel <= maxVel) {
         yVel = yVel + rateAccel + dashBoost
       }
@@ -165,82 +184,130 @@ const handleInput = (moveObj) => {
         xVel = xVel + rateAccel + dashBoost
       }
     } else {
-      if (!checkCollision(x, y, cMasks, blockSize, [1]) && !checkCollision(x, y, cMasks, blockSize, [3])) {
+      if (!trCol && !blCol) {
         xVel = 0
         yVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [1])) {
+      } else if (!trCol) {
         xVel = 0
-      } else if (!checkCollision(x, y, cMasks, blockSize, [3])) {
+      } else if (!blCol) {
         yVel = 0
       }
     }
   } else if (keys.ArrowUp.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [0, 1])) {
-      if (yVel >= -maxVel) {
+    if (tlCol && trCol && blCol && brCol) {
+      if (yVel > -maxVel) {
         yVel = yVel - rateAccel - dashBoost
       }
       xVel = 0
-    } else if (checkCollision(x, y, cMasks, blockSize, [0])) {
-      if (yVel >= -maxVel) {
+    } else if (!tlCol && !trCol) {
+      yVel = -yVel / 2
+    } else if (!tlCol && trCol && !blCol || tlCol && !trCol && !brCol) {
+      if (yVel > -maxVel) {
+        yVel = yVel - rateAccel - dashBoost
+      }
+      xVel = 0
+    } else if (!tlCol || !trCol) {
+      x -= .1
+      y -= .1
+      yVel = 0
+    } else {
+      if (yVel > -maxVel) {
         yVel = yVel - rateAccel - dashBoost
       }
       xVel = 0
     }
   } else if (keys.ArrowDown.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [2, 3])) {
-      if (yVel <= maxVel) {
+    if (tlCol && trCol && blCol && brCol) {
+      if (yVel < maxVel) {
         yVel = yVel + rateAccel + dashBoost
       }
       xVel = 0
-    } else {
+    } else if (!blCol && !brCol) {
+      yVel = -yVel / 2
+    } else if (!blCol && brCol && !tlCol || blCol && !brCol && !trCol) {
+      if (yVel < maxVel) {
+        yVel = yVel + rateAccel + dashBoost
+      }
+      xVel = 0
+    } else if (!blCol || !brCol) {
       yVel = 0
-      // xVel = 0
+    } else {
+      if (yVel < maxVel) {
+        yVel = yVel + rateAccel + dashBoost
+      }
+      xVel = 0
     }
   } else if (keys.ArrowLeft.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [0, 3])) {
-      if (xVel >= -maxVel) {
+    if (tlCol && trCol && blCol && brCol) {
+      if (xVel > -maxVel) {
         xVel = xVel - rateAccel - dashBoost
       }
       yVel = 0
-    } else {
-      // yVel = 0
+    } else if (!tlCol && !blCol) {
+      xVel = -xVel / 2
+    } else if (!tlCol && blCol && !trCol || !blCol && tlCol && !brCol) {
+      if (xVel > -maxVel) {
+        xVel = xVel - rateAccel - dashBoost
+      }
+      yVel = 0
+    } else if (!tlCol || !blCol) {
       xVel = 0
+    } else {
+      if (xVel > -maxVel) {
+        xVel = xVel - rateAccel - dashBoost
+      }
+      yVel = 0
     }
   } else if (keys.ArrowRight.pressed) {
-    if (checkCollision(x, y, cMasks, blockSize, [1, 2])) {
-      if (xVel <= maxVel) {
+    if (tlCol && trCol && blCol && brCol) {
+      if (xVel < maxVel) {
         xVel = xVel + rateAccel + dashBoost
       }
       yVel = 0
-    } else {
-      // yVel = 0
+    } else if (!trCol && !brCol) {
+      xVel = -xVel / 2
+    } else if (!trCol && brCol && !tlCol || !brCol && trCol && !blCol) {
+      if (xVel < maxVel) {
+        xVel = xVel + rateAccel + dashBoost
+      }
+      yVel = 0
+    } else if (!trCol || !brCol) {
       xVel = 0
+    } else {
+      if (xVel < maxVel) {
+        xVel = xVel + rateAccel + dashBoost
+      }
+      yVel = 0
     }
   } else {
     // reduces velocity back to zero for x and y every frame that input is not given
     if (xVel < 0) {
-      xVel = xVel + rateDecel
-    }
-    if (xVel < 0 && xVel >= -rateDecel) {
-      xVel = 0
+      if (xVel >= -rateDecel) {
+        xVel = 0
+      } else {
+        xVel = xVel + rateDecel
+      }
     }
     if (xVel > 0) {
-      xVel = xVel - rateDecel
-    }
-    if (xVel > 0 && xVel <= rateDecel) {
-      xVel = 0
+      if (xVel <= rateDecel) {
+        xVel = 0
+      } else {
+        xVel = xVel - rateDecel
+      }
     }
     if (yVel < 0) {
-      yVel = yVel + rateDecel
-    }
-    if (yVel < 0 && yVel >= -rateDecel) {
-      yVel = 0
+      if (yVel >= -rateDecel) {
+        yVel = 0
+      } else {
+        yVel = yVel + rateDecel
+      }
     }
     if (yVel > 0) {
-      yVel = yVel - rateDecel
-    }
-    if (yVel > 0 && yVel <= rateDecel) {
-      yVel = 0
+      if (yVel <= rateDecel) {
+        yVel = 0
+      } else {
+        yVel = yVel - rateDecel
+      }
     }
   }
 

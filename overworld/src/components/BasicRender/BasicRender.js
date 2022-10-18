@@ -11,7 +11,7 @@ let dashDecel = false // triggers special deceleration for dash movement
 let dashBoost = 0
 let maxVel = 1 // max acceleration (pixel movement) of velocity per frame
 let rateAccel = .1 // rate at which movement object accelerates velocity
-let rateDecel = .2 // rate at which velocity decays
+let rateDecel = .1 // rate at which velocity decays
 
 const maxStam = 100
 let currentStam = maxStam
