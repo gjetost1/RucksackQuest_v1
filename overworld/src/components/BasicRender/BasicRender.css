@@ -11,23 +11,24 @@
   height: 100vh; */
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-end;
+  align-items: flex-end;
   border: 2px solid gray;
-  background-color: gray;
+  background-color: rgb(177, 15, 15);
+  /* background-color: rgb(119, 183, 168); */
   padding: 0px;
 }
 
-#stamina-container {
+/* #stamina-container {
   position: absolute;
   top: -16px;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 
-#stamina-bar {
+/* #stamina-bar {
   background-color: gray;
   height: 12px;
   width: 200px;
@@ -43,4 +44,4 @@
   background-color: lightseagreen;
   height: 8px;
   border-radius: 4px;
-}
+} */

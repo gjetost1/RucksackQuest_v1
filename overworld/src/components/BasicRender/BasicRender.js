@@ -6,7 +6,7 @@ import CanvasContext from '../CanvasContext'
 
 const height = 192 * 2
 const width = 256 * 2
-const blockSize = 16 // size of each grid block in pixels
+const blockSize = 16  // size of each grid block in pixels
 const topDashBoost = .2
 let dashBoost = 0
 const boostMaxVel = 2 // maxVel when boosting
@@ -16,7 +16,7 @@ let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
 
 const maxStam = 100
-// let currentStam = maxStam
+let currentStam = maxStam
 
 
 // // move rate for character sprite
@@ -28,18 +28,54 @@ let yVel = 0
 
 
 
-
+// defines the outer bounds of the scene for collision purposes
 const outerBoundary = [
-  {x: -blockSize, y: -blockSize, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize},
+  {x: 0, y: 0, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize}, // this one covers the hud bar at the top
   {x: -blockSize, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
   {x: width, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
   {x: -blockSize, y: height, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize},
 ]
 
+// defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
-  {x: 164, y: 64, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
-  {x: 0, y: 120, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 10, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 1, yBlocks: 8, gridSize: blockSize},
+  {x: width / 2 + blockSize * 4, y: 64, xBlocks: 1, yBlocks: 8, gridSize: blockSize},
+  {x: width / 2 - blockSize * 5, y: 176, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 + blockSize * 2, y: 176, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 8, y: 228, xBlocks: 16, yBlocks: 1, gridSize: blockSize},
 ]
+
+// concats all collision arrays for use in buildCMask
+const collisions = outerBoundary.concat(innerBoundary)
+
+// getDimension returns the dimension of a rectangular object for collision detection
+// x and y are the upper left corner pixel coordinates
+// xBlocks and yBlocks are the number of 16px (or whatever the grid size is) grid blocks the object spans in each dimension
+const getDimension = (boundary) => {
+  let {x, y, xBlocks, yBlocks, gridSize} = boundary
+  return (
+    {
+      tl: [x, y],
+      tr: [x + (xBlocks * gridSize), y],
+      bl: [x, y + (yBlocks * gridSize)],
+      br: [x + (xBlocks * gridSize), y + (yBlocks * gridSize)]
+    }
+  )
+}
+
+// buildCMask takes the collisions array and creates coordinates for each collision object
+// so we can check for collisions
+const buildCMask = (collisions) => {
+  const cMaskBuild = []
+  for (let el of collisions) {
+    cMaskBuild.push(getDimension(el))
+  }
+  return cMaskBuild
+}
+
+// this array contains all collision masks for map boundaries and other collision objects present
+const cMasks = buildCMask(collisions)
 
 
 
@@ -162,7 +198,7 @@ document.addEventListener('keyup', (action) => {
 
 const BasicRender = ({}) => {
 
-  const [currentStam, setCurrentStam] = useState(maxStam)
+  // const [currentStam, setCurrentStam] = useState(maxStam)
 
   const canvasRef = useRef(null)
   // const ctx = useContext(CanvasContext)
@@ -198,80 +234,6 @@ const BasicRender = ({}) => {
       }
     })
 
-    // getDimension returns the dimension of a rectangular object for collision detection
-    // x and y are the upper left corner pixel coordinates
-    // xBlocks and yBlocks are the number of 16px (or whatever the grid size is) grid blocks the object spans in each dimension
-    const getDimension = (boundary) => {
-      let {x, y, xBlocks, yBlocks, gridSize} = boundary
-      return (
-        {
-          tl: [x, y],
-          tr: [x + (xBlocks * gridSize), y],
-          bl: [x, y + (yBlocks * gridSize)],
-          br: [x + (xBlocks * gridSize), y + (yBlocks * gridSize)]
-        }
-      )
-    }
-
-    // checkCollision takes x and y coords of one thing and a bounds object and returns false if the x,y is inside those bounds
-    // gridSize is the grid size in pixels of the object we are checking
-    // corner is which corner we are checking - 0 = tl, 1 = tr, 2 = br, 3 = bl
-
-    // const checkCollision = (x, y, bounds, gridSize, corner) => {
-    //   const coords = [x, y]
-    //   // coordsExp is used to check all the corners of the collision object, based on the upper left corner
-    //   const coordsExp = [[1, 1], [gridSize - 1, 1], [gridSize - 1, gridSize - 1], [1, gridSize - 1]] // array of coordinates for all 4 corners of colliding object
-    //   // console.log(x, y, bounds)
-    //   for (let i = 0; i < bounds.length; i++) {
-    //     let {tl, tr, bl, br} = bounds[i] //  coordinates of collision object
-    //     if (corner) { // if there is a specified corner just check collision for that
-    //         if (
-    //           x + coordsExp[corner][0] >= tl[0] &&
-    //           y + coordsExp[corner][1] >= tl[1] &&
-    //           x + coordsExp[corner][0] <= tr[0] &&
-    //           y + coordsExp[corner][1] >= tr[1] &&
-    //           x + coordsExp[corner][0] >= bl[0] &&
-    //           y + coordsExp[corner][1] <= bl[1] &&
-    //           x + coordsExp[corner][0] <= br[0] &&
-    //           y + coordsExp[corner][1] <= br[1]
-    //           ) {
-    //             // console.log('!!!COLLISION!!!')
-    //             return false
-    //           }
-    //     } else { // otherwise check all the corners
-    //       for (let j = 0; j < coordsExp.length; j++) {
-    //         if (
-    //           x + coordsExp[j][0] >= tl[0] &&
-    //           y + coordsExp[j][1] >= tl[1] &&
-    //           x + coordsExp[j][0] <= tr[0] &&
-    //           y + coordsExp[j][1] >= tr[1] &&
-    //           x + coordsExp[j][0] >= bl[0] &&
-    //           y + coordsExp[j][1] <= bl[1] &&
-    //           x + coordsExp[j][0] <= br[0] &&
-    //           y + coordsExp[j][1] <= br[1]
-    //           ) {
-    //             // console.log('!!!COLLISION!!!')
-    //             return false
-    //           }
-    //         }
-    //       }
-    //     }
-    //     return true
-    // }
-
-
-
-    const cMasks = [
-      getDimension(outerBoundary[0]),
-      getDimension(outerBoundary[1]),
-      getDimension(outerBoundary[2]),
-      getDimension(outerBoundary[3]),
-      getDimension(innerBoundary[0]),
-      getDimension(innerBoundary[1]),
-    ]
-
-
-
     const animate = () => {
 
       let moveObj = { // object passed to MoveEngine to get next frame movement
@@ -293,10 +255,11 @@ const BasicRender = ({}) => {
         blockSize: blockSize
       }
 
-
+      // is true if any directional input is given, otherwise false
       let keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
 
-      if (keysPressed || xVel != 0 || yVel != 0) {
+      // moveEngine runs only if there is a directional input or if there is any x or y velocity
+      if (keysPressed || xVel !== 0 || yVel !== 0) {
         moveObj = moveEngine(moveObj)
       }
 
@@ -306,26 +269,55 @@ const BasicRender = ({}) => {
       xVel = moveObj.xVel
       yVel = moveObj.yVel
 
-      // currentStam = moveObj.currentStam
-      setCurrentStam(moveObj.currentStam)
+      currentStam = moveObj.currentStam
+
+      // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
+      if (currentStam < maxStam) {
+        currentStam = currentStam + .06
+      } else {
+        currentStam = maxStam
+      }
+
+
       rateAccel = moveObj.rateAccel
       rateDecel = moveObj.rateDecel
 
 
       window.requestAnimationFrame(animate);
-      // ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)'
-      ctx.fillRect(0, 0, width, height)
 
+      // draws background of current scene
+      ctx.fillStyle = 'rgb(119, 183, 168)'
+      ctx.fillRect(0, blockSize, width, height - blockSize)
+
+      // draws HUD bar at top
+      ctx.fillStyle = 'gray'
+      ctx.fillRect(0, 0, width, blockSize)
+
+      // draws stamina bar
+      ctx.fillStyle = 'black'
+      ctx.font = "12px Arial"
+      ctx.fillText("S", 2, 12)
+      ctx.fillStyle = 'rgb(65, 65, 65)'
+      ctx.fillRect(13, 3, 102, 9)
+      if (currentStam > maxStam - maxStam / 3) {
+        ctx.fillStyle = 'rgb(57, 201, 237)'
+      } else if (currentStam > maxStam - (maxStam / 3) * 2) {
+        ctx.fillStyle = 'rgb(240, 143, 33)'
+      } else {
+        ctx.fillStyle = 'rgb(240, 57, 33)'
+      }
+      ctx.fillRect(14, 4, currentStam, 7)
+
+
+      // this draws all interior objects that have collision
       for (let i = 0; i < innerBoundary.length; i++) {
+        ctx.fillStyle = 'rgb(177, 15, 15)'
         let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[i]
-        // ctx.fillStyle = 'rgba(255, 1, 1, 0)'
-        ctx.clearRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
+        ctx.fillRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
       }
 
+      // draws hero sprite image to canvas
       playerSprite.draw()
-
-
 
     }
 
@@ -333,35 +325,11 @@ const BasicRender = ({}) => {
 
   }, [])
 
-  // useEffect(() => {
-  //   if (keys.Shift.pressed && currentStam > 0) {
-  //     // console.log('shift')
-  //     maxVel = 2
-  //     dashBoost = .2
-  //     setCurrentStam((prev) => prev - .2)
-  //   } else {
-  //     maxVel = 1
-  //     dashBoost = 0
-  //     if (currentStam < maxStam) {
-  //       setCurrentStam((prev) => prev + .2)
-  //     }
-  //     // console.log('deshift')
-  //   }
-  // },[])
-
-
 
 
   return (
     <div id='main-container'>
       <div id='canvas-container'>
-        <div id='stamina-container'>
-          <div id='stamina-bar'>
-            <div id='stamina-level' style={{
-              width: `${currentStam}%`
-        }}></div>
-          </div>
-        </div>
         <canvas ref={canvasRef} height={height} width={width} />
       </div>
     </div>

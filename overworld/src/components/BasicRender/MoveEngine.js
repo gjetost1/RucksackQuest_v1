@@ -1,4 +1,4 @@
-// const moveObj = {
+// const moveObj = {  // for reference here
 //   x: x,
 //   y: y,
 //   cMasks: cMasks,
@@ -18,62 +18,6 @@
 // }
 
 const moveEngine = (moveObj) => {
-  const newMoveObj = handleInput(moveObj)
-  // console.log(newMoveObj.yVel)
-
-  // console.log('newMoveObj', newMoveObj)
-  return newMoveObj
-};
-
-// checkCollision checks if x,y coordinates are inside one of the collision masks in cMask
-// returns false if there is a collision and true if there is not
-const checkCollision = (x, y, cMasks, blockSize, corner) => {
-  const colBuffer = 1 // number of pixels away from hero that detectors sit
-  const heroColBox = [
-    // array of coordinates for all detectors of hero object
-    [0, colBuffer],
-    [colBuffer, 0],
-    [blockSize - colBuffer, 0],
-    [blockSize, colBuffer],
-    [blockSize, blockSize - colBuffer],
-    [blockSize - colBuffer, blockSize],
-    [colBuffer, blockSize],
-    [0, blockSize - colBuffer]
-  ]
-
-  // const heroColBox = [
-  //   // array of coordinates for all detectors of hero object
-  //   [-colBuffer, 0],
-  //   [0, -colBuffer],
-  //   [blockSize, -colBuffer],
-  //   [blockSize + colBuffer, 0],
-  //   [blockSize + colBuffer, blockSize],
-  //   [blockSize, blockSize + colBuffer],
-  //   [0, blockSize + colBuffer],
-  //   [-colBuffer, blockSize]
-  // ]
-
-  for (let i = 0; i < cMasks.length; i++) {
-    //  loops every collision mask in cMasks array to check for collisions with hero
-    let { tl, tr, bl, br } = cMasks[i]; // coordinates of the 4 corners of the collision mask
-      if (
-        x + heroColBox[corner][0] > tl[0] &&
-        y + heroColBox[corner][1] > tl[1] &&
-        x + heroColBox[corner][0] < tr[0] &&
-        y + heroColBox[corner][1] > tr[1] &&
-        x + heroColBox[corner][0] > bl[0] &&
-        y + heroColBox[corner][1] < bl[1] &&
-        x + heroColBox[corner][0] < br[0] &&
-        y + heroColBox[corner][1] < br[1]
-      ) {
-        console.log('!!!COLLISION ', corner)
-        return false;
-      }
-  }
-  return true;
-};
-
-const handleInput = (moveObj) => {
   // destructure all the values from moveObj
   let {
     x,
@@ -92,11 +36,11 @@ const handleInput = (moveObj) => {
     boostMaxVel,
     dashBoost,
     blockSize,
-  } = moveObj;
+  } = moveObj
 
 
   const bounce = 0 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
-  const diagScale = .9 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
+  const diagScale = .8 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
 
   // get boolean values for each detector of hero hitbox
   // false if it is in collision state
@@ -121,6 +65,7 @@ const handleInput = (moveObj) => {
   const col7 = checkCollision(x, y, cMasks, blockSize, 7)
   const allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7)
 
+  // moves hero out of collision
   if (!col0 || !col7) {
     x += .1
   }
@@ -141,14 +86,11 @@ const handleInput = (moveObj) => {
     dashBoost = topDashBoost
     // drains stamina if dash is active and there is directional input
     if (currentStam > 0 && (keys.ArrowDown.pressed || keys.ArrowUp.pressed || keys.ArrowRight.pressed || keys.ArrowLeft.pressed)) {
-      currentStam = currentStam - .2
+      currentStam = currentStam - .4
     }
   } else {
     maxVel = baseMaxVel
     dashBoost = 0
-    if (currentStam < maxStam) {
-      currentStam = currentStam + .1
-    }
   }
 
   // if x or y velocity is higher than the current maxVel this brings it back down
@@ -167,7 +109,7 @@ const handleInput = (moveObj) => {
   }
 
 
-// if chain to handle all directional inputs and collision
+  // if chain to handle all directional inputs and collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
@@ -400,6 +342,54 @@ const handleInput = (moveObj) => {
       blockSize
     }
   )
-};
+}
 
-export default moveEngine;
+// checkCollision checks if x,y coordinates are inside one of the collision masks in cMask
+// returns false if there is a collision and true if there is not
+const checkCollision = (x, y, cMasks, blockSize, corner) => {
+  const colBuffer = 1 // number of pixels away from hero that detectors sit
+  const heroColBox = [
+    // array of coordinates for all detectors of hero object
+    [0, colBuffer],
+    [colBuffer, 0],
+    [blockSize - colBuffer, 0],
+    [blockSize, colBuffer],
+    [blockSize, blockSize - colBuffer],
+    [blockSize - colBuffer, blockSize],
+    [colBuffer, blockSize],
+    [0, blockSize - colBuffer]
+  ]
+
+  // const heroColBox = [
+  //   // array of coordinates for all detectors of hero object
+  //   [-colBuffer, 0],
+  //   [0, -colBuffer],
+  //   [blockSize, -colBuffer],
+  //   [blockSize + colBuffer, 0],
+  //   [blockSize + colBuffer, blockSize],
+  //   [blockSize, blockSize + colBuffer],
+  //   [0, blockSize + colBuffer],
+  //   [-colBuffer, blockSize]
+  // ]
+
+  for (let i = 0; i < cMasks.length; i++) {
+    //  loops every collision mask in cMasks array to check for collisions with hero
+    let { tl, tr, bl, br } = cMasks[i]; // coordinates of the 4 corners of the collision mask
+      if (
+        x + heroColBox[corner][0] > tl[0] &&
+        y + heroColBox[corner][1] > tl[1] &&
+        x + heroColBox[corner][0] < tr[0] &&
+        y + heroColBox[corner][1] > tr[1] &&
+        x + heroColBox[corner][0] > bl[0] &&
+        y + heroColBox[corner][1] < bl[1] &&
+        x + heroColBox[corner][0] < br[0] &&
+        y + heroColBox[corner][1] < br[1]
+      ) {
+        console.log('!!!COLLISION ', corner)
+        return false;
+      }
+  }
+  return true;
+}
+
+export default moveEngine
