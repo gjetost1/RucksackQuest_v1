@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
-import MoveEngine from './MoveEngine'
+import moveEngine from './MoveEngine'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
@@ -9,7 +9,7 @@ const width = 256 * 2
 const blockSize = 16 // size of each grid block in pixels
 let dashDecel = false // triggers special deceleration for dash movement
 let dashBoost = 0
-let maxAccel = 1
+let maxVel = 1
 
 const maxStam = 100
 
@@ -260,7 +260,7 @@ const BasicRender = ({}) => {
 
 
 
-    const border = [
+    const cMasks = [
       getDimension(outerBoundary[0]),
       getDimension(outerBoundary[1]),
       getDimension(outerBoundary[2]),
@@ -268,6 +268,8 @@ const BasicRender = ({}) => {
       getDimension(innerBoundary[0]),
       getDimension(innerBoundary[1]),
     ]
+
+
 
     const animate = () => {
       window.requestAnimationFrame(animate);
@@ -286,57 +288,57 @@ const BasicRender = ({}) => {
       // moveY = 1.2
 
 
-      // const checkBorder = (border) => {
-      //   for (let i = 0; i < border.length; i++) {
-      //     if (checkCollision(playerSprite.position.x, playerSprite.position.y, border[i])) {
+      // const checkcMasks = (cMasks) => {
+      //   for (let i = 0; i < cMasks.length; i++) {
+      //     if (checkCollision(playerSprite.position.x, playerSprite.position.y, cMasks[i])) {
       //       return false
       //     }
       //     return true
       //   }
       // }
 
-      // console.log(playerSprite.position.x, playerSprite.position.y, border)
+      // console.log(playerSprite.position.x, playerSprite.position.y, cMasks)
 
       // this if chain reverses the velocity of the object on collision and makes sure it doesn't clip into a collision mask
-      if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize, 1) && !checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize, 2)) {
+      if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, cMasks, blockSize, 1) && !checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, cMasks, blockSize, 2)) {
         playerSprite.position.x -= .5
         xVel = -xVel
         // yVel = -.2
         // console.log('1 & 2')
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize, 0) && !checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize, 3)) {
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, cMasks, blockSize, 0) && !checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, cMasks, blockSize, 3)) {
         playerSprite.position.x += .5
         xVel = -xVel
         // yVel = -.2
         // console.log('0 & 3')
-      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize, 2) && !checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize, 3)) {
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, cMasks, blockSize, 2) && !checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, cMasks, blockSize, 3)) {
         playerSprite.position.y -= .5
         // xVel = .2
         yVel = -yVel
         // console.log('2 & 3')
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize, 0) && !checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize, 1)) {
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, cMasks, blockSize, 0) && !checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, cMasks, blockSize, 1)) {
         playerSprite.position.y += .5
         // xVel = .2
         yVel = -yVel
         // console.log('0 & 1')
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, border, blockSize, 0)) {
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y - 1, cMasks, blockSize, 0)) {
         // playerSprite.position.x += .5
         // playerSprite.position.y += .5
         xVel = -xVel
         yVel = yVel
         // console.log('0')
-      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, border, blockSize, 2)) {
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y + 1, cMasks, blockSize, 2)) {
         // playerSprite.position.x -= .5
         // playerSprite.position.y -= .5
         xVel = -xVel
         yVel = yVel
         // console.log('2')
-      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, border, blockSize, 1)) {
+      } else if (!checkCollision(playerSprite.position.x + 1, playerSprite.position.y - 1, cMasks, blockSize, 1)) {
         // playerSprite.position.x -= .5
         // playerSprite.position.y += .5
         xVel = -xVel
         yVel = yVel
         // console.log('1')
-      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, border, blockSize, 3)) {
+      } else if (!checkCollision(playerSprite.position.x - 1, playerSprite.position.y + 1, cMasks, blockSize, 3)) {
         // playerSprite.position.x += .5
         // playerSprite.position.y -= .5
         xVel = xVel
@@ -354,7 +356,9 @@ const BasicRender = ({}) => {
         movePlayer()
       }
 
-      // if (checkCollision(playerSprite.position.x, playerSprite.position.y, border, blockSize)) {
+
+
+      // if (checkCollision(playerSprite.position.x, playerSprite.position.y, cMasks, blockSize)) {
       //   playerSprite.position.x = playerSprite.position.x + xVel;  // Move Right
       //   playerSprite.position.y = playerSprite.position.y + yVel;  // Move Down
       // } else {
@@ -369,17 +373,35 @@ const BasicRender = ({}) => {
       //   // console.log('jump!!!!!')
       // }
 
-      let maxAccel = 1 // max acceleration (pixel movement) of velocity per frame
+      let maxVel = 1 // max acceleration (pixel movement) of velocity per frame
       let rateAccel = .1 // rate at which movement object accelerates velocity
-      let velReduce = .2 // rate at which velocity decays
+      let rateDecel = .2 // rate at which velocity decays
+
+      const moveObj = { // object passed to MoveEngine to get next frame movement
+        x: playerSprite.position.x,
+        y: playerSprite.position.y,
+        cMasks: cMasks, // collision maps array
+        xVel: xVel,
+        yVel: yVel,
+        keys: keys,
+        maxStam: maxStam,
+        currentStam: currentStam,
+        maxVel: maxVel,
+        rateAccel: rateAccel,
+        rateDecel: rateDecel,
+        dashBoost: dashBoost,
+        blockSize: blockSize
+      }
+
+      moveEngine(moveObj)
 
       if (keys.Shift.pressed && currentStam > 0) {
         // console.log('shift')
-        maxAccel = 2
+        maxVel = 2
         dashBoost = .2
         setCurrentStam((prev) => prev - .2)
       } else {
-        maxAccel = 1
+        maxVel = 1
         dashBoost = 0
         if (currentStam < maxStam) {
           setCurrentStam((prev) => prev + .2)
@@ -394,67 +416,67 @@ const BasicRender = ({}) => {
       if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        if (yVel <= maxAccel) {
+        if (yVel <= maxVel) {
           yVel = yVel + rateAccel + dashBoost
         }
-        if (xVel <= maxAccel) {
+        if (xVel <= maxVel) {
           xVel = xVel + rateAccel + dashBoost
         }
       }
       else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        if (yVel >= -maxAccel) {
+        if (yVel >= -maxVel) {
           yVel = yVel - rateAccel - dashBoost
         }
-        if (xVel <= maxAccel) {
+        if (xVel <= maxVel) {
           xVel = xVel + rateAccel + dashBoost
         }
       }
       else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        if (yVel <= maxAccel) {
+        if (yVel <= maxVel) {
           yVel = yVel + rateAccel + dashBoost
         }
-        if (xVel >= -maxAccel) {
+        if (xVel >= -maxVel) {
           xVel = xVel - rateAccel - dashBoost
         }
       }
       else if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        if (yVel >= -maxAccel) {
+        if (yVel >= -maxVel) {
           yVel = yVel - rateAccel - dashBoost
         }
-        if (xVel >= -maxAccel) {
+        if (xVel >= -maxVel) {
           xVel = xVel - rateAccel - dashBoost
         }
       }
       else if (keys.ArrowDown.pressed) {
         // playerSprite.position.y = playerSprite.position.y + moveY;  // Move Down
-        if (yVel <= maxAccel) {
+        if (yVel <= maxVel) {
           yVel = yVel + rateAccel + dashBoost
         }
         xVel = 0
       }
       else if (keys.ArrowUp.pressed) {
         // playerSprite.position.y = playerSprite.position.y - moveY;  // Move Up
-        if (yVel >= -maxAccel) {
+        if (yVel >= -maxVel) {
           yVel = yVel - rateAccel - dashBoost
         }
         xVel = 0
       }
       else if (keys.ArrowRight.pressed) {
         // playerSprite.position.x = playerSprite.position.x + moveX;  // Move Right
-        if (xVel <= maxAccel) {
+        if (xVel <= maxVel) {
           xVel = xVel + rateAccel + dashBoost
         }
         yVel = 0
       }
       else if (keys.ArrowLeft.pressed) {
         // playerSprite.position.x = playerSprite.position.x - moveX;  // Move Left
-        if (xVel >= -maxAccel) {
+        if (xVel >= -maxVel) {
           xVel = xVel - rateAccel - dashBoost
         }
         yVel = 0
@@ -462,55 +484,55 @@ const BasicRender = ({}) => {
       else {
         // reduces velocity back to zero for x and y every frame that input is not given
         if (xVel < 0) {
-          xVel = xVel + velReduce
+          xVel = xVel + rateDecel
         }
-        if (xVel < 0 && xVel >= -velReduce) {
+        if (xVel < 0 && xVel >= -rateDecel) {
           xVel = 0
         }
         if (xVel > 0) {
-          xVel = xVel - velReduce
+          xVel = xVel - rateDecel
         }
-        if (xVel > 0 && xVel <= velReduce) {
+        if (xVel > 0 && xVel <= rateDecel) {
           xVel = 0
         }
         if (yVel < 0) {
-          yVel = yVel + velReduce
+          yVel = yVel + rateDecel
         }
-        if (yVel < 0 && yVel >= -velReduce) {
+        if (yVel < 0 && yVel >= -rateDecel) {
           yVel = 0
         }
         if (yVel > 0) {
-          yVel = yVel - velReduce
+          yVel = yVel - rateDecel
         }
-        if (yVel > 0 && yVel <= velReduce) {
+        if (yVel > 0 && yVel <= rateDecel) {
           yVel = 0
         }
       }
 
       if (dashDecel) {
-        let velReduce = .15 // rate at which velocity decays
+        let rateDecel = .15 // rate at which velocity decays
         if (xVel < 0) {
-          xVel = xVel + velReduce
+          xVel = xVel + rateDecel
         }
-        if (xVel < 0 && xVel >= -velReduce) {
+        if (xVel < 0 && xVel >= -rateDecel) {
           xVel = 0
         }
         if (xVel > 0) {
-          xVel = xVel - velReduce
+          xVel = xVel - rateDecel
         }
-        if (xVel > 0 && xVel <= velReduce) {
+        if (xVel > 0 && xVel <= rateDecel) {
           xVel = 0
         }
         if (yVel < 0) {
-          yVel = yVel + velReduce
+          yVel = yVel + rateDecel
         }
-        if (yVel < 0 && yVel >= -velReduce) {
+        if (yVel < 0 && yVel >= -rateDecel) {
           yVel = 0
         }
         if (yVel > 0) {
-          yVel = yVel - velReduce
+          yVel = yVel - rateDecel
         }
-        if (yVel > 0 && yVel <= velReduce) {
+        if (yVel > 0 && yVel <= rateDecel) {
           yVel = 0
         }
       }
@@ -520,7 +542,7 @@ const BasicRender = ({}) => {
 
 
     // const gravityInterval = setInterval(() => {
-    //   if (checkCollision(playerSprite.position.x, playerSprite.position.y + 1, border, blockSize)) {
+    //   if (checkCollision(playerSprite.position.x, playerSprite.position.y + 1, cMasks, blockSize)) {
     //     playerSprite.position.y = playerSprite.position.y + 1
     //   }
     // }, 40)
@@ -532,11 +554,11 @@ const BasicRender = ({}) => {
   // useEffect(() => {
   //   if (keys.Shift.pressed && currentStam > 0) {
   //     // console.log('shift')
-  //     maxAccel = 2
+  //     maxVel = 2
   //     dashBoost = .2
   //     setCurrentStam((prev) => prev - .2)
   //   } else {
-  //     maxAccel = 1
+  //     maxVel = 1
   //     dashBoost = 0
   //     if (currentStam < maxStam) {
   //       setCurrentStam((prev) => prev + .2)
