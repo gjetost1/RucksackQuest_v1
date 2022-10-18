@@ -1,6 +1,6 @@
 // const moveObj = {
-//   x: playerSprite.position.x,
-//   y: playerSprite.position.y,
+//   x: x,
+//   y: y,
 //   cMasks: cMasks,
 //   xVel: xVel,
 //   yVel: yVel,
@@ -101,6 +101,7 @@ const handleInput = (moveObj) => {
   //   yVel = yVel + rateDecel
   // }
 
+
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
     if (checkCollision(x, y, cMasks, blockSize, [0])) {
       if (yVel >= -maxVel) {
@@ -110,8 +111,14 @@ const handleInput = (moveObj) => {
         xVel = xVel - rateAccel - dashBoost;
       }
     } else {
-      yVel = 0
-      xVel = 0
+      if (!checkCollision(x, y, cMasks, blockSize, [1]) && !checkCollision(x, y, cMasks, blockSize, [3])) {
+        xVel = 0
+        yVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [1])) {
+        yVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [3])) {
+        xVel = 0
+      }
     }
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
     if (checkCollision(x, y, cMasks, blockSize, [1])) {
@@ -122,8 +129,14 @@ const handleInput = (moveObj) => {
         xVel = xVel + rateAccel + dashBoost;
       }
     } else {
-      yVel = 0
-      xVel = 0
+      if (!checkCollision(x, y, cMasks, blockSize, [0]) && !checkCollision(x, y, cMasks, blockSize, [2])) {
+        xVel = 0
+        yVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [0])) {
+        yVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [2])) {
+        xVel = 0
+      }
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
     if (checkCollision(x, y, cMasks, blockSize, [3])) {
@@ -134,8 +147,14 @@ const handleInput = (moveObj) => {
         xVel = xVel - rateAccel - dashBoost;
       }
     } else {
-      yVel = 0
-      xVel = 0
+      if (!checkCollision(x, y, cMasks, blockSize, [0]) && !checkCollision(x, y, cMasks, blockSize, [2])) {
+        xVel = 0
+        yVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [0])) {
+        xVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [2])) {
+        yVel = 0
+      }
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
     if (checkCollision(x, y, cMasks, blockSize, [2])) {
@@ -146,8 +165,14 @@ const handleInput = (moveObj) => {
         xVel = xVel + rateAccel + dashBoost
       }
     } else {
-      yVel = 0
-      xVel = 0
+      if (!checkCollision(x, y, cMasks, blockSize, [1]) && !checkCollision(x, y, cMasks, blockSize, [3])) {
+        xVel = 0
+        yVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [1])) {
+        xVel = 0
+      } else if (!checkCollision(x, y, cMasks, blockSize, [3])) {
+        yVel = 0
+      }
     }
   } else if (keys.ArrowUp.pressed) {
     if (checkCollision(x, y, cMasks, blockSize, [0, 1])) {
@@ -155,8 +180,10 @@ const handleInput = (moveObj) => {
         yVel = yVel - rateAccel - dashBoost
       }
       xVel = 0
-    } else {
-      yVel = 0
+    } else if (checkCollision(x, y, cMasks, blockSize, [0])) {
+      if (yVel >= -maxVel) {
+        yVel = yVel - rateAccel - dashBoost
+      }
       xVel = 0
     }
   } else if (keys.ArrowDown.pressed) {
@@ -167,7 +194,7 @@ const handleInput = (moveObj) => {
       xVel = 0
     } else {
       yVel = 0
-      xVel = 0
+      // xVel = 0
     }
   } else if (keys.ArrowLeft.pressed) {
     if (checkCollision(x, y, cMasks, blockSize, [0, 3])) {
@@ -176,7 +203,7 @@ const handleInput = (moveObj) => {
       }
       yVel = 0
     } else {
-      yVel = 0
+      // yVel = 0
       xVel = 0
     }
   } else if (keys.ArrowRight.pressed) {
@@ -186,7 +213,7 @@ const handleInput = (moveObj) => {
       }
       yVel = 0
     } else {
-      yVel = 0
+      // yVel = 0
       xVel = 0
     }
   } else {
