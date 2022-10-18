@@ -7,9 +7,12 @@
 //   keys: keys,
 //   maxStam: maxStam,
 //   currentStam: currentStam,
+//   baseMaxVel: baseMaxVel,
 //   maxVel: maxVel,
 //   rateAccel: rateAccel,
 //   rateDecel: rateDecel,
+//   topDashBoost: topDashBoost,
+//   boostMaxVel: boostMaxVel,
 //   dashBoost: dashBoost,
 //   blockSize: blockSize
 // }
@@ -25,18 +28,30 @@ const moveEngine = (moveObj) => {
 // checkCollision checks if x,y coordinates are inside one of the collision masks in cMask
 // returns false if there is a collision and true if there is not
 const checkCollision = (x, y, cMasks, blockSize, corner) => {
-  const colBuffer = 2 // number of pixels away from hero that detectors sit
+  const colBuffer = 1 // number of pixels away from hero that detectors sit
   const heroColBox = [
     // array of coordinates for all detectors of hero object
-    [-colBuffer, 0],
-    [0, -colBuffer],
-    [blockSize, -colBuffer],
-    [blockSize + colBuffer, 0],
-    [blockSize + colBuffer, blockSize],
-    [blockSize, blockSize + colBuffer],
-    [0, blockSize + colBuffer],
-    [-colBuffer, blockSize]
-  ];
+    [0, colBuffer],
+    [colBuffer, 0],
+    [blockSize - colBuffer, 0],
+    [blockSize, colBuffer],
+    [blockSize, blockSize - colBuffer],
+    [blockSize - colBuffer, blockSize],
+    [colBuffer, blockSize],
+    [0, blockSize - colBuffer]
+  ]
+
+  // const heroColBox = [
+  //   // array of coordinates for all detectors of hero object
+  //   [-colBuffer, 0],
+  //   [0, -colBuffer],
+  //   [blockSize, -colBuffer],
+  //   [blockSize + colBuffer, 0],
+  //   [blockSize + colBuffer, blockSize],
+  //   [blockSize, blockSize + colBuffer],
+  //   [0, blockSize + colBuffer],
+  //   [-colBuffer, blockSize]
+  // ]
 
   for (let i = 0; i < cMasks.length; i++) {
     //  loops every collision mask in cMasks array to check for collisions with hero
@@ -51,7 +66,7 @@ const checkCollision = (x, y, cMasks, blockSize, corner) => {
         x + heroColBox[corner][0] < br[0] &&
         y + heroColBox[corner][1] < br[1]
       ) {
-        console.log('!!!COLLISION!!!')
+        console.log('!!!COLLISION ', corner)
         return false;
       }
   }
@@ -69,15 +84,18 @@ const handleInput = (moveObj) => {
     keys,
     maxStam,
     currentStam,
+    baseMaxVel,
     maxVel,
     rateAccel,
     rateDecel,
+    topDashBoost,
+    boostMaxVel,
     dashBoost,
     blockSize,
   } = moveObj;
 
 
-  const bounce = .6 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
+  const bounce = 0 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
   const diagScale = .9 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
 
   // get boolean values for each detector of hero hitbox
@@ -86,11 +104,11 @@ const handleInput = (moveObj) => {
   // there are 8 detectors for better precision - 4 didn't capture some collision states properly
   // corners are arranged like this:
   //
-  //   1________2
+  //    1______2
   //  0|        |3
   //   |        |
   //  7|        |4
-  //   6--------5
+  //    6------5
   //
 
   const col0 = checkCollision(x, y, cMasks, blockSize, 0)
@@ -103,17 +121,30 @@ const handleInput = (moveObj) => {
   const col7 = checkCollision(x, y, cMasks, blockSize, 7)
   const allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7)
 
+  if (!col0 || !col7) {
+    x += .1
+  }
+  if (!col1 || !col2) {
+    y += .1
+  }
+  if (!col3 || !col4) {
+    x -= .1
+  }
+  if (!col5 || !col6) {
+    y -= .1
+  }
+
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
   if (keys.Shift.pressed && currentStam > 0) {
-    maxVel = 2
-    dashBoost = .2
+    maxVel = boostMaxVel
+    dashBoost = topDashBoost
     // drains stamina if dash is active and there is directional input
     if (currentStam > 0 && (keys.ArrowDown.pressed || keys.ArrowUp.pressed || keys.ArrowRight.pressed || keys.ArrowLeft.pressed)) {
       currentStam = currentStam - .2
     }
   } else {
-    maxVel = 1
+    maxVel = baseMaxVel
     dashBoost = 0
     if (currentStam < maxStam) {
       currentStam = currentStam + .1
@@ -148,12 +179,12 @@ const handleInput = (moveObj) => {
     } else if (!col0 && !col1) { // if both the forward moving corner detectors collide reverse both x and y velocity
       xVel = -xVel * bounce
       yVel = -yVel * bounce
-    } else if (!col1 || !col2) { // if either top corners collide reverse y velocity
+    } else if (!col1 || !col2) { // if either top corners collide reverse y velocity but allow x movement
       yVel = -yVel * bounce
       if (xVel > -maxVel * diagScale) {
         xVel = (xVel - rateAccel - dashBoost) * diagScale
       } else { xVel = -maxVel * diagScale}
-    } else if (!col0 || !col7) { // if either side corners collide reverse x velocity
+    } else if (!col0 || !col7) { // if either side corners collide reverse x velocity but allow y movement
       xVel = -xVel * bounce
       if (yVel > -maxVel * diagScale) {
         yVel = (yVel - rateAccel - dashBoost) * diagScale
@@ -177,12 +208,12 @@ const handleInput = (moveObj) => {
     } else if (!col2 && !col3) { // if both the forward moving corner detectors collide reverse both x and y velocity
       xVel = -xVel * bounce
       yVel = -yVel * bounce
-    } else if (!col1 || !col2) { // if either top corners collide reverse y velocity
+    } else if (!col1 || !col2) { // if either top corners collide reverse y velocity but allow x movement
       yVel = -yVel * bounce
       if (xVel < maxVel * diagScale) {
         xVel = (xVel + rateAccel + dashBoost) * diagScale
       } else { xVel = maxVel * diagScale}
-    } else if (!col3 || !col4) { // if either side corners collide reverse x velocity
+    } else if (!col3 || !col4) { // if either side corners collide reverse x velocity but allow y movement
       xVel = -xVel * bounce
       if (yVel > -maxVel * diagScale) {
         yVel = (yVel - rateAccel - dashBoost) * diagScale
@@ -204,14 +235,16 @@ const handleInput = (moveObj) => {
         xVel = (xVel - rateAccel - dashBoost) * diagScale
       } else { xVel = -maxVel * diagScale}
     } else if (!col6 && !col7) { // if both the forward moving corner detectors collide reverse both x and y velocity
+      x += 1
+      y -= 1
       xVel = -xVel * bounce
       yVel = -yVel * bounce
-    } else if (!col5 || !col6) { // if either bottom corners collide reverse y velocity
+    } else if (!col5 || !col6) { // if either bottom corners collide reverse y velocity but allow x movement
       yVel = -yVel * bounce
       if (xVel > -maxVel * diagScale) {
         xVel = (xVel - rateAccel - dashBoost) * diagScale
       } else { xVel = -maxVel * diagScale}
-    } else if (!col0 || !col7) { // if either side corners collide reverse x velocity
+    } else if (!col0 || !col7) { // if either side corners collide reverse x velocity but allow x movement
       xVel = -xVel * bounce
       if (yVel < maxVel * diagScale) {
         yVel = (yVel + rateAccel + dashBoost) * diagScale
@@ -235,12 +268,12 @@ const handleInput = (moveObj) => {
     } else if (!col4 && !col5) { // if both the forward moving corner detectors collide reverse both x and y velocity
       xVel = -xVel * bounce
       yVel = -yVel * bounce
-    } else if (!col5 || !col6) { // if either bottom corners collide reverse y velocity
+    } else if (!col5 || !col6) { // if either bottom corners collide reverse y velocity but allow x movement
       yVel = -yVel * bounce
       if (xVel < maxVel * diagScale) {
         xVel = (xVel + rateAccel + dashBoost) * diagScale
       } else { xVel = maxVel * diagScale}
-    } else if (!col3 || !col4) { // if either side corners collide reverse x velocity
+    } else if (!col3 || !col4) { // if either side corners collide reverse x velocity but allow y movement
       xVel = -xVel * bounce
       if (yVel < maxVel * diagScale) {
         yVel = (yVel + rateAccel + dashBoost) * diagScale

@@ -7,14 +7,16 @@ import CanvasContext from '../CanvasContext'
 const height = 192 * 2
 const width = 256 * 2
 const blockSize = 16 // size of each grid block in pixels
-let dashDecel = false // triggers special deceleration for dash movement
+const topDashBoost = .2
 let dashBoost = 0
-let maxVel = 1 // max acceleration (pixel movement) of velocity per frame
-let rateAccel = .1 // rate at which movement object accelerates velocity
+const boostMaxVel = 2 // maxVel when boosting
+const baseMaxVel = 1 // base maxVel that maxVel will return to when not boosting
+let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
+let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
 
 const maxStam = 100
-let currentStam = maxStam
+// let currentStam = maxStam
 
 
 // // move rate for character sprite
@@ -62,6 +64,7 @@ const keys = {
     pressed:false
   }
 }
+
 
 let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
 // event listener for directional movement input
@@ -151,10 +154,6 @@ document.addEventListener('keyup', (action) => {
     break
     case 'Shift':
       keys.Shift.pressed = false
-      dashDecel = true
-      setTimeout(() => {
-        dashDecel = false
-      }, 100)
     break
     default:
     break
@@ -163,8 +162,7 @@ document.addEventListener('keyup', (action) => {
 
 const BasicRender = ({}) => {
 
-  const [collision, setCollision] = useState(false)
-  // const [currentStam, setCurrentStam] = useState(maxStam)
+  const [currentStam, setCurrentStam] = useState(maxStam)
 
   const canvasRef = useRef(null)
   // const ctx = useContext(CanvasContext)
@@ -285,14 +283,22 @@ const BasicRender = ({}) => {
         keys: keys,
         maxStam: maxStam,
         currentStam: currentStam,
+        baseMaxVel: baseMaxVel,
         maxVel: maxVel,
         rateAccel: rateAccel,
         rateDecel: rateDecel,
+        topDashBoost: topDashBoost,
+        boostMaxVel: boostMaxVel,
         dashBoost: dashBoost,
         blockSize: blockSize
       }
 
-      moveObj = moveEngine(moveObj)
+
+      let keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
+
+      if (keysPressed || xVel != 0 || yVel != 0) {
+        moveObj = moveEngine(moveObj)
+      }
 
       playerSprite.position.x = moveObj.x
       playerSprite.position.y = moveObj.y
@@ -300,7 +306,8 @@ const BasicRender = ({}) => {
       xVel = moveObj.xVel
       yVel = moveObj.yVel
 
-      currentStam = moveObj.currentStam
+      // currentStam = moveObj.currentStam
+      setCurrentStam(moveObj.currentStam)
       rateAccel = moveObj.rateAccel
       rateDecel = moveObj.rateDecel
 
