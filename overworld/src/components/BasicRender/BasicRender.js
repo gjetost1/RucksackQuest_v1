@@ -4,6 +4,9 @@ import moveEngine from './MoveEngine'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
+import droneSprt from './droneRef'
+
+
 const height = 192 * 2
 const width = 256 * 2
 const blockSize = 16  // size of each grid block in pixels
@@ -14,6 +17,7 @@ const baseMaxVel = 1 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
 let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
+let heroSprite = droneSprt.down
 
 const maxStam = 100
 let currentStam = maxStam
@@ -224,7 +228,7 @@ const BasicRender = ({}) => {
     }
 
     const playerImage = new Image()
-    playerImage.src = black_square
+    playerImage.src = heroSprite
 
     const playerSprite = new Sprite({
       image: playerImage,
@@ -252,7 +256,8 @@ const BasicRender = ({}) => {
         topDashBoost: topDashBoost,
         boostMaxVel: boostMaxVel,
         dashBoost: dashBoost,
-        blockSize: blockSize
+        blockSize: blockSize,
+        heroSprite: heroSprite
       }
 
       // is true if any directional input is given, otherwise false
@@ -265,6 +270,9 @@ const BasicRender = ({}) => {
 
       playerSprite.position.x = moveObj.x
       playerSprite.position.y = moveObj.y
+
+      heroSprite = moveObj.heroSprite
+      playerImage.src = heroSprite
 
       xVel = moveObj.xVel
       yVel = moveObj.yVel

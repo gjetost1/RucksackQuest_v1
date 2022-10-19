@@ -1,3 +1,5 @@
+import droneSprt from './droneRef'
+
 // const moveObj = {  // for reference here
 //   x: x,
 //   y: y,
@@ -36,6 +38,7 @@ const moveEngine = (moveObj) => {
     boostMaxVel,
     dashBoost,
     blockSize,
+    heroSprite
   } = moveObj
 
 
@@ -111,6 +114,10 @@ const moveEngine = (moveObj) => {
 
   // if chain to handle all directional inputs and collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
+
+    //sets appropriate sprite for direction of movement
+    heroSprite = droneSprt.upleft
+
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
         yVel = (yVel - rateAccel - dashBoost) * diagScale
@@ -140,6 +147,10 @@ const moveEngine = (moveObj) => {
       } else { xVel = -maxVel * diagScale}
     }
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
+
+      //sets appropriate sprite for direction of movement
+      heroSprite = droneSprt.upright
+
     if (allCol) { // if no collisions move normally - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
         yVel = (yVel - rateAccel - dashBoost) * diagScale
@@ -169,6 +180,10 @@ const moveEngine = (moveObj) => {
       } else { xVel = maxVel * diagScale}
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
+
+          //sets appropriate sprite for direction of movement
+          heroSprite = droneSprt.downleft
+
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel < maxVel * diagScale) {
         yVel = (yVel + rateAccel + dashBoost) * diagScale
@@ -200,6 +215,10 @@ const moveEngine = (moveObj) => {
       } else { xVel = -maxVel * diagScale}
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
+
+    //sets appropriate sprite for direction of movement
+    heroSprite = droneSprt.downright
+
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel < maxVel * diagScale) {
         yVel = (yVel + rateAccel + dashBoost) * diagScale
@@ -229,6 +248,10 @@ const moveEngine = (moveObj) => {
       } else { xVel = maxVel * diagScale}
     }
   } else if (keys.ArrowUp.pressed) {
+
+    //sets appropriate sprite for direction of movement
+    heroSprite = droneSprt.up
+
     if (allCol) { // if no collisions move normally
       if (yVel > -maxVel) {
         yVel = yVel - rateAccel - dashBoost
@@ -244,6 +267,10 @@ const moveEngine = (moveObj) => {
       xVel = 0
     }
   } else if (keys.ArrowDown.pressed) {
+
+    //sets appropriate sprite for direction of movement
+    heroSprite = droneSprt.down
+
     if (allCol) { // if no collisions move normally
       if (yVel < maxVel) {
         yVel = yVel + rateAccel + dashBoost
@@ -259,6 +286,10 @@ const moveEngine = (moveObj) => {
       xVel = 0
     }
   } else if (keys.ArrowLeft.pressed) {
+
+    //sets appropriate sprite for direction of movement
+    heroSprite = droneSprt.left
+
     if (allCol) { // if no collisions move normally
       if (xVel > -maxVel) {
         xVel = xVel - rateAccel - dashBoost
@@ -274,6 +305,9 @@ const moveEngine = (moveObj) => {
       yVel = 0
     }
   } else if (keys.ArrowRight.pressed) {
+
+    //sets appropriate sprite for direction of movement
+    heroSprite = droneSprt.right
 
     if (allCol) { // if no collisions move normally
       if (xVel < maxVel) {
@@ -339,7 +373,8 @@ const moveEngine = (moveObj) => {
       rateAccel,
       rateDecel,
       dashBoost,
-      blockSize
+      blockSize,
+      heroSprite
     }
   )
 }
