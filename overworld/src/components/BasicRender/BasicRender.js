@@ -107,6 +107,7 @@ const keys = {
 
 
 let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
+
 // event listener for directional movement input
 document.addEventListener('keydown', function(playerWalk) {
   switch (playerWalk.key) {
@@ -226,6 +227,8 @@ const BasicRender = ({}) => {
         ctx.drawImage(this.image, this.position.x, this.position.y, rectWidth, rectHeight)
       }
     }
+
+
 
     const playerImage = new Image()
     playerImage.src = heroSprite
