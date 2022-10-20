@@ -113,24 +113,28 @@ document.addEventListener('keydown', function(playerWalk) {
   switch (playerWalk.key) {
     case 'w':
     case 'W':
+    case 'ArrowUp':
       keys.ArrowUp.pressed = true
       lastKeyDown = 'ArrowUp'
       // console.log('Walk Up')
     break;
     case 's':
     case 'S':
+    case 'ArrowDown':
       keys.ArrowDown.pressed = true
       lastKeyDown = 'ArrowDown'
       // console.log('Walk Down')
     break;
     case 'a':
     case 'A':
+    case 'ArrowLeft':
       keys.ArrowLeft.pressed = true
       lastKeyDown = 'ArrowLeft'
       // console.log('Walk Left')
     break;
     case 'd':
     case 'D':
+    case 'ArrowRight':
       keys.ArrowRight.pressed = true
       lastKeyDown = 'ArrowRight'
       // console.log('Walk Right')
@@ -145,21 +149,25 @@ document.addEventListener('keyup', function(playerWalk) {
   switch (playerWalk.key) {
     case 'w':
     case 'W':
+    case 'ArrowUp':
       keys.ArrowUp.pressed = false
       // console.log('Walk Up')
     break;
     case 's':
     case 'S':
+    case 'ArrowDown':
       keys.ArrowDown.pressed = false
       // console.log('Walk Down')
     break;
       case 'a':
       case 'A':
+      case 'ArrowLeft':
         keys.ArrowLeft.pressed = false
         // console.log('Walk Left')
       break;
       case 'd':
       case 'D':
+      case 'ArrowRight':
         keys.ArrowRight.pressed = false
         // console.log('Walk Right')
       break;

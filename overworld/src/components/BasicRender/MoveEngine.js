@@ -48,7 +48,7 @@ const moveEngine = (moveObj) => {
 
   // keysPressed is true if any directional input was given this frame, otherwise false.
   const keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
-  const bounce = 0 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
+  const bounce = 1 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
   const diagScale = .8 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
 
 
@@ -79,15 +79,19 @@ const moveEngine = (moveObj) => {
   // moves hero out of collision
   if (!col0 || !col7) {
     x += .1
+    xVel = 0
   }
   if (!col1 || !col2) {
     y += .1
+    yVel = 0
   }
   if (!col3 || !col4) {
     x -= .1
+    xVel = 0
   }
   if (!col5 || !col6) {
     y -= .1
+    yVel = 0
   }
 
 
@@ -97,7 +101,7 @@ const moveEngine = (moveObj) => {
     dashBoost = topDashBoost
     // drains stamina if dash is active and there is directional input
     if (currentStam > 0 && (keys.ArrowDown.pressed || keys.ArrowUp.pressed || keys.ArrowRight.pressed || keys.ArrowLeft.pressed)) {
-      currentStam = currentStam - .4
+      currentStam = currentStam - .1
     }
   } else {
     maxVel = baseMaxVel
@@ -119,12 +123,47 @@ const moveEngine = (moveObj) => {
     yVel = yVel + rateDecel
   }
 
+  // deceleratorX increments xVel towards 0.
+  // activated if there is no directional input
+  const deceleratorX = () => {
+    if (xVel < 0) {
+      if (xVel >= -rateDecel) {
+        xVel = 0
+      } else {
+        xVel = xVel + rateDecel
+      }
+    }
+    if (xVel > 0) {
+      if (xVel <= rateDecel) {
+        xVel = 0
+      } else {
+        xVel = xVel - rateDecel
+      }
+    }
+  }
+
+  const deceleratorY = () => {
+    if (yVel < 0) {
+      if (yVel >= -rateDecel) {
+        yVel = 0
+      } else {
+        yVel = yVel + rateDecel
+      }
+    }
+    if (yVel > 0) {
+      if (yVel <= rateDecel) {
+        yVel = 0
+      } else {
+        yVel = yVel - rateDecel
+      }
+    }
+  }
+
 
   // if chain to handle all directional inputs and collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
-
+    console.log('upleft')
     heroSprite = droneSprt.upleft //sets appropriate sprite for direction of movement
-
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
@@ -155,6 +194,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = -maxVel * diagScale}
     }
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
+    console.log('upright')
 
     heroSprite = droneSprt.upright //sets appropriate sprite for direction of movement
 
@@ -187,6 +227,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = maxVel * diagScale}
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
+    console.log('downleft')
 
     heroSprite = droneSprt.downleft //sets appropriate sprite for direction of movement
 
@@ -198,8 +239,6 @@ const moveEngine = (moveObj) => {
         xVel = (xVel - rateAccel - dashBoost) * diagScale
       } else { xVel = -maxVel * diagScale}
     } else if (!col6 && !col7) { // if both the forward moving corner detectors collide reverse both x and y velocity
-      x += 1
-      y -= 1
       xVel = -xVel * bounce
       yVel = -yVel * bounce
     } else if (!col5 || !col6) { // if either bottom corners collide reverse y velocity but allow x movement
@@ -221,6 +260,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = -maxVel * diagScale}
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
+    console.log('downright')
 
     heroSprite = droneSprt.downright //sets appropriate sprite for direction of movement
 
@@ -253,6 +293,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = maxVel * diagScale}
     }
   } else if (keys.ArrowUp.pressed) {
+    console.log('up')
 
     heroSprite = droneSprt.up //sets appropriate sprite for direction of movement
 
@@ -260,17 +301,21 @@ const moveEngine = (moveObj) => {
       if (yVel > -maxVel) {
         yVel = yVel - rateAccel - dashBoost
       }
-      xVel = 0
+      // xVel = 0
+      deceleratorX()
     } else if (!col1 || !col2) { // if either detector on forward moving side collides reverse the velocity
       yVel = -yVel * bounce
-      xVel = 0
+      // xVel = 0
+      deceleratorX()
     } else { // catchall to make sure you can still move in unforseen collision instances
       if (yVel > -maxVel) {
         yVel = yVel - rateAccel - dashBoost
       }
-      xVel = 0
+      // xVel = 0
+      deceleratorX()
     }
   } else if (keys.ArrowDown.pressed) {
+    console.log('down')
 
     heroSprite = droneSprt.down //sets appropriate sprite for direction of movement
 
@@ -278,17 +323,21 @@ const moveEngine = (moveObj) => {
       if (yVel < maxVel) {
         yVel = yVel + rateAccel + dashBoost
       }
-      xVel = 0
+      // xVel = 0
+      deceleratorX()
     } else if (!col5 || !col6) { // if either detector on forward moving side collides reverse the velocity
       yVel = -yVel * bounce
-      xVel = 0
+      // xVel = 0
+      deceleratorX()
     } else { // catchall to make sure you can still move in unforseen collision instances
       if (yVel < maxVel) {
         yVel = yVel + rateAccel + dashBoost
       }
-      xVel = 0
+      // xVel = 0
+      deceleratorX()
     }
   } else if (keys.ArrowLeft.pressed) {
+    console.log('left')
 
     heroSprite = droneSprt.left //sets appropriate sprite for direction of movement
 
@@ -296,17 +345,21 @@ const moveEngine = (moveObj) => {
       if (xVel > -maxVel) {
         xVel = xVel - rateAccel - dashBoost
       }
-      yVel = 0
+      // yVel = 0
+      deceleratorY()
     } else if (!col0 || !col7) { // if either detector on forward moving side collides reverse the velocity
       xVel = -xVel * bounce
-      yVel = 0
+      // yVel = 0
+      deceleratorY()
     } else { // catchall to make sure you can still move in unforseen collision instances
       if (xVel > -maxVel) {
         xVel = xVel - rateAccel - dashBoost
       }
-      yVel = 0
+      deceleratorY()
+      // yVel = 0
     }
   } else if (keys.ArrowRight.pressed) {
+    console.log('right')
 
     heroSprite = droneSprt.right //sets appropriate sprite for direction of movement
 
@@ -314,51 +367,29 @@ const moveEngine = (moveObj) => {
       if (xVel < maxVel) {
         xVel = xVel + rateAccel + dashBoost
       }
-      yVel = 0
+      deceleratorY()
+      // yVel = 0
     } else if (!col3 || !col4) { // if either detector on forward moving side collides reverse the velocity
       xVel = -xVel * bounce
-      yVel = 0
+      deceleratorY()
+      // yVel = 0
     } else { // catchall to make sure you can still move in unforseen collision instances
       if (xVel < maxVel) {
         xVel = xVel + rateAccel + dashBoost
       }
-      yVel = 0
+      deceleratorY()
+      // yVel = 0
     }
   } else {
     // reduces velocity back to zero for x and y every frame that input is not given
-    if (xVel < 0) {
-      if (xVel >= -rateDecel) {
-        xVel = 0
-      } else {
-        xVel = xVel + rateDecel
-      }
-    }
-    if (xVel > 0) {
-      if (xVel <= rateDecel) {
-        xVel = 0
-      } else {
-        xVel = xVel - rateDecel
-      }
-    }
-    if (yVel < 0) {
-      if (yVel >= -rateDecel) {
-        yVel = 0
-      } else {
-        yVel = yVel + rateDecel
-      }
-    }
-    if (yVel > 0) {
-      if (yVel <= rateDecel) {
-        yVel = 0
-      } else {
-        yVel = yVel - rateDecel
-      }
-    }
+    deceleratorX()
+    deceleratorY()
   }
 
   // sets moveObj x and y coordinates based on current xVel and yVel values
   x = x + xVel
   y = y + yVel
+
 
 
 
@@ -380,11 +411,19 @@ const moveEngine = (moveObj) => {
     if (xVel < 0 && yVel < 0) {
       heroSprite = droneSprt.upleft //sets appropriate sprite for direction of movement
     } else if (xVel < 0 && yVel > 0) {
-      heroSprite = droneSprt.downleft //sets appropriate sprite for direction of movement
+      heroSprite = droneSprt.downleft
     } else if (xVel > 0 && yVel > 0) {
-      heroSprite = droneSprt.upright //sets appropriate sprite for direction of movement
+      heroSprite = droneSprt.downright
     } else if (xVel > 0 && yVel < 0) {
-      heroSprite = droneSprt.downright //sets appropriate sprite for direction of movement
+      heroSprite = droneSprt.upright
+    } else if (xVel < 0 ) {
+      heroSprite = droneSprt.left
+    } else if (xVel > 0 ) {
+      heroSprite = droneSprt.right
+    } else if (yVel < 0 ) {
+      heroSprite = droneSprt.up
+    } else if (yVel > 0 ) {
+      heroSprite = droneSprt.down
     }
   }
 
