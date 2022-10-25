@@ -24,6 +24,8 @@ const imagePreLoad = Object.values(droneSprt) // values of droneSprt object whic
 
 
 const moveEngine = (moveObj) => {
+  if (!moveObj) return
+
   // destructure all the values from moveObj
   let {
     x,
@@ -162,7 +164,7 @@ const moveEngine = (moveObj) => {
 
   // if chain to handle all directional inputs and collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
-    console.log('upleft')
+    // console.log('upleft')
     heroSprite = droneSprt.upleft //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
@@ -194,7 +196,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = -maxVel * diagScale}
     }
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
-    console.log('upright')
+    // console.log('upright')
 
     heroSprite = droneSprt.upright //sets appropriate sprite for direction of movement
 
@@ -227,7 +229,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = maxVel * diagScale}
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
-    console.log('downleft')
+    // console.log('downleft')
 
     heroSprite = droneSprt.downleft //sets appropriate sprite for direction of movement
 
@@ -260,7 +262,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = -maxVel * diagScale}
     }
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
-    console.log('downright')
+    // console.log('downright')
 
     heroSprite = droneSprt.downright //sets appropriate sprite for direction of movement
 
@@ -293,7 +295,7 @@ const moveEngine = (moveObj) => {
       } else { xVel = maxVel * diagScale}
     }
   } else if (keys.ArrowUp.pressed) {
-    console.log('up')
+    // console.log('up')
 
     heroSprite = droneSprt.up //sets appropriate sprite for direction of movement
 
@@ -315,7 +317,7 @@ const moveEngine = (moveObj) => {
       deceleratorX()
     }
   } else if (keys.ArrowDown.pressed) {
-    console.log('down')
+    // console.log('down')
 
     heroSprite = droneSprt.down //sets appropriate sprite for direction of movement
 
@@ -337,7 +339,7 @@ const moveEngine = (moveObj) => {
       deceleratorX()
     }
   } else if (keys.ArrowLeft.pressed) {
-    console.log('left')
+    // console.log('left')
 
     heroSprite = droneSprt.left //sets appropriate sprite for direction of movement
 
@@ -359,7 +361,7 @@ const moveEngine = (moveObj) => {
       // yVel = 0
     }
   } else if (keys.ArrowRight.pressed) {
-    console.log('right')
+    // console.log('right')
 
     heroSprite = droneSprt.right //sets appropriate sprite for direction of movement
 
@@ -396,7 +398,7 @@ const moveEngine = (moveObj) => {
   // preloads sprite images every so often (every counter number of frames)
   // to prevent sprite flickering from image loading by browser
   if (spriteCounter >= 1000) {
-    console.log('preloading')
+    // console.log('preloading')
     for (let element of imagePreLoad) {
       const img = new Image()
         img.src = element
@@ -490,7 +492,7 @@ const checkCollision = (x, y, cMasks, blockSize, corner) => {
         x + heroColBox[corner][0] < br[0] &&
         y + heroColBox[corner][1] < br[1]
       ) {
-        console.log('!!!COLLISION ', corner)
+        // console.log('!!!COLLISION ', corner)
         return false;
       }
   }
