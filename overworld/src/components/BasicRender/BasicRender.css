@@ -1,0 +1,52 @@
+#main-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#canvas-container {
+  /* width: 100vw;
+  height: 100vh; */
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  border: 2px solid gray;
+  background-color: rgb(177, 15, 15);
+  /* background-color: rgb(119, 183, 168); */
+  padding: 0px;
+}
+
+#instructions {
+  color: white;
+}
+
+/* #stamina-container {
+  position: absolute;
+  top: -16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+/* #stamina-bar {
+  background-color: gray;
+  height: 12px;
+  width: 200px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 2px;
+  padding-right: 1px;
+}
+
+#stamina-level {
+  background-color: lightseagreen;
+  height: 8px;
+  border-radius: 4px;
+} */

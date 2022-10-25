@@ -90,9 +90,7 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
-const PlayingField = ({ canvas, height, width }) => {
-  console.log('canvas', canvas
-  )
+const PlayingField = ({canvas, height, width}) => {
 
   // const context = useContext()
   // console.log(context)
@@ -300,9 +298,7 @@ function animate() {
 
 return (
     <div id='main-display-div'>
-      <div id='canvas-container'>
-        <canvas ref={canvas} height={height} width={width} />
-      </div>
+      <canvas ref={canvas} height={height} width={width} />
     </div>
   );
 };

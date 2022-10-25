@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
 import PropTypes from 'prop-types';
-import './PlayingField.css'
 
 
 import { main_down, main_up, main_left, main_right } from './spriteRef.js'
@@ -90,9 +89,7 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
-const PlayingField = ({ canvas, height, width }) => {
-  console.log('canvas', canvas
-  )
+const PlayingField = ({canvas, height, width}) => {
 
   // const context = useContext()
   // console.log(context)
@@ -299,11 +296,7 @@ function animate() {
 }, [height, width]);
 
 return (
-    <div id='main-display-div'>
-      <div id='canvas-container'>
-        <canvas ref={canvas} height={height} width={width} />
-      </div>
-    </div>
+    <canvas ref={canvas} height={height} width={width} />
   );
 };
 PlayingField.propTypes = {
