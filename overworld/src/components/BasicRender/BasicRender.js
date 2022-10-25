@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
+import eventEngine from './EventEngine'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
@@ -102,6 +103,9 @@ const keys = {
   },
   Shift: {
     pressed:false
+  },
+  e: {
+    pressed:false
   }
 }
 
@@ -176,7 +180,7 @@ document.addEventListener('keyup', function(playerWalk) {
   }
 });
 
-// event listener for actions other than directional movement
+// event listener for inputs other than directional movement
 document.addEventListener('keydown', (action) => {
   // console.log(jump)
   switch(action.key) {
@@ -187,8 +191,12 @@ document.addEventListener('keydown', (action) => {
     break
     case 'Shift':
       keys.Shift.pressed = true
-      // setTimeout(() => keys.Shift.pressed = false, 30)
       // console.log('dash')
+    break
+    case 'e':
+    case 'E':
+      keys.e.pressed = true
+      // console.log('action')
     break
     default:
     break
@@ -203,6 +211,11 @@ document.addEventListener('keyup', (action) => {
     break
     case 'Shift':
       keys.Shift.pressed = false
+    break
+    case 'e':
+    case 'E':
+      keys.e.pressed = false
+      // console.log('end action')
     break
     default:
     break
@@ -250,6 +263,16 @@ const BasicRender = ({}) => {
     })
 
     const animate = () => {
+
+      if (keys.e.pressed) {
+        let eventObj = { // object passed to EventEngine to trigger appropriate event
+          x: playerSprite.position.x,
+          y: playerSprite.position.y,
+
+        }
+        
+        eventEngine('weeeeee')
+      }
 
       let moveObj = { // object passed to MoveEngine to get next frame movement
         x: playerSprite.position.x,
