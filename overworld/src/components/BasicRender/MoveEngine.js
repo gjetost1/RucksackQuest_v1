@@ -24,6 +24,8 @@ const imagePreLoad = Object.values(droneSprt) // values of droneSprt object whic
 
 
 const moveEngine = (moveObj) => {
+  if (!moveObj) return
+
   // destructure all the values from moveObj
   let {
     x,

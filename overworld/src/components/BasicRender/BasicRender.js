@@ -225,6 +225,12 @@ document.addEventListener('keyup', (action) => {
 const BasicRender = ({}) => {
 
   // const [currentStam, setCurrentStam] = useState(maxStam)
+  // const [moveObj, setMoveObj] = useState({})
+  // const [eventObj, setEventObj] = useState({})
+  let moveObj = {}
+  let eventObj = {}
+  const [attackTimeoutOff, setAttackTimeoutOff] = useState(true)
+  const [attackActive, setAttackActive] = useState(false)
 
   const canvasRef = useRef(null)
   // const ctx = useContext(CanvasContext)
@@ -264,17 +270,7 @@ const BasicRender = ({}) => {
 
     const animate = () => {
 
-      if (keys.e.pressed) {
-        let eventObj = { // object passed to EventEngine to trigger appropriate event
-          x: playerSprite.position.x,
-          y: playerSprite.position.y,
-
-        }
-        
-        eventEngine('weeeeee')
-      }
-
-      let moveObj = { // object passed to MoveEngine to get next frame movement
+      moveObj = { // object passed to MoveEngine to get next frame movement
         x: playerSprite.position.x,
         y: playerSprite.position.y,
         cMasks: cMasks, // collision maps array
@@ -298,31 +294,35 @@ const BasicRender = ({}) => {
       let keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
 
       // moveEngine runs only if there is a directional input or if there is any x or y velocity
-      if (keysPressed || xVel !== 0 || yVel !== 0) {
+      if (keysPressed || xVel || yVel) {
+        // setMoveObj(moveEngine(moveObj))
         moveObj = moveEngine(moveObj)
       }
 
-      playerSprite.position.x = moveObj.x
-      playerSprite.position.y = moveObj.y
+      if (moveObj) {
+        playerSprite.position.x = moveObj.x
+        playerSprite.position.y = moveObj.y
 
-      heroSprite = moveObj.heroSprite
-      playerImage.src = heroSprite
+        heroSprite = moveObj.heroSprite
+        playerImage.src = heroSprite
 
-      xVel = moveObj.xVel
-      yVel = moveObj.yVel
+        xVel = moveObj.xVel
+        yVel = moveObj.yVel
 
-      currentStam = moveObj.currentStam
+        currentStam = moveObj.currentStam
 
-      // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
-      if (currentStam < maxStam) {
-        currentStam = currentStam + .06
-      } else {
-        currentStam = maxStam
+        // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
+        if (currentStam < maxStam) {
+          currentStam = currentStam + .06
+        } else {
+          currentStam = maxStam
+        }
+
+
+        rateAccel = moveObj.rateAccel
+        rateDecel = moveObj.rateDecel
       }
 
-
-      rateAccel = moveObj.rateAccel
-      rateDecel = moveObj.rateDecel
 
 
       window.requestAnimationFrame(animate);
@@ -360,6 +360,44 @@ const BasicRender = ({}) => {
 
       // draws hero sprite image to canvas
       playerSprite.draw()
+
+      // calculates and draws attack effects on keypress with cooldown
+      if (keys.e.pressed && attackTimeoutOff) {
+        let eventObj = { // object passed to EventEngine to trigger appropriate event
+          x: playerSprite.position.x,
+          y: playerSprite.position.y,
+          eventX: null,
+          eventY: null,
+          blockSize: blockSize,
+          eventType: 'attack',
+          eventDirection: 'heroFront',
+          eventAreaShape: 'rectangle',
+          eventXDim: 1,
+          eventYDim: 1,
+          eventEffect: {
+            damage: 10
+          },
+          eventDuration: 1,
+          eventTimeout: 3,
+          eventAnim: null,
+        }
+
+        eventEngine(eventObj)
+
+        setAttackTimeoutOff(false)
+
+        const attackTimeout = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
+          setAttackTimeoutOff(true)
+          clearTimeout(attackTimeout)
+        }, eventObj.eventTimeout * 1000)
+
+      }
+
+      // renders attack visuals if there is an active attack
+      if (attackActive) {
+        ctx.fillStyle = 'rgb(65, 65, 65)'
+        ctx.fillRect(13, 3, 102, 9)
+      }
 
     }
 
