@@ -17,6 +17,8 @@ import droneSprt from './droneRef'
 //   boostMaxVel: boostMaxVel,
 //   dashBoost: dashBoost,
 //   blockSize: blockSize
+//   heroSprite,
+//   heroDirection
 // }
 
 let spriteCounter = 0 // counter is used to only update the sprite periodically
@@ -44,7 +46,8 @@ const moveEngine = (moveObj) => {
     boostMaxVel,
     dashBoost,
     blockSize,
-    heroSprite
+    heroSprite,
+    heroDirection
   } = moveObj
 
 
@@ -80,20 +83,20 @@ const moveEngine = (moveObj) => {
 
   // moves hero out of collision
   if (!col0 || !col7) {
-      x += 1
-      // xVel = 0
+      x += .1
+      xVel = 0
   }
   if (!col1 || !col2) {
-    y += 1
-    // yVel = 0
+    y += .1
+    yVel = 0
   }
   if (!col3 || !col4) {
-    x -= 1
-    // xVel = 0
+    x -= .1
+    xVel = 0
   }
   if (!col5 || !col6) {
-    y -= 1
-    // yVel = 0
+    y -= .1
+    yVel = 0
   }
 
 
@@ -430,6 +433,26 @@ const moveEngine = (moveObj) => {
   }
 
 
+    if (xVel < 0 && yVel < 0) {
+      heroDirection = 'upleft'
+    } else if (xVel < 0 && yVel > 0) {
+      heroDirection = 'downleft'
+    } else if (xVel > 0 && yVel > 0) {
+      heroDirection = 'downright'
+    } else if (xVel > 0 && yVel < 0) {
+      heroDirection = 'upright'
+    } else if (xVel < 0 ) {
+      heroDirection = 'left'
+    } else if (xVel > 0 ) {
+      heroDirection = 'right'
+    } else if (yVel < 0 ) {
+      heroDirection = 'up'
+    } else if (yVel > 0 ) {
+      heroDirection = 'down'
+    }
+
+
+
 
   return (
     {   // returns moveObj with updated values for xVel, yVel, currentStam
@@ -446,7 +469,8 @@ const moveEngine = (moveObj) => {
       rateDecel,
       dashBoost,
       blockSize,
-      heroSprite
+      heroSprite,
+      heroDirection
     }
   )
 }

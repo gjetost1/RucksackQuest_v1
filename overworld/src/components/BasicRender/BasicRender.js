@@ -11,16 +11,18 @@ import droneSprt from './droneRef'
 const height = 192 * 2
 const width = 256 * 2
 const blockSize = 16  // size of each grid block in pixels
-const topDashBoost = 1
+const topDashBoost = .4
 let dashBoost = 0
-const boostMaxVel = 10 // maxVel when boosting
+const boostMaxVel = 4 // maxVel when boosting
 const baseMaxVel = 1.5 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
-let rateAccel = .3 // rate at which movement object accelerates velocity
-let rateDecel = .3 // rate at which velocity decays
+let rateAccel = .2 // rate at which movement object accelerates velocity
+let rateDecel = .1 // rate at which velocity decays
 let heroSprite = droneSprt.down
+let heroDirection = 'down'
+let attackActive = false
 
-const maxStam = .4
+const maxStam = 100
 let currentStam = maxStam
 
 
@@ -229,8 +231,9 @@ const BasicRender = ({}) => {
   // const [eventObj, setEventObj] = useState({})
   let moveObj = {}
   let eventObj = {}
-  const [attackTimeoutOff, setAttackTimeoutOff] = useState(true)
-  const [attackActive, setAttackActive] = useState(false)
+  // const [attackTimeoutOff, setAttackTimeoutOff] = useState(true)
+  let attackCooldownOff = true
+  // const [attackActive, setAttackActive] = useState(false)
 
   const canvasRef = useRef(null)
   // const ctx = useContext(CanvasContext)
@@ -287,19 +290,20 @@ const BasicRender = ({}) => {
         boostMaxVel: boostMaxVel,
         dashBoost: dashBoost,
         blockSize: blockSize,
-        heroSprite: heroSprite
+        heroSprite: heroSprite,
+        heroDirection: heroDirection
       }
 
       // is true if any directional input is given, otherwise false
       let keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
 
       // moveEngine runs only if there is a directional input or if there is any x or y velocity
-      if (keysPressed || xVel || yVel) {
+      // if (keysPressed || xVel || yVel) {
         // setMoveObj(moveEngine(moveObj))
         moveObj = moveEngine(moveObj)
-      }
+      // }
 
-      if (moveObj) {
+      // if (moveObj) {
         playerSprite.position.x = moveObj.x
         playerSprite.position.y = moveObj.y
 
@@ -311,6 +315,8 @@ const BasicRender = ({}) => {
 
         currentStam = moveObj.currentStam
 
+        heroDirection = moveObj.heroDirection
+
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
         if (currentStam < maxStam) {
           currentStam = currentStam + .01
@@ -321,9 +327,55 @@ const BasicRender = ({}) => {
 
         rateAccel = moveObj.rateAccel
         rateDecel = moveObj.rateDecel
+      // }
+
+
+      // calculates and draws attack effects on keypress with cooldown
+      if (keys.e.pressed && attackCooldownOff) {
+        attackCooldownOff = false
+        attackActive = true
+
+        console.log('action')
+        let eventObj = { // object passed to EventEngine to trigger appropriate event
+          x: playerSprite.position.x,
+          y: playerSprite.position.y,
+          heroDirection: heroDirection,
+          eventX: null,
+          eventY: null,
+          blockSize: blockSize,
+          eventType: 'attack',
+          eventDirection: 'heroFront',
+          eventAreaShape: 'rectangle',
+          eventXDim: 1,
+          eventYDim: 1,
+          eventEffect: {
+            damage: 10
+          },
+          eventDuration: 1,
+          eventTimeout: 3,
+          eventAnim: null,
+        }
+
+        eventObj = eventEngine(eventObj)
+
+        // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
+        const cooldown = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
+          attackCooldownOff = true
+          clearTimeout(cooldown)
+          console.log('cooldown over')
+        }, eventObj.eventTimeout * 1000)
+
+
+
+        // sets duration of event, set by eventObj.eventDuration in seconds
+        const eventDuration = setTimeout(() => {
+          clearTimeout(eventDuration)
+          attackActive = false
+          console.log('attack over')
+        }, eventObj.eventDuration * 1000)
+
+
       }
-
-
 
       window.requestAnimationFrame(animate);
 
@@ -348,7 +400,8 @@ const BasicRender = ({}) => {
       } else {
         ctx.fillStyle = 'rgb(240, 57, 33)'
       }
-      ctx.fillRect(14, 4, currentStam, 7)
+      const stamDisplay = (currentStam / maxStam) * 100
+      ctx.fillRect(14, 4, stamDisplay, 7)
 
 
       // this draws all interior objects that have collision
@@ -361,43 +414,14 @@ const BasicRender = ({}) => {
       // draws hero sprite image to canvas
       playerSprite.draw()
 
-      // calculates and draws attack effects on keypress with cooldown
-      if (keys.e.pressed && attackTimeoutOff) {
-        let eventObj = { // object passed to EventEngine to trigger appropriate event
-          x: playerSprite.position.x,
-          y: playerSprite.position.y,
-          eventX: null,
-          eventY: null,
-          blockSize: blockSize,
-          eventType: 'attack',
-          eventDirection: 'heroFront',
-          eventAreaShape: 'rectangle',
-          eventXDim: 1,
-          eventYDim: 1,
-          eventEffect: {
-            damage: 10
-          },
-          eventDuration: 1,
-          eventTimeout: 3,
-          eventAnim: null,
+        // renders attack visuals if there is an active attack
+        if (attackActive) {
+          console.log('attack is active')
+          ctx.fillStyle = 'rgb(65, 65, 100)'
+          ctx.fillRect(eventObj.eventX, eventObj.eventY, eventObj.blockSize * eventObj.eventXDim, eventObj.blockSize * eventObj.eventYDim)
+          ctx.fillRect(eventObj.eventX, eventObj.eventY, eventObj.blockSize * eventObj.eventXDim, eventObj.blockSize * eventObj.eventYDim)
         }
 
-        eventEngine(eventObj)
-
-        setAttackTimeoutOff(false)
-
-        const attackTimeout = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
-          setAttackTimeoutOff(true)
-          clearTimeout(attackTimeout)
-        }, eventObj.eventTimeout * 1000)
-
-      }
-
-      // renders attack visuals if there is an active attack
-      if (attackActive) {
-        ctx.fillStyle = 'rgb(65, 65, 65)'
-        ctx.fillRect(13, 3, 102, 9)
-      }
 
     }
 
