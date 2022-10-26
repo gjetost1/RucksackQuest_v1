@@ -11,16 +11,16 @@ import droneSprt from './droneRef'
 const height = 192 * 2
 const width = 256 * 2
 const blockSize = 16  // size of each grid block in pixels
-const topDashBoost = .2
+const topDashBoost = 1
 let dashBoost = 0
-const boostMaxVel = 2 // maxVel when boosting
-const baseMaxVel = 1 // base maxVel that maxVel will return to when not boosting
+const boostMaxVel = 10 // maxVel when boosting
+const baseMaxVel = 1.5 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
-let rateAccel = .2 // rate at which movement object accelerates velocity
-let rateDecel = .1 // rate at which velocity decays
+let rateAccel = .3 // rate at which movement object accelerates velocity
+let rateDecel = .3 // rate at which velocity decays
 let heroSprite = droneSprt.down
 
-const maxStam = 100
+const maxStam = .4
 let currentStam = maxStam
 
 
@@ -313,7 +313,7 @@ const BasicRender = ({}) => {
 
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
         if (currentStam < maxStam) {
-          currentStam = currentStam + .06
+          currentStam = currentStam + .01
         } else {
           currentStam = maxStam
         }

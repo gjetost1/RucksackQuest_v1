@@ -80,20 +80,20 @@ const moveEngine = (moveObj) => {
 
   // moves hero out of collision
   if (!col0 || !col7) {
-    x += .1
-    xVel = 0
+      x += 1
+      // xVel = 0
   }
   if (!col1 || !col2) {
-    y += .1
-    yVel = 0
+    y += 1
+    // yVel = 0
   }
   if (!col3 || !col4) {
-    x -= .1
-    xVel = 0
+    x -= 1
+    // xVel = 0
   }
   if (!col5 || !col6) {
-    y -= .1
-    yVel = 0
+    y -= 1
+    // yVel = 0
   }
 
 
