@@ -124,7 +124,7 @@ const moveEngine = (moveObj) => {
   } else {
     maxVel = baseMaxVel
     dashBoost = 0
-    spriteAnimSpeed = baseAnimSpeeds
+    spriteAnimSpeed = baseAnimSpeed
   }
 
   // if x or y velocity is higher than the current maxVel this brings it back down
