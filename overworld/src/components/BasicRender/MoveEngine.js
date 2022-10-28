@@ -23,19 +23,13 @@ import { hero_down, hero_up, hero_left, hero_right, hero_downleft, hero_downrigh
 //   heroDirection
 // }
 
-let spriteCounter = 299 // counter is used to only update the sprite periodically
+let spriteCounter = 140 // counter is used to only update the sprite periodically
 // const imagePreLoad = Object.values(droneSprt) // values of droneSprt object which are sprite images
 const imagePreLoad = [...hero_down, ...hero_up, ...hero_left, ...hero_right, ...hero_downleft, ...hero_downright, ...hero_upleft, ...hero_upright] // values of droneSprt object which are sprite images
 let spriteIndex = 1 // increments for sprite animation while walking
 const baseAnimSpeed = 10
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
 let spriteAnimCounter = 0 // increments to trigger render of next animation frame
-
-// loads all hero sprites to prevent flickering while loading individually
-for (let element of imagePreLoad) {
-  const img = new Image()
-    img.src = element
-}
 
 
 const moveEngine = (moveObj) => {
@@ -415,8 +409,8 @@ const moveEngine = (moveObj) => {
 
   // preloads sprite images every so often (every counter number of frames)
   // to prevent sprite flickering from image loading by browser
-  if (spriteCounter >= 300) {
-    // console.log('preloading')
+  if (spriteCounter >= 200) {
+    console.log('preloading')
     for (let element of imagePreLoad) {
       const img = new Image()
         img.src = element
@@ -508,14 +502,14 @@ const checkCollision = (x, y, cMasks, blockSize, corner) => {
   const colBuffer = 1 // number of pixels away from hero that detectors sit
   const heroColBox = [
     // array of coordinates for all detectors of hero object
-    [0, colBuffer],
-    [colBuffer, 0],
-    [blockSize - colBuffer, 0],
-    [blockSize, colBuffer],
-    [blockSize, blockSize - colBuffer],
-    [blockSize - colBuffer, blockSize],
-    [colBuffer, blockSize],
-    [0, blockSize - colBuffer]
+    [8, colBuffer + 8],
+    [colBuffer + 8, 8],
+    [blockSize - colBuffer - 8, 8],
+    [blockSize + 8, colBuffer + 8],
+    [blockSize + 8, blockSize - colBuffer - 8],
+    [blockSize - 8 - colBuffer, blockSize + 8],
+    [colBuffer + 8, blockSize + 8],
+    [8, blockSize - colBuffer - 8]
   ]
 
   // const heroColBox = [

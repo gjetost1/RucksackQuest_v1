@@ -15,17 +15,18 @@ import droneSprt from './droneRef'
 
 // consider height of 336 x 192 with block size of 24
 // consider height of 256 x 192 with block size of 16
-const height = 192 * 2
-const width = 336 * 2
+const upscale = 3 // multiplier for resolution
+const height = 192 * upscale
+const width = 336 * upscale
 const blockSize = 16   // size of each grid block in pixels
-const heroBlockSize = 16 * 2   // size of each grid block in pixels for hero collison box
-const topDashBoost = .4
+const heroBlockSize = 10 * upscale   // size of each grid block in pixels for hero collison box
+const topDashBoost = .2
 let dashBoost = 0
-const boostMaxVel = 4 // maxVel when boosting
-const baseMaxVel = 1.5 // base maxVel that maxVel will return to when not boosting
+const boostMaxVel = 2 // maxVel when boosting
+const baseMaxVel = 1 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
 let rateAccel = .2 // rate at which movement object accelerates velocity
-let rateDecel = .1 // rate at which velocity decays
+let rateDecel = .08 // rate at which velocity decays
 let heroSprite = hero_down[0]
 let heroDirection = 'down'
 let attackActive = false
@@ -254,8 +255,8 @@ const BasicRender = ({}) => {
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
-    const rectWidth = 16 * 2
-    const rectHeight = 16 * 2
+    const rectWidth = 16 * upscale
+    const rectHeight = 16 * upscale
     const coordX = (width / 2) - (rectWidth / 2)
     const coordY = (height / 2) - (rectHeight / 2)
 
