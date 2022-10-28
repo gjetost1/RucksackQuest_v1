@@ -23,7 +23,7 @@ import { hero_down, hero_up, hero_left, hero_right, hero_downleft, hero_downrigh
 //   heroDirection
 // }
 
-let spriteCounter = 140 // counter is used to only update the sprite periodically
+let spriteCounter = 160 // counter is used to only update the sprite periodically
 // const imagePreLoad = Object.values(droneSprt) // values of droneSprt object which are sprite images
 const imagePreLoad = [...hero_down, ...hero_up, ...hero_left, ...hero_right, ...hero_downleft, ...hero_downright, ...hero_upleft, ...hero_upright] // values of droneSprt object which are sprite images
 let spriteIndex = 1 // increments for sprite animation while walking
@@ -63,6 +63,18 @@ const moveEngine = (moveObj) => {
   const bounce = 1 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
   const diagScale = .8 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
 
+  // preloads sprite images every so often (every counter number of frames)
+  // to prevent sprite flickering from image loading by browser
+  if (spriteCounter >= 100) {
+    console.log('preloading')
+    for (let element of imagePreLoad) {
+      const img = new Image()
+        img.src = element
+    }
+    spriteCounter = 0
+  }
+
+  spriteCounter++
 
   // get boolean values for each detector of hero hitbox
   // false if it is in collision state
@@ -89,19 +101,19 @@ const moveEngine = (moveObj) => {
 
   // moves hero out of collision
   if (!col0 || !col7) {
-      x += .1
+      x += .4
       xVel = 0
   }
   if (!col1 || !col2) {
-    y += .1
+    y += .4
     yVel = 0
   }
   if (!col3 || !col4) {
-    x -= .1
+    x -= .4
     xVel = 0
   }
   if (!col5 || !col6) {
-    y -= .1
+    y -= .4
     yVel = 0
   }
 
@@ -405,20 +417,6 @@ const moveEngine = (moveObj) => {
 
 
 
-
-
-  // preloads sprite images every so often (every counter number of frames)
-  // to prevent sprite flickering from image loading by browser
-  if (spriteCounter >= 200) {
-    console.log('preloading')
-    for (let element of imagePreLoad) {
-      const img = new Image()
-        img.src = element
-    }
-    spriteCounter = 0
-  }
-
-  spriteCounter++
 
   if (keysPressed){
     if (spriteAnimCounter >= spriteAnimSpeed) {
