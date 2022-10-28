@@ -1,4 +1,6 @@
 import droneSprt from './droneRef'
+import { hero_down, hero_up, hero_left, hero_right, hero_downleft, hero_downright, hero_upleft, hero_upright } from './spriteRef'
+
 
 // const moveObj = {  // for reference here
 //   x: x,
@@ -21,8 +23,19 @@ import droneSprt from './droneRef'
 //   heroDirection
 // }
 
-let spriteCounter = 0 // counter is used to only update the sprite periodically
-const imagePreLoad = Object.values(droneSprt) // values of droneSprt object which are sprite images
+let spriteCounter = 299 // counter is used to only update the sprite periodically
+// const imagePreLoad = Object.values(droneSprt) // values of droneSprt object which are sprite images
+const imagePreLoad = [...hero_down, ...hero_up, ...hero_left, ...hero_right, ...hero_downleft, ...hero_downright, ...hero_upleft, ...hero_upright] // values of droneSprt object which are sprite images
+let spriteIndex = 1 // increments for sprite animation while walking
+const baseAnimSpeed = 10
+let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
+let spriteAnimCounter = 0 // increments to trigger render of next animation frame
+
+// loads all hero sprites to prevent flickering while loading individually
+for (let element of imagePreLoad) {
+  const img = new Image()
+    img.src = element
+}
 
 
 const moveEngine = (moveObj) => {
@@ -55,7 +68,6 @@ const moveEngine = (moveObj) => {
   const keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
   const bounce = 1 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
   const diagScale = .8 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
-
 
 
   // get boolean values for each detector of hero hitbox
@@ -102,6 +114,7 @@ const moveEngine = (moveObj) => {
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
   if (keys.Shift.pressed && currentStam > 0) {
+    spriteAnimSpeed = 6
     maxVel = boostMaxVel
     dashBoost = topDashBoost
     // drains stamina if dash is active and there is directional input
@@ -111,6 +124,7 @@ const moveEngine = (moveObj) => {
   } else {
     maxVel = baseMaxVel
     dashBoost = 0
+    spriteAnimSpeed = baseAnimSpeeds
   }
 
   // if x or y velocity is higher than the current maxVel this brings it back down
@@ -168,7 +182,7 @@ const moveEngine = (moveObj) => {
   // if chain to handle all directional inputs and collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
     // console.log('upleft')
-    heroSprite = droneSprt.upleft //sets appropriate sprite for direction of movement
+    heroSprite = hero_upleft[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
@@ -201,7 +215,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
     // console.log('upright')
 
-    heroSprite = droneSprt.upright //sets appropriate sprite for direction of movement
+    heroSprite = hero_upright[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
@@ -234,7 +248,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
     // console.log('downleft')
 
-    heroSprite = droneSprt.downleft //sets appropriate sprite for direction of movement
+    heroSprite = hero_downleft[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel < maxVel * diagScale) {
@@ -267,7 +281,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
     // console.log('downright')
 
-    heroSprite = droneSprt.downright //sets appropriate sprite for direction of movement
+    heroSprite = hero_downright[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel < maxVel * diagScale) {
@@ -300,7 +314,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowUp.pressed) {
     // console.log('up')
 
-    heroSprite = droneSprt.up //sets appropriate sprite for direction of movement
+    heroSprite = hero_up[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (yVel > -maxVel) {
@@ -322,7 +336,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowDown.pressed) {
     // console.log('down')
 
-    heroSprite = droneSprt.down //sets appropriate sprite for direction of movement
+    heroSprite = hero_down[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (yVel < maxVel) {
@@ -344,7 +358,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowLeft.pressed) {
     // console.log('left')
 
-    heroSprite = droneSprt.left //sets appropriate sprite for direction of movement
+    heroSprite = hero_left[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (xVel > -maxVel) {
@@ -366,7 +380,7 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowRight.pressed) {
     // console.log('right')
 
-    heroSprite = droneSprt.right //sets appropriate sprite for direction of movement
+    heroSprite = hero_right[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (xVel < maxVel) {
@@ -398,9 +412,10 @@ const moveEngine = (moveObj) => {
 
 
 
+
   // preloads sprite images every so often (every counter number of frames)
   // to prevent sprite flickering from image loading by browser
-  if (spriteCounter >= 1000) {
+  if (spriteCounter >= 300) {
     // console.log('preloading')
     for (let element of imagePreLoad) {
       const img = new Image()
@@ -411,24 +426,36 @@ const moveEngine = (moveObj) => {
 
   spriteCounter++
 
+  if (keysPressed){
+    if (spriteAnimCounter >= spriteAnimSpeed) {
+      spriteIndex++
+      if (spriteIndex > 6) {
+        spriteIndex = 1
+      }
+      spriteAnimCounter = 0
+    }
+    spriteAnimCounter++
+  }
+
+
 
   if (!keysPressed) {
     if (xVel < 0 && yVel < 0) {
-      heroSprite = droneSprt.upleft //sets appropriate sprite for direction of movement
+      heroSprite = hero_upleft[0] //sets appropriate sprite for direction of movement
     } else if (xVel < 0 && yVel > 0) {
-      heroSprite = droneSprt.downleft
+      heroSprite = hero_downleft[0]
     } else if (xVel > 0 && yVel > 0) {
-      heroSprite = droneSprt.downright
+      heroSprite = hero_downright[0]
     } else if (xVel > 0 && yVel < 0) {
-      heroSprite = droneSprt.upright
+      heroSprite = hero_upright[0]
     } else if (xVel < 0 ) {
-      heroSprite = droneSprt.left
+      heroSprite = hero_left[0]
     } else if (xVel > 0 ) {
-      heroSprite = droneSprt.right
+      heroSprite = hero_right[0]
     } else if (yVel < 0 ) {
-      heroSprite = droneSprt.up
+      heroSprite = hero_up[0]
     } else if (yVel > 0 ) {
-      heroSprite = droneSprt.down
+      heroSprite = hero_down[0]
     }
   }
 

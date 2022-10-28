@@ -17,11 +17,13 @@ const eventEngine = (eventObj) => {
     eventAnim,
   } = eventObj
 
+  // this chain determines where the event hitbox will appear based on the direction
+  // the hero is facing
   if (heroDirection === 'up') {
-    eventObj.eventX = x
+    eventObj.eventX = x - blockSize
     eventObj.eventY = y - blockSize
   } else if (heroDirection === 'down') {
-    eventObj.eventX = x
+    eventObj.eventX = x - blockSize
     eventObj.eventY = y + blockSize
   } else if (heroDirection === 'left') {
     eventObj.eventX = x - blockSize

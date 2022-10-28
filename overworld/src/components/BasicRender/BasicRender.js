@@ -2,15 +2,23 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
+import background_1 from '../../assets/backgrounds/test/background_1.png'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
+
+// import hero_down from './spriteRef'
+
+import { hero_down } from './spriteRef'
 
 import droneSprt from './droneRef'
 
 
+// consider height of 336 x 192 with block size of 24
+// consider height of 256 x 192 with block size of 16
 const height = 192 * 2
-const width = 256 * 2
-const blockSize = 16  // size of each grid block in pixels
+const width = 336 * 2
+const blockSize = 16   // size of each grid block in pixels
+const heroBlockSize = 16 * 2   // size of each grid block in pixels for hero collison box
 const topDashBoost = .4
 let dashBoost = 0
 const boostMaxVel = 4 // maxVel when boosting
@@ -18,12 +26,16 @@ const baseMaxVel = 1.5 // base maxVel that maxVel will return to when not boosti
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
 let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
-let heroSprite = droneSprt.down
+let heroSprite = hero_down[0]
 let heroDirection = 'down'
 let attackActive = false
 
 const maxStam = 100
 let currentStam = maxStam
+
+
+let eventX = null
+let eventY = null
 
 
 // // move rate for character sprite
@@ -242,8 +254,8 @@ const BasicRender = ({}) => {
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
-    const rectWidth = 16
-    const rectHeight = 16
+    const rectWidth = 16 * 2
+    const rectHeight = 16 * 2
     const coordX = (width / 2) - (rectWidth / 2)
     const coordY = (height / 2) - (rectHeight / 2)
 
@@ -258,6 +270,17 @@ const BasicRender = ({}) => {
       }
     }
 
+    class Background {
+      constructor({ image, position }) {
+        this.position = position
+        this.image = image
+      }
+
+      draw() {
+        ctx.drawImage(this.image, this.position.x, this.position.y, width, height)
+      }
+    }
+
 
 
     const playerImage = new Image()
@@ -268,6 +291,17 @@ const BasicRender = ({}) => {
       position: {
         x: coordX,
         y: coordY
+      }
+    })
+
+    const background = new Image()
+    background.src = background_1
+
+    const backgroundSprite = new Background({
+      image: background,
+      position: {
+        x: 0,
+        y: 0
       }
     })
 
@@ -289,7 +323,7 @@ const BasicRender = ({}) => {
         topDashBoost: topDashBoost,
         boostMaxVel: boostMaxVel,
         dashBoost: dashBoost,
-        blockSize: blockSize,
+        blockSize: heroBlockSize,
         heroSprite: heroSprite,
         heroDirection: heroDirection
       }
@@ -331,32 +365,36 @@ const BasicRender = ({}) => {
 
 
       // calculates and draws attack effects on keypress with cooldown
+      let eventObj = { // object passed to EventEngine to trigger appropriate event
+        x: playerSprite.position.x,
+        y: playerSprite.position.y,
+        heroDirection: heroDirection,
+        eventX: eventX,
+        eventY: eventY,
+        blockSize: blockSize,
+        eventType: 'attack',
+        eventDirection: 'heroFront',
+        eventAreaShape: 'rectangle',
+        eventXDim: 1,
+        eventYDim: 3,
+        eventEffect: {
+          damage: 10
+        },
+        eventDuration: 1,
+        eventTimeout: 1,
+        eventAnim: null,
+      }
+
       if (keys.e.pressed && attackCooldownOff) {
         attackCooldownOff = false
         attackActive = true
 
         console.log('action')
-        let eventObj = { // object passed to EventEngine to trigger appropriate event
-          x: playerSprite.position.x,
-          y: playerSprite.position.y,
-          heroDirection: heroDirection,
-          eventX: null,
-          eventY: null,
-          blockSize: blockSize,
-          eventType: 'attack',
-          eventDirection: 'heroFront',
-          eventAreaShape: 'rectangle',
-          eventXDim: 1,
-          eventYDim: 1,
-          eventEffect: {
-            damage: 10
-          },
-          eventDuration: 1,
-          eventTimeout: 3,
-          eventAnim: null,
-        }
 
         eventObj = eventEngine(eventObj)
+
+        eventX = eventObj.eventX
+        eventY = eventObj.eventY
 
         // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
         const cooldown = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
@@ -382,6 +420,7 @@ const BasicRender = ({}) => {
       // draws background of current scene
       ctx.fillStyle = 'rgb(119, 183, 168)'
       ctx.fillRect(0, blockSize, width, height - blockSize)
+      // backgroundSprite.draw()
 
       // draws HUD bar at top
       ctx.fillStyle = 'gray'
@@ -411,16 +450,16 @@ const BasicRender = ({}) => {
         ctx.fillRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
       }
 
+      // renders attack visuals if there is an active attack
+      if (attackActive) {
+        console.log('attack is active')
+        ctx.fillStyle = 'rgb(65, 65, 100)'
+        ctx.fillRect(eventX, eventY, eventObj.blockSize * 1, eventObj.blockSize * 1)
+      }
+
       // draws hero sprite image to canvas
       playerSprite.draw()
 
-        // renders attack visuals if there is an active attack
-        if (attackActive) {
-          console.log('attack is active')
-          ctx.fillStyle = 'rgb(65, 65, 100)'
-          ctx.fillRect(eventObj.eventX, eventObj.eventY, eventObj.blockSize * eventObj.eventXDim, eventObj.blockSize * eventObj.eventYDim)
-          ctx.fillRect(eventObj.eventX, eventObj.eventY, eventObj.blockSize * eventObj.eventXDim, eventObj.blockSize * eventObj.eventYDim)
-        }
 
 
     }
