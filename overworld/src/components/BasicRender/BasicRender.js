@@ -19,7 +19,7 @@ import droneSprt from './droneRef'
 const upscale = 4 // multiplier for resolution
 const height = 192 * upscale
 const width = 336 * upscale
-const blockSize = 16   // size of each grid block in pixels for collison objects
+const blockSize = 38   // size of each grid block in pixels for collison objects
 const heroBlockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
 const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 let heroCropX = 0
@@ -63,12 +63,12 @@ const outerBoundary = [
 
 // defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
-  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 10, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 1, yBlocks: 8, gridSize: blockSize},
-  {x: width / 2 + blockSize * 4, y: 64, xBlocks: 1, yBlocks: 8, gridSize: blockSize},
-  {x: width / 2 - blockSize * 5, y: 176, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 + blockSize * 2, y: 176, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 - blockSize * 8, y: 228, xBlocks: 16, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 20, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
+  {x: width / 2 + blockSize * 4, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
+  {x: width / 2 - blockSize * 5, y: 176, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 + blockSize * 2, y: 176, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 8, y: 228, xBlocks: 32, yBlocks: 1, gridSize: blockSize},
 ]
 
 // concats all collision arrays for use in buildCMask

@@ -537,31 +537,31 @@ const moveEngine = (moveObj) => {
 // returns false if there is a collision and true if there is not
 const checkCollision = (x, y, cMasks, blockSize, corner) => {
   const colBuffer = 1 // number of pixels away from hero that detectors sit
-  const horzBuffer = 5
-  const vertBuffer = 4
+  const horzBuffer = 20
+  const vertBuffer = 12
+  const heroColBox = [
+    // array of coordinates for all detectors of hero object
+    [horzBuffer, colBuffer + vertBuffer],
+    [colBuffer + horzBuffer, vertBuffer],
+    [blockSize - colBuffer - horzBuffer, vertBuffer],
+    [blockSize - horzBuffer, colBuffer + vertBuffer],
+    [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer],
+    [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer],
+    [colBuffer + horzBuffer, blockSize - vertBuffer],
+    [horzBuffer, blockSize - colBuffer - vertBuffer]
+  ]
+
   // const heroColBox = [
   //   // array of coordinates for all detectors of hero object
-  //   [horzBuffer, colBuffer],
-  //   [colBuffer, vertBuffer],
-  //   [blockSize - colBuffer, vertBuffer],
+  //   [0, colBuffer],
+  //   [colBuffer, 0],
+  //   [blockSize - colBuffer, 0],
   //   [blockSize, colBuffer],
   //   [blockSize, blockSize - colBuffer],
   //   [blockSize - colBuffer, blockSize],
   //   [colBuffer, blockSize],
-  //   [horzBuffer, blockSize - colBuffer]
+  //   [0, blockSize - colBuffer]
   // ]
-
-  const heroColBox = [
-    // array of coordinates for all detectors of hero object
-    [0, colBuffer],
-    [colBuffer, 0],
-    [blockSize - colBuffer, 0],
-    [blockSize, colBuffer],
-    [blockSize, blockSize - colBuffer],
-    [blockSize - colBuffer, blockSize],
-    [colBuffer, blockSize],
-    [0, blockSize - colBuffer]
-  ]
 
   // const heroColBox = [
   //   // array of coordinates for all detectors of hero object
