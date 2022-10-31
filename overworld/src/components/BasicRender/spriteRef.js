@@ -1,3 +1,12 @@
+import down from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_down.png'
+import up from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_up.png'
+import left from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_left.png'
+import right from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_right.png'
+import downleft from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downleft.png'
+import downright from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downright.png'
+import upleft from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upleft.png'
+import upright from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upright.png'
+
 import down_1 from '../../assets/sprites/hero32/hero32_down1.png'
 import down_2 from '../../assets/sprites/hero32/hero32_down2.png'
 import down_3 from '../../assets/sprites/hero32/hero32_down3.png'
@@ -141,3 +150,14 @@ export const hero_upright = [
   upright_6,
   upright_7,
 ]
+
+export const hero_spritesheets = {
+  up,
+  down,
+  left,
+  right,
+  downleft,
+  downright,
+  upleft,
+  upright
+}

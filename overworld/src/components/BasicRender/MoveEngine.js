@@ -1,6 +1,6 @@
 import droneSprt from './droneRef'
 import { hero_down, hero_up, hero_left, hero_right, hero_downleft, hero_downright, hero_upleft, hero_upright } from './spriteRef'
-
+import { hero_spritesheets } from './spriteRef'
 
 // const moveObj = {  // for reference here
 //   x: x,
@@ -20,6 +20,9 @@ import { hero_down, hero_up, hero_left, hero_right, hero_downleft, hero_downrigh
 //   dashBoost: dashBoost,
 //   blockSize: blockSize
 //   heroSprite,
+//   heroSpriteSize,
+//   heroCropX,
+//   heroCropY
 //   heroDirection
 // }
 
@@ -54,6 +57,9 @@ const moveEngine = (moveObj) => {
     dashBoost,
     blockSize,
     heroSprite,
+    heroSpriteSize,
+    heroCropX,
+    heroCropY,
     heroDirection
   } = moveObj
 
@@ -65,16 +71,16 @@ const moveEngine = (moveObj) => {
 
   // preloads sprite images every so often (every counter number of frames)
   // to prevent sprite flickering from image loading by browser
-  if (spriteCounter >= 100) {
-    console.log('preloading')
-    for (let element of imagePreLoad) {
-      const img = new Image()
-        img.src = element
-    }
-    spriteCounter = 0
-  }
+  // if (spriteCounter >= 100) {
+  //   console.log('preloading')
+  //   for (let element of imagePreLoad) {
+  //     const img = new Image()
+  //       img.src = element
+  //   }
+  //   spriteCounter = 0
+  // }
 
-  spriteCounter++
+  // spriteCounter++
 
   // get boolean values for each detector of hero hitbox
   // false if it is in collision state
@@ -188,7 +194,8 @@ const moveEngine = (moveObj) => {
   // if chain to handle all directional inputs and collision
   if (keys.ArrowUp.pressed && keys.ArrowLeft.pressed) {
     // console.log('upleft')
-    heroSprite = hero_upleft[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.upleft //sets appropriate sprite for direction of movement
+    // heroSprite = hero_upleft[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
@@ -221,7 +228,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowUp.pressed && keys.ArrowRight.pressed) {
     // console.log('upright')
 
-    heroSprite = hero_upright[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.upright //sets appropriate sprite for direction of movement
+    // heroSprite = hero_upright[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally - diagScale used to reduce diagonal movement speed
       if (yVel > -maxVel * diagScale) {
@@ -254,7 +262,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowDown.pressed && keys.ArrowLeft.pressed) {
     // console.log('downleft')
 
-    heroSprite = hero_downleft[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.downleft //sets appropriate sprite for direction of movement
+    // heroSprite = hero_downleft[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel < maxVel * diagScale) {
@@ -287,7 +296,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowDown.pressed && keys.ArrowRight.pressed) {
     // console.log('downright')
 
-    heroSprite = hero_downright[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.downright //sets appropriate sprite for direction of movement
+    // heroSprite = hero_downright[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally  - diagScale used to reduce diagonal movement speed
       if (yVel < maxVel * diagScale) {
@@ -320,7 +330,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowUp.pressed) {
     // console.log('up')
 
-    heroSprite = hero_up[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.up //sets appropriate sprite for direction of movement
+    // heroSprite = hero_up[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (yVel > -maxVel) {
@@ -342,7 +353,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowDown.pressed) {
     // console.log('down')
 
-    heroSprite = hero_down[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.down //sets appropriate sprite for direction of movement
+    // heroSprite = hero_down[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (yVel < maxVel) {
@@ -364,7 +376,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowLeft.pressed) {
     // console.log('left')
 
-    heroSprite = hero_left[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.left //sets appropriate sprite for direction of movement
+    // heroSprite = hero_left[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (xVel > -maxVel) {
@@ -386,7 +399,8 @@ const moveEngine = (moveObj) => {
   } else if (keys.ArrowRight.pressed) {
     // console.log('right')
 
-    heroSprite = hero_right[spriteIndex] //sets appropriate sprite for direction of movement
+    heroSprite = heroSprite = hero_spritesheets.right //sets appropriate sprite for direction of movement
+    // heroSprite = hero_right[spriteIndex] //sets appropriate sprite for direction of movement
 
     if (allCol) { // if no collisions move normally
       if (xVel < maxVel) {
@@ -418,12 +432,18 @@ const moveEngine = (moveObj) => {
 
 
 
+  // iterates through the sprite sheet images to animate sprite - spriteAnimSpeed sets how fast this happens
   if (keysPressed){
     if (spriteAnimCounter >= spriteAnimSpeed) {
-      spriteIndex++
-      if (spriteIndex > 6) {
-        spriteIndex = 1
+      heroCropX += heroSpriteSize
+      // spriteIndex++
+      if (heroCropX > heroSpriteSize * 6) {
+        heroCropX = heroSpriteSize
+        // spriteIndex = 1
       }
+      // if (spriteIndex > 6) {
+      //   spriteIndex = 1
+      // }
       spriteAnimCounter = 0
     }
     spriteAnimCounter++
@@ -433,21 +453,37 @@ const moveEngine = (moveObj) => {
 
   if (!keysPressed) {
     if (xVel < 0 && yVel < 0) {
-      heroSprite = hero_upleft[0] //sets appropriate sprite for direction of movement
+      heroCropX = 0
+      heroSprite = hero_spritesheets.upleft //sets appropriate sprite for direction of movement
+      // heroSprite = hero_upleft[0] //sets appropriate sprite for direction of movement
     } else if (xVel < 0 && yVel > 0) {
-      heroSprite = hero_downleft[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.downleft
+      // heroSprite = hero_downleft[0]
     } else if (xVel > 0 && yVel > 0) {
-      heroSprite = hero_downright[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.downright
+      // heroSprite = hero_downright[0]
     } else if (xVel > 0 && yVel < 0) {
-      heroSprite = hero_upright[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.upright
+      // heroSprite = hero_upright[0]
     } else if (xVel < 0 ) {
-      heroSprite = hero_left[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.left
+      // heroSprite = hero_left[0]
     } else if (xVel > 0 ) {
-      heroSprite = hero_right[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.right
+      // heroSprite = hero_right[0]
     } else if (yVel < 0 ) {
-      heroSprite = hero_up[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.up
+      // heroSprite = hero_up[0]
     } else if (yVel > 0 ) {
-      heroSprite = hero_down[0]
+      heroCropX = 0
+      heroSprite = hero_spritesheets.down
+      // heroSprite = hero_down[0]
     }
   }
 
@@ -489,6 +525,9 @@ const moveEngine = (moveObj) => {
       dashBoost,
       blockSize,
       heroSprite,
+      heroSpriteSize,
+      heroCropX,
+      heroCropY,
       heroDirection
     }
   )
@@ -498,16 +537,30 @@ const moveEngine = (moveObj) => {
 // returns false if there is a collision and true if there is not
 const checkCollision = (x, y, cMasks, blockSize, corner) => {
   const colBuffer = 1 // number of pixels away from hero that detectors sit
+  const horzBuffer = 5
+  const vertBuffer = 4
+  // const heroColBox = [
+  //   // array of coordinates for all detectors of hero object
+  //   [horzBuffer, colBuffer],
+  //   [colBuffer, vertBuffer],
+  //   [blockSize - colBuffer, vertBuffer],
+  //   [blockSize, colBuffer],
+  //   [blockSize, blockSize - colBuffer],
+  //   [blockSize - colBuffer, blockSize],
+  //   [colBuffer, blockSize],
+  //   [horzBuffer, blockSize - colBuffer]
+  // ]
+
   const heroColBox = [
     // array of coordinates for all detectors of hero object
-    [8, colBuffer + 8],
-    [colBuffer + 8, 8],
-    [blockSize - colBuffer - 8, 8],
-    [blockSize + 8, colBuffer + 8],
-    [blockSize + 8, blockSize - colBuffer - 8],
-    [blockSize - 8 - colBuffer, blockSize + 8],
-    [colBuffer + 8, blockSize + 8],
-    [8, blockSize - colBuffer - 8]
+    [0, colBuffer],
+    [colBuffer, 0],
+    [blockSize - colBuffer, 0],
+    [blockSize, colBuffer],
+    [blockSize, blockSize - colBuffer],
+    [blockSize - colBuffer, blockSize],
+    [colBuffer, blockSize],
+    [0, blockSize - colBuffer]
   ]
 
   // const heroColBox = [

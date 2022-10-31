@@ -8,18 +8,22 @@ import CanvasContext from '../CanvasContext'
 
 // import hero_down from './spriteRef'
 
-import { hero_down } from './spriteRef'
+import { hero_down, hero_spritesheets } from './spriteRef'
+
 
 import droneSprt from './droneRef'
 
 
 // consider height of 336 x 192 with block size of 24
 // consider height of 256 x 192 with block size of 16
-const upscale = 3 // multiplier for resolution
+const upscale = 4 // multiplier for resolution
 const height = 192 * upscale
 const width = 336 * upscale
-const blockSize = 16   // size of each grid block in pixels
-const heroBlockSize = 10 * upscale   // size of each grid block in pixels for hero collison box
+const blockSize = 16   // size of each grid block in pixels for collison objects
+const heroBlockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
+const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
+let heroCropX = 0
+let heroCropY = 0
 const topDashBoost = .2
 let dashBoost = 0
 const boostMaxVel = 2 // maxVel when boosting
@@ -27,7 +31,8 @@ const baseMaxVel = 1 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
 let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
-let heroSprite = hero_down[0]
+let heroSprite = hero_spritesheets.down
+// let heroSprite = hero_down[0]
 let heroDirection = 'down'
 let attackActive = false
 
@@ -255,19 +260,28 @@ const BasicRender = ({}) => {
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
-    const rectWidth = 16 * upscale
-    const rectHeight = 16 * upscale
+    const rectWidth = heroSpriteSize
+    const rectHeight = heroSpriteSize
     const coordX = (width / 2) - (rectWidth / 2)
     const coordY = (height / 2) - (rectHeight / 2)
 
     class Sprite {
-      constructor({ image, position }) {
+      constructor({ image, position, crop }) {
         this.position = position
         this.image = image
+        this.crop = crop
+      }
+
+      cropChange(cropX, cropY) {
+        this.crop = {
+          x: cropX,
+          y: cropY
+        }
       }
 
       draw() {
-        ctx.drawImage(this.image, this.position.x, this.position.y, rectWidth, rectHeight)
+        ctx.drawImage(this.image, this.crop.x, this.crop.y, rectWidth, rectHeight, this.position.x, this.position.y, rectWidth, rectHeight)
+        // ctx.drawImage(this.image, this.position.x, this.position.y, rectWidth, rectHeight)
       }
     }
 
@@ -292,6 +306,10 @@ const BasicRender = ({}) => {
       position: {
         x: coordX,
         y: coordY
+      },
+      crop: {
+        x: heroCropX,
+        y: heroCropY
       }
     })
 
@@ -326,6 +344,9 @@ const BasicRender = ({}) => {
         dashBoost: dashBoost,
         blockSize: heroBlockSize,
         heroSprite: heroSprite,
+        heroSpriteSize,
+        heroCropX: heroCropX,
+        heroCropY: heroCropY,
         heroDirection: heroDirection
       }
 
@@ -351,6 +372,11 @@ const BasicRender = ({}) => {
         currentStam = moveObj.currentStam
 
         heroDirection = moveObj.heroDirection
+
+        heroCropX = moveObj.heroCropX
+
+        playerSprite.cropChange(heroCropX, heroCropY)
+
 
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
         if (currentStam < maxStam) {
