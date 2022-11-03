@@ -19,7 +19,7 @@ import droneSprt from './droneRef'
 const upscale = 4 // multiplier for resolution
 const height = 192 * upscale
 const width = 336 * upscale
-const blockSize = 38   // size of each grid block in pixels for collison objects
+const blockSize = 24   // size of each grid block in pixels for collison objects
 const heroBlockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
 const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 let heroCropX = 0

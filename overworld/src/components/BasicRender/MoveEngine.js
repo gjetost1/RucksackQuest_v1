@@ -426,9 +426,31 @@ const moveEngine = (moveObj) => {
   }
 
   // sets moveObj x and y coordinates based on current xVel and yVel values
-  x = x + xVel
-  y = y + yVel
 
+// this forces the x and y coordinates to be whole integers.
+
+
+x = Math.round(x + xVel)
+y = Math.round(y + yVel)
+
+// if (xVel >= 0 && yVel >= 0) {
+//   x = Math.ceil(x + xVel) + ((x + xVel) % 4)
+//   y = Math.ceil(y + yVel) + ((y + yVel) % 4)
+// } else if (xVel >= 0 && yVel <= 0){
+//   x = Math.ceil(x + xVel) + ((x + xVel) % 4)
+//   y = Math.floor(y + yVel) - ((y + yVel) % 4)
+// } else if (xVel <= 0 && yVel <= 0) {
+//   x = Math.floor(x + xVel) - ((x + xVel) % 4)
+//   y = Math.floor(y + yVel) - ((y + yVel) % 4)
+// } else if (xVel <= 0 && yVel >= 0) {
+//   x = Math.floor(x + xVel) - ((x + xVel) % 4)
+//   y = Math.ceil(y + yVel)  + ((y + yVel) % 4)
+// }
+
+// x = x + xVel
+// y = y + yVel
+
+console.log(x, y)
 
 
 
@@ -536,15 +558,15 @@ const moveEngine = (moveObj) => {
 // checkCollision checks if x,y coordinates are inside one of the collision masks in cMask
 // returns false if there is a collision and true if there is not
 const checkCollision = (x, y, cMasks, blockSize, corner) => {
-  const colBuffer = 1 // number of pixels away from hero that detectors sit
+  const colBuffer = 4 // number of pixels away from hero that detectors sit
   const horzBuffer = 20
   const vertBuffer = 12
   const heroColBox = [
     // array of coordinates for all detectors of hero object
-    [horzBuffer, colBuffer + vertBuffer],
-    [colBuffer + horzBuffer, vertBuffer],
-    [blockSize - colBuffer - horzBuffer, vertBuffer],
-    [blockSize - horzBuffer, colBuffer + vertBuffer],
+    [horzBuffer, colBuffer + vertBuffer * 2],
+    [colBuffer + horzBuffer, vertBuffer * 2],
+    [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
+    [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
     [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer],
     [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer],
     [colBuffer + horzBuffer, blockSize - vertBuffer],
