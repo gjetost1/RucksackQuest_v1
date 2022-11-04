@@ -8,10 +8,11 @@ import CanvasContext from '../CanvasContext'
 
 // import hero_down from './spriteRef'
 
-import { hero_down, hero_spritesheets } from './spriteRef'
+import { hero_down, hero_spritesheets, sword_spritesheets } from './spriteRef'
 
 
 import droneSprt from './droneRef'
+
 
 
 // consider height of 336 x 192 with block size of 24
@@ -32,6 +33,7 @@ let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per fra
 let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
 let heroSprite = hero_spritesheets.down
+let swordSpriteSheet = sword_spritesheets.down
 // let heroSprite = hero_down[0]
 let heroDirection = 'down'
 let attackActive = false
@@ -313,6 +315,23 @@ const BasicRender = ({}) => {
       }
     })
 
+    const equipImage = new Image()
+    equipImage.src = swordSpriteSheet
+
+    console.log(heroSprite)
+
+    const swordSprite = new Sprite({
+      image: equipImage,
+      position: {
+        x: coordX,
+        y: coordY
+      },
+      crop: {
+        x: heroCropX,
+        y: heroCropY
+      }
+    })
+
     const background = new Image()
     background.src = background_1
 
@@ -344,6 +363,7 @@ const BasicRender = ({}) => {
         dashBoost: dashBoost,
         blockSize: heroBlockSize,
         heroSprite: heroSprite,
+        equipImage: swordSpriteSheet,
         heroSpriteSize,
         heroCropX: heroCropX,
         heroCropY: heroCropY,
@@ -363,8 +383,17 @@ const BasicRender = ({}) => {
         playerSprite.position.x = moveObj.x
         playerSprite.position.y = moveObj.y
 
+        swordSprite.position.x = moveObj.x
+        swordSprite.position.y = moveObj.y
+
+
+
         heroSprite = moveObj.heroSprite
         playerImage.src = heroSprite
+
+        swordSpriteSheet = moveObj.equipImage
+        equipImage.src = swordSpriteSheet
+
 
         xVel = moveObj.xVel
         yVel = moveObj.yVel
@@ -376,6 +405,7 @@ const BasicRender = ({}) => {
         heroCropX = moveObj.heroCropX
 
         playerSprite.cropChange(heroCropX, heroCropY)
+        swordSprite.cropChange(heroCropX, heroCropY)
 
 
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
@@ -486,6 +516,7 @@ const BasicRender = ({}) => {
 
       // draws hero sprite image to canvas
       playerSprite.draw()
+      swordSprite.draw()
 
 
 
