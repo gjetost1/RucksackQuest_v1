@@ -1,4 +1,4 @@
-import down from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_down.png'
+import down from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_down2.png'
 import up from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_up.png'
 import left from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_left.png'
 import right from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_right.png'
@@ -7,7 +7,7 @@ import downright from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_
 import upleft from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upleft.png'
 import upright from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upright.png'
 
-import sword_down from '../../assets/sprites/hero_sword/hero_sword_down.png'
+import sword_down from '../../assets/sprites/hero_sword/hero_sword_down2.png'
 import sword_up from '../../assets/sprites/hero_sword/hero_sword_up.png'
 import sword_left from '../../assets/sprites/hero_sword/hero_sword_left.png'
 import sword_right from '../../assets/sprites/hero_sword/hero_sword_right.png'

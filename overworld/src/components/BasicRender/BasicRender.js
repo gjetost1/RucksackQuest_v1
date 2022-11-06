@@ -6,6 +6,8 @@ import background_1 from '../../assets/backgrounds/test/background_1.png'
 import black_square from '../../assets/sprites/black_square.png'
 import CanvasContext from '../CanvasContext'
 
+import { heroRender } from './HeroRender'
+
 // import hero_down from './spriteRef'
 
 import { hero_down, hero_spritesheets, sword_spritesheets } from './spriteRef'
@@ -34,9 +36,11 @@ let rateAccel = .2 // rate at which movement object accelerates velocity
 let rateDecel = .1 // rate at which velocity decays
 let heroSprite = hero_spritesheets.down
 let swordSpriteSheet = sword_spritesheets.down
-// let heroSprite = hero_down[0]
 let heroDirection = 'down'
 let attackActive = false
+let attackAnimation = false
+let attackAnimationCounter = 0
+let attackAnimationMaxCount = 30
 
 const maxStam = 100
 let currentStam = maxStam
@@ -45,10 +49,6 @@ let currentStam = maxStam
 let eventX = null
 let eventY = null
 
-
-// // move rate for character sprite
-// let moveX = 1.2
-// let moveY = 1.2
 
 let xVel = 0 // current velocity for x and y movement
 let yVel = 0
@@ -127,6 +127,9 @@ const keys = {
     pressed:false
   },
   e: {
+    pressed:false
+  },
+  mouse1: {
     pressed:false
   }
 }
@@ -244,21 +247,49 @@ document.addEventListener('keyup', (action) => {
   }
 })
 
+// these next 2 event listeners manage mouse input.
+// 0 is left mouse button
+// 1 is middle mouse button
+// 2 is left mouse button
+document.addEventListener('pointerdown', (action) => {
+  console.log(action.button)
+  switch(action.button) {
+    case 0:
+      keys.mouse1.pressed = true
+    break
+    case 1:
+      action.preventDefault()
+    break
+    default:
+    break
+  }
+})
+
+document.addEventListener('pointerup', (action) => {
+  switch(action.button) {
+    case 0:
+      keys.mouse1.pressed = false
+    break
+    default:
+    break
+  }
+})
+
+// disables right-click context menu since this messes with input registration
+// and also lets you use the right mouse button for input
+window.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+}, false);
+
+
+
 const BasicRender = ({}) => {
 
-  // const [currentStam, setCurrentStam] = useState(maxStam)
-  // const [moveObj, setMoveObj] = useState({})
-  // const [eventObj, setEventObj] = useState({})
   let moveObj = {}
   let eventObj = {}
-  // const [attackTimeoutOff, setAttackTimeoutOff] = useState(true)
   let attackCooldownOff = true
-  // const [attackActive, setAttackActive] = useState(false)
-
   const canvasRef = useRef(null)
-  // const ctx = useContext(CanvasContext)
 
-  // const ctx = canvasRef.current.getContext('2d');
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
@@ -266,6 +297,14 @@ const BasicRender = ({}) => {
     const rectHeight = heroSpriteSize
     const coordX = (width / 2) - (rectWidth / 2)
     const coordY = (height / 2) - (rectHeight / 2)
+
+    // Sprite is the main class for hero and enemy sprites
+    // image is the .png for the spritesheet you are rendering
+    // position is an object with global x and y coordinates for the
+    // upper lefthand corner of the sprite (where it is currently being rendered on the screen)
+    // crop is the upper lefthand corner where the spritesheet is being
+    // cropped - crop size is based on rectWidth and rectHeight which is
+    // currently set globally
 
     class Sprite {
       constructor({ image, position, crop }) {
@@ -318,7 +357,7 @@ const BasicRender = ({}) => {
     const equipImage = new Image()
     equipImage.src = swordSpriteSheet
 
-    console.log(heroSprite)
+    // console.log(heroSprite)
 
     const swordSprite = new Sprite({
       image: equipImage,
@@ -442,11 +481,12 @@ const BasicRender = ({}) => {
         eventAnim: null,
       }
 
-      if (keys.e.pressed && attackCooldownOff) {
+      if (keys.e.pressed && attackCooldownOff || keys.mouse1.pressed && attackCooldownOff) {
         attackCooldownOff = false
         attackActive = true
+        attackAnimation = true
 
-        console.log('action')
+        // console.log('action')
 
         eventObj = eventEngine(eventObj)
 
@@ -457,7 +497,7 @@ const BasicRender = ({}) => {
         const cooldown = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
           attackCooldownOff = true
           clearTimeout(cooldown)
-          console.log('cooldown over')
+          // console.log('cooldown over')
         }, eventObj.eventTimeout * 1000)
 
 
@@ -466,7 +506,7 @@ const BasicRender = ({}) => {
         const eventDuration = setTimeout(() => {
           clearTimeout(eventDuration)
           attackActive = false
-          console.log('attack over')
+          // console.log('attack over')
         }, eventObj.eventDuration * 1000)
 
 
@@ -509,14 +549,41 @@ const BasicRender = ({}) => {
 
       // renders attack visuals if there is an active attack
       if (attackActive) {
-        console.log('attack is active')
+        // console.log('attack is active')
         ctx.fillStyle = 'rgb(65, 65, 100)'
         ctx.fillRect(eventX, eventY, eventObj.blockSize * 1, eventObj.blockSize * 1)
       }
 
+      const attackAnim = () => {
+        attackAnimationCounter++
+        xVel = 0
+        yVel = 0
+        if (attackAnimationCounter < attackAnimationMaxCount / 2) {
+          heroCropX = heroSpriteSize * 7
+        } else if (attackAnimationCounter < (attackAnimationMaxCount / 4) * 3) {
+          heroCropX = heroSpriteSize * 8
+        } else if (attackAnimationCounter < attackAnimationMaxCount) {
+          heroCropX = heroSpriteSize * 9
+        } else if (attackAnimationCounter > attackAnimationMaxCount) {
+          attackAnimationCounter = 0
+          attackAnimation = false
+        }
+      }
+
+      if (attackAnimation) {
+        attackAnim()
+      }
+
       // draws hero sprite image to canvas
-      playerSprite.draw()
-      swordSprite.draw()
+      // feed in sprite class instances in the order you want them rendered
+      // eg typically base player sprite first, then clothing, then equipment
+      heroRender([playerSprite, swordSprite])
+
+
+
+
+      // playerSprite.draw()
+      // swordSprite.draw()
 
 
 
@@ -537,5 +604,6 @@ const BasicRender = ({}) => {
     </div>
   )
 }
+
 
 export default BasicRender
