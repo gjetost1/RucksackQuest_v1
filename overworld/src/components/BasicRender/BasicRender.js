@@ -8,12 +8,12 @@ import CanvasContext from '../CanvasContext'
 
 import { heroRender } from './HeroRender'
 
-// import hero_down from './spriteRef'
 
-import { hero_down, hero_spritesheets, sword_spritesheets } from './spriteRef'
+import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 
+import sword_fx from '../../assets/sounds/sword/damage_sound.wav'
 
-import droneSprt from './droneRef'
+// import droneSprt from './droneRef'
 
 
 
@@ -38,9 +38,9 @@ let heroSprite = hero_spritesheets.down
 let swordSpriteSheet = sword_spritesheets.down
 let heroDirection = 'down'
 let attackActive = false
-let attackAnimation = false
-let attackAnimationCounter = 0
-let attackAnimationMaxCount = 30
+let attackAnimation = false // when true this overrides the normal walking animation with the attack anim
+let attackAnimationCounter = 0 // incremented to set timing for attack animation frames
+let attackAnimationMaxCount = 40 // higher number means slower attack animations
 
 const maxStam = 100
 let currentStam = maxStam
@@ -285,6 +285,7 @@ window.addEventListener('contextmenu', (e) => {
 
 const BasicRender = ({}) => {
 
+  const swordFx = new Audio(sword_fx)
   let moveObj = {}
   let eventObj = {}
   let attackCooldownOff = true
@@ -554,17 +555,19 @@ const BasicRender = ({}) => {
         ctx.fillRect(eventX, eventY, eventObj.blockSize * 1, eventObj.blockSize * 1)
       }
 
+      // overwrites the walking animation with an attack animation when attack is active
       const attackAnim = () => {
         attackAnimationCounter++
-        xVel = 0
-        yVel = 0
-        if (attackAnimationCounter < attackAnimationMaxCount / 2) {
+        if (attackAnimationCounter < attackAnimationMaxCount / 4) {
           heroCropX = heroSpriteSize * 7
-        } else if (attackAnimationCounter < (attackAnimationMaxCount / 4) * 3) {
+        } else if (attackAnimationCounter < (attackAnimationMaxCount / 4) * 2) {
+          swordFx.volume = 0.1;
+          swordFx.play();
           heroCropX = heroSpriteSize * 8
         } else if (attackAnimationCounter < attackAnimationMaxCount) {
           heroCropX = heroSpriteSize * 9
         } else if (attackAnimationCounter > attackAnimationMaxCount) {
+          heroCropX = 0
           attackAnimationCounter = 0
           attackAnimation = false
         }
@@ -597,7 +600,7 @@ const BasicRender = ({}) => {
 
   return (
     <div id='main-container'>
-        <div id='instructions'>WASD to move - SHIFT to dash</div>
+        <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div>
       <div id='canvas-container'>
         <canvas ref={canvasRef} height={height} width={width} />
       </div>

@@ -22,6 +22,7 @@
 
 #instructions {
   color: white;
+  user-select: none;
 }
 
 /* #stamina-container {
