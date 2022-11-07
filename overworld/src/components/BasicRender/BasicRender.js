@@ -3,8 +3,8 @@ import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
 import background_1 from '../../assets/backgrounds/test/background_1.png'
-import black_square from '../../assets/sprites/black_square.png'
-import CanvasContext from '../CanvasContext'
+// import black_square from '../../assets/sprites/black_square.png'
+// import CanvasContext from '../CanvasContext'
 
 import { heroRender } from './HeroRender'
 
@@ -228,6 +228,7 @@ document.addEventListener('keydown', (action) => {
   }
 })
 
+// event listener for end of input other than directional movement
 document.addEventListener('keyup', (action) => {
   // console.log(jump)
   switch(action.key) {
@@ -248,7 +249,7 @@ document.addEventListener('keyup', (action) => {
 })
 
 // these next 2 event listeners manage mouse input.
-// 0 is left mouse button
+// case 0 is left mouse button
 // 1 is middle mouse button
 // 2 is left mouse button
 document.addEventListener('pointerdown', (action) => {
@@ -257,8 +258,8 @@ document.addEventListener('pointerdown', (action) => {
     case 0:
       keys.mouse1.pressed = true
     break
-    case 1:
-      action.preventDefault()
+    case 2:
+      action.preventDefault() // prevents the middle mouse button from going into all direction scroll mode
     break
     default:
     break
@@ -450,7 +451,7 @@ const BasicRender = ({}) => {
 
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
         if (currentStam < maxStam) {
-          currentStam = currentStam + .01
+          currentStam = currentStam + .03
         } else {
           currentStam = maxStam
         }
@@ -543,7 +544,7 @@ const BasicRender = ({}) => {
 
       // this draws all interior objects that have collision
       for (let i = 0; i < innerBoundary.length; i++) {
-        ctx.fillStyle = 'rgb(108, 29, 0)'
+        ctx.fillStyle = 'rgb(0, 116, 81)'
         let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[i]
         ctx.fillRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
       }
