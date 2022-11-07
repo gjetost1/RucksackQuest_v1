@@ -16,6 +16,7 @@
   align-items: flex-end;
   border: 2px solid gray;
   background-color: gray;
+  background-color: rgb(255, 192, 150);
   /* background-color: rgb(119, 183, 168); */
   padding: 0px;
 }

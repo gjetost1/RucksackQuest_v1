@@ -15,6 +15,8 @@ import sword_downleft from '../../assets/sprites/hero_sword/hero_sword_downleft.
 import sword_downright from '../../assets/sprites/hero_sword/hero_sword_downright.png'
 import sword_upleft from '../../assets/sprites/hero_sword/hero_sword_upleft.png'
 import sword_upright from '../../assets/sprites/hero_sword/hero_sword_upright.png'
+import sword_icon from '../../assets/sprites/hero_sword/sword_icon.png'
+
 
 import down_1 from '../../assets/sprites/hero32/hero32_down1.png'
 import down_2 from '../../assets/sprites/hero32/hero32_down2.png'
@@ -179,5 +181,6 @@ export const sword_spritesheets = {
   downleft: sword_downleft,
   downright: sword_downright,
   upleft: sword_upleft,
-  upright: sword_upright
+  upright: sword_upright,
+  icon: sword_icon
 }

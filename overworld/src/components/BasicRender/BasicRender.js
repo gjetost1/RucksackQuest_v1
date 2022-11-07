@@ -7,7 +7,7 @@ import background_1 from '../../assets/backgrounds/test/background_1.png'
 // import CanvasContext from '../CanvasContext'
 
 import { heroRender } from './HeroRender'
-
+import inputEngine from './InputEngine'
 
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 
@@ -41,6 +41,9 @@ let attackActive = false
 let attackAnimation = false // when true this overrides the normal walking animation with the attack anim
 let attackAnimationCounter = 0 // incremented to set timing for attack animation frames
 let attackAnimationMaxCount = 40 // higher number means slower attack animations
+let coolDownLevel = 0
+let currentCooldownMax = 120
+const coolDownLevelMax = 100
 
 const maxStam = 100
 let currentStam = maxStam
@@ -106,8 +109,8 @@ const cMasks = buildCMask(collisions)
 
 
 
-// keeps track of input state
-const keys = {
+// keeps track of input state. Fed into inputEngine function in useEffect below every frame
+let keys = {
   ArrowUp: {
     pressed:false
   },
@@ -135,154 +138,6 @@ const keys = {
 }
 
 
-let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
-
-// event listener for directional movement input
-document.addEventListener('keydown', function(playerWalk) {
-  switch (playerWalk.key) {
-    case 'w':
-    case 'W':
-    case 'ArrowUp':
-      keys.ArrowUp.pressed = true
-      lastKeyDown = 'ArrowUp'
-      // console.log('Walk Up')
-    break;
-    case 's':
-    case 'S':
-    case 'ArrowDown':
-      keys.ArrowDown.pressed = true
-      lastKeyDown = 'ArrowDown'
-      // console.log('Walk Down')
-    break;
-    case 'a':
-    case 'A':
-    case 'ArrowLeft':
-      keys.ArrowLeft.pressed = true
-      lastKeyDown = 'ArrowLeft'
-      // console.log('Walk Left')
-    break;
-    case 'd':
-    case 'D':
-    case 'ArrowRight':
-      keys.ArrowRight.pressed = true
-      lastKeyDown = 'ArrowRight'
-      // console.log('Walk Right')
-    break;
-      default:
-      break;
-  }
-})
-
-// event listener for directional movement end of input
-document.addEventListener('keyup', function(playerWalk) {
-  switch (playerWalk.key) {
-    case 'w':
-    case 'W':
-    case 'ArrowUp':
-      keys.ArrowUp.pressed = false
-      // console.log('Walk Up')
-    break;
-    case 's':
-    case 'S':
-    case 'ArrowDown':
-      keys.ArrowDown.pressed = false
-      // console.log('Walk Down')
-    break;
-      case 'a':
-      case 'A':
-      case 'ArrowLeft':
-        keys.ArrowLeft.pressed = false
-        // console.log('Walk Left')
-      break;
-      case 'd':
-      case 'D':
-      case 'ArrowRight':
-        keys.ArrowRight.pressed = false
-        // console.log('Walk Right')
-      break;
-      default:
-      break;
-  }
-});
-
-// event listener for inputs other than directional movement
-document.addEventListener('keydown', (action) => {
-  // console.log(jump)
-  switch(action.key) {
-    case ' ':
-      keys.Space.pressed = true
-      setTimeout(() => keys.Space.pressed = false, 30)
-      // console.log('jump')
-    break
-    case 'Shift':
-      keys.Shift.pressed = true
-      // console.log('dash')
-    break
-    case 'e':
-    case 'E':
-      keys.e.pressed = true
-      // console.log('action')
-    break
-    default:
-    break
-  }
-})
-
-// event listener for end of input other than directional movement
-document.addEventListener('keyup', (action) => {
-  // console.log(jump)
-  switch(action.key) {
-    case ' ':
-      keys.Space.pressed = false
-    break
-    case 'Shift':
-      keys.Shift.pressed = false
-    break
-    case 'e':
-    case 'E':
-      keys.e.pressed = false
-      // console.log('end action')
-    break
-    default:
-    break
-  }
-})
-
-// these next 2 event listeners manage mouse input.
-// case 0 is left mouse button
-// 1 is middle mouse button
-// 2 is left mouse button
-document.addEventListener('pointerdown', (action) => {
-  console.log(action.button)
-  switch(action.button) {
-    case 0:
-      keys.mouse1.pressed = true
-    break
-    case 2:
-      action.preventDefault() // prevents the middle mouse button from going into all direction scroll mode
-    break
-    default:
-    break
-  }
-})
-
-document.addEventListener('pointerup', (action) => {
-  switch(action.button) {
-    case 0:
-      keys.mouse1.pressed = false
-    break
-    default:
-    break
-  }
-})
-
-// disables right-click context menu since this messes with input registration
-// and also lets you use the right mouse button for input
-window.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-}, false);
-
-
 
 const BasicRender = ({}) => {
 
@@ -293,12 +148,19 @@ const BasicRender = ({}) => {
   const canvasRef = useRef(null)
 
 
+
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
     const rectWidth = heroSpriteSize
     const rectHeight = heroSpriteSize
     const coordX = (width / 2) - (rectWidth / 2)
     const coordY = (height / 2) - (rectHeight / 2)
+
+
+
+    // this next function sends the keys object to the inputEngine where all the event listeners are for inputs
+    // returns keys object which is checked for what keys are currently pressed each frame
+    keys = inputEngine(keys)
 
     // Sprite is the main class for hero and enemy sprites
     // image is the .png for the spritesheet you are rendering
@@ -372,6 +234,10 @@ const BasicRender = ({}) => {
         y: heroCropY
       }
     })
+
+    const swordIcon = new Image()
+    swordIcon.src = sword_spritesheets.icon
+
 
     const background = new Image()
     background.src = background_1
@@ -487,6 +353,7 @@ const BasicRender = ({}) => {
         attackCooldownOff = false
         attackActive = true
         attackAnimation = true
+        coolDownLevel = 0 // sets the var for animating HUD cooldown level
 
         // console.log('action')
 
@@ -503,7 +370,6 @@ const BasicRender = ({}) => {
         }, eventObj.eventTimeout * 1000)
 
 
-
         // sets duration of event, set by eventObj.eventDuration in seconds
         const eventDuration = setTimeout(() => {
           clearTimeout(eventDuration)
@@ -512,6 +378,17 @@ const BasicRender = ({}) => {
         }, eventObj.eventDuration * 1000)
 
 
+      }
+
+      if (!attackCooldownOff) {
+        coolDownLevel += coolDownLevelMax / currentCooldownMax
+        coolDownLevel = Math.round(coolDownLevel)
+        if (coolDownLevel >= coolDownLevelMax) {
+          coolDownLevel = coolDownLevelMax
+        }
+        console.log(coolDownLevel)
+      } else {
+        coolDownLevel = 0
       }
 
       window.requestAnimationFrame(animate);
@@ -540,6 +417,20 @@ const BasicRender = ({}) => {
       }
       const stamDisplay = (currentStam / maxStam) * 100
       ctx.fillRect(14, 4, stamDisplay, 7)
+
+      // ability display with cooldown level
+      const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * 22
+      ctx.fillStyle = 'rgb(65, 65, 65)'
+      ctx.fillRect(150, 0, 24, 24)
+      if (attackCooldownOff) {
+        ctx.fillStyle = 'rgb(57, 201, 237)'
+      } else if (coolDownLevel > coolDownLevelMax / 3) {
+        ctx.fillStyle = 'rgb(240, 143, 33)'
+      } else {
+        ctx.fillStyle = 'rgb(240, 57, 33)'
+      }
+      ctx.fillRect(151, 1 + cooldownDisplay, 22, 22 - cooldownDisplay)
+      ctx.drawImage(swordIcon, 150, 0, 24, 24)
 
 
       // this draws all interior objects that have collision
