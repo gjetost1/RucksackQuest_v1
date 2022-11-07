@@ -65,12 +65,12 @@ const outerBoundary = [
 
 // defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
-  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 20, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 - blockSize * 5, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
-  {x: width / 2 + blockSize * 4, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
-  {x: width / 2 - blockSize * 5, y: 176, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 + blockSize * 2, y: 176, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 - blockSize * 8, y: 228, xBlocks: 32, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 10, y: 64, xBlocks: 20, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
+  {x: width / 2 + blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
+  {x: width / 2 - blockSize * 9, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 + blockSize * 4, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  {x: width / 2 - blockSize * 12, y: 528, xBlocks: 25, yBlocks: 1, gridSize: blockSize},
 ]
 
 // concats all collision arrays for use in buildCMask
@@ -543,26 +543,26 @@ const BasicRender = ({}) => {
 
       // this draws all interior objects that have collision
       for (let i = 0; i < innerBoundary.length; i++) {
-        ctx.fillStyle = 'rgb(177, 15, 15)'
+        ctx.fillStyle = 'rgb(108, 29, 0)'
         let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[i]
         ctx.fillRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
       }
 
       // renders attack visuals if there is an active attack
-      if (attackActive) {
+      // if (attackActive) {
         // console.log('attack is active')
-        ctx.fillStyle = 'rgb(65, 65, 100)'
-        ctx.fillRect(eventX, eventY, eventObj.blockSize * 1, eventObj.blockSize * 1)
-      }
+        // ctx.fillStyle = 'rgb(65, 65, 100)'
+        // ctx.fillRect(eventX, eventY, eventObj.blockSize * 1, eventObj.blockSize * 1)
+      // }
 
       // overwrites the walking animation with an attack animation when attack is active
       const attackAnim = () => {
         attackAnimationCounter++
         if (attackAnimationCounter < attackAnimationMaxCount / 4) {
           heroCropX = heroSpriteSize * 7
-        } else if (attackAnimationCounter < (attackAnimationMaxCount / 4) * 2) {
           swordFx.volume = 0.1;
           swordFx.play();
+        } else if (attackAnimationCounter < (attackAnimationMaxCount / 4) * 2) {
           heroCropX = heroSpriteSize * 8
         } else if (attackAnimationCounter < attackAnimationMaxCount) {
           heroCropX = heroSpriteSize * 9
@@ -604,6 +604,7 @@ const BasicRender = ({}) => {
       <div id='canvas-container'>
         <canvas ref={canvasRef} height={height} width={width} />
       </div>
+        {/* <div id='color-tone'></div> */}
     </div>
   )
 }

@@ -15,7 +15,7 @@
   justify-content: flex-end;
   align-items: flex-end;
   border: 2px solid gray;
-  background-color: rgb(177, 15, 15);
+  background-color: gray;
   /* background-color: rgb(119, 183, 168); */
   padding: 0px;
 }
@@ -23,6 +23,17 @@
 #instructions {
   color: white;
   user-select: none;
+}
+
+#color-tone {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(200, 0, 255, 0.566);
+  mix-blend-mode: color;
+  opacity: .5;
 }
 
 /* #stamina-container {
