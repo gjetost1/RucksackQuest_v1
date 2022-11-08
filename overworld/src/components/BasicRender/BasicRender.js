@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-import background_1 from '../../assets/backgrounds/test/background_1.png'
+// import background_1 from '../../assets/backgrounds/test/background_1.png'
+import background_1 from '../../assets/backgrounds/test/forest_background.png'
 // import black_square from '../../assets/sprites/black_square.png'
 // import CanvasContext from '../CanvasContext'
 
@@ -395,6 +396,7 @@ const BasicRender = ({}) => {
 
       // draws background of current scene
       ctx.fillStyle = 'rgb(119, 183, 168)'
+      // ctx.fillStyle = 'black'
       ctx.fillRect(0, 0, width, height - blockSize)
       // backgroundSprite.draw()
 
@@ -516,9 +518,9 @@ const BasicRender = ({}) => {
     <div id='main-container'>
         <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div>
       <div id='canvas-container'>
-        <canvas ref={canvasRef} height={height} width={width} />
+        <canvas id='canvas' ref={canvasRef} height={height} width={width} />
+        <div className='color-tone'></div>
       </div>
-        {/* <div id='color-tone'></div> */}
     </div>
   )
 }

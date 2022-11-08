@@ -27,16 +27,49 @@
   user-select: none;
 }
 
-#color-tone {
+.color-tone::before {
+  content: " ";
   position: absolute;
-  left: 0px;
-  right: 0px;
-  height: 100vh;
-  width: 100vw;
-  background-color: rgba(200, 0, 255, 0.566);
-  mix-blend-mode: color;
-  opacity: .5;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 100%); */
+  /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 80%); */
+  /* background: black; */
+  background-image: url('../../assets/backgrounds/crt_pixel_black.png');
+  z-index: 2;
+  background-size:  4px 4px;
+  pointer-events: none;
+  mix-blend-mode: hard-light;
+  /* mix-blend-mode: soft-light; */
+  /* mix-blend-mode: lighten; */
+  opacity: .3;
 }
+
+.color-tone::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /* background: linear-gradient(90deg, rgba(255, 0, 0, .5) 33%, rgba(0, 255, 0, .2) 33%, 66%, rgba(0, 0, 255, .2) 66%); */
+  background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 80%);
+  z-index: 2;
+  background-size:  4px 4px;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: .4;
+}
+
+
+#canvas {
+  /* filter: contrast(160%) saturate(200%) brightness(200%); */
+  /* filter: contrast(180%) brightness(130%); */
+  /* filter: brightness(120%) contrast(120%) saturate(80%); */
+}
+
 
 /* #stamina-container {
   position: absolute;
