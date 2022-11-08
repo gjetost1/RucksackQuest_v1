@@ -40,9 +40,9 @@ let heroDirection = 'down'
 let attackActive = false
 let attackAnimation = false // when true this overrides the normal walking animation with the attack anim
 let attackAnimationCounter = 0 // incremented to set timing for attack animation frames
-let attackAnimationMaxCount = 40 // higher number means slower attack animations
+let attackAnimationMaxCount = 35 // higher number means slower attack animations
 let coolDownLevel = 0
-let currentCooldownMax = 120
+// let currentCooldownMax = 120
 const coolDownLevelMax = 100
 
 const maxStam = 100
@@ -345,7 +345,7 @@ const BasicRender = ({}) => {
           damage: 10
         },
         eventDuration: 1,
-        eventTimeout: 1,
+        eventTimeout: 1.5,
         eventAnim: null,
       }
 
@@ -380,13 +380,13 @@ const BasicRender = ({}) => {
 
       }
 
+      // this increments coolDownLevel which controls the visual cooldown HUD
       if (!attackCooldownOff) {
-        coolDownLevel += coolDownLevelMax / currentCooldownMax
-        coolDownLevel = Math.round(coolDownLevel)
+        coolDownLevel += coolDownLevelMax / (eventObj.eventTimeout * 120)
+        // coolDownLevel = Math.round(coolDownLevel)
         if (coolDownLevel >= coolDownLevelMax) {
           coolDownLevel = coolDownLevelMax
         }
-        console.log(coolDownLevel)
       } else {
         coolDownLevel = 0
       }
@@ -395,42 +395,64 @@ const BasicRender = ({}) => {
 
       // draws background of current scene
       ctx.fillStyle = 'rgb(119, 183, 168)'
-      ctx.fillRect(0, blockSize, width, height - blockSize)
+      ctx.fillRect(0, 0, width, height - blockSize)
       // backgroundSprite.draw()
 
-      // draws HUD bar at top
+      // draws HUD bar at bottom
       ctx.fillStyle = 'gray'
-      ctx.fillRect(0, 0, width, blockSize)
+      ctx.fillRect(0, height - blockSize, width, blockSize)
+
+      const uiDrift = width / 2 - 50
 
       // draws stamina bar
-      ctx.fillStyle = 'black'
-      ctx.font = "12px Arial"
-      ctx.fillText("S", 2, 12)
+      // ctx.fillStyle = 'black'
+      // ctx.font = "14px Arial"
+      // ctx.fillText("S", 2, height - 3)
       ctx.fillStyle = 'rgb(65, 65, 65)'
-      ctx.fillRect(13, 3, 102, 9)
+      ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
       if (currentStam > maxStam - maxStam / 3) {
-        ctx.fillStyle = 'rgb(57, 201, 237)'
+        ctx.fillStyle = 'rgb(45, 154, 213)'
       } else if (currentStam > maxStam - (maxStam / 3) * 2) {
         ctx.fillStyle = 'rgb(240, 143, 33)'
       } else {
         ctx.fillStyle = 'rgb(240, 57, 33)'
       }
+
+      // gradient used for stamina bar
+      const grd = ctx.createLinearGradient(0, 0, 100, 0)
+      grd.addColorStop(0, 'rgb(45, 154, 213)')
+      grd.addColorStop(1, 'rgb(57, 201, 237)')
+
+      // ctx.fillStyle = grd
+
       const stamDisplay = (currentStam / maxStam) * 100
-      ctx.fillRect(14, 4, stamDisplay, 7)
+      ctx.fillRect(2 + uiDrift, height - 21, stamDisplay, 20)
+
+      const grdHighlight = ctx.createLinearGradient(0, height - 18, 0, height - 4)
+      grdHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.6)')
+      grdHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)')
+
+      ctx.fillStyle = grdHighlight
+
+      ctx.fillRect(3 + uiDrift, height - 20, 98, 22)
+
 
       // ability display with cooldown level
-      const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * 22
+      const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * 20
       ctx.fillStyle = 'rgb(65, 65, 65)'
-      ctx.fillRect(150, 0, 24, 24)
-      if (attackCooldownOff) {
+      ctx.fillRect(106 + uiDrift, height - 22, 22, 22)
+      if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
         ctx.fillStyle = 'rgb(57, 201, 237)'
-      } else if (coolDownLevel > coolDownLevelMax / 3) {
-        ctx.fillStyle = 'rgb(240, 143, 33)'
+        ctx.fillRect(107 + uiDrift, height - 21, 20, 20)
       } else {
         ctx.fillStyle = 'rgb(240, 57, 33)'
+        ctx.fillRect(107 + uiDrift, height - cooldownDisplay - 1, 20, cooldownDisplay)
       }
-      ctx.fillRect(151, 1 + cooldownDisplay, 22, 22 - cooldownDisplay)
-      ctx.drawImage(swordIcon, 150, 0, 24, 24)
+
+      ctx.fillStyle = grdHighlight
+      ctx.fillRect(108 + uiDrift, height - 20, 18, 18)
+
+      ctx.drawImage(swordIcon, 105 + uiDrift, height - 23, 24, 24)
 
 
       // this draws all interior objects that have collision

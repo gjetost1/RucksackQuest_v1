@@ -14,9 +14,10 @@
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  border: 2px solid gray;
+  border: 2px solid rgb(128, 128, 128);
+  border: 2px solid rgba(255, 255, 255, 0);
   background-color: gray;
-  background-color: rgb(255, 192, 150);
+  /* background-color: rgb(255, 192, 150); */
   /* background-color: rgb(119, 183, 168); */
   padding: 0px;
 }
