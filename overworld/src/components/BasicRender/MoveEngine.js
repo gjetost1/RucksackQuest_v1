@@ -31,7 +31,7 @@ let spriteCounter = 160 // counter is used to only update the sprite periodicall
 // const imagePreLoad = Object.values(droneSprt) // values of droneSprt object which are sprite images
 const imagePreLoad = [...hero_down, ...hero_up, ...hero_left, ...hero_right, ...hero_downleft, ...hero_downright, ...hero_upleft, ...hero_upright] // values of droneSprt object which are sprite images
 let spriteIndex = 1 // increments for sprite animation while walking
-const baseAnimSpeed = 10
+const baseAnimSpeed = 3
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
 let spriteAnimCounter = 0 // increments to trigger render of next animation frame
 
@@ -69,7 +69,7 @@ const moveEngine = (moveObj) => {
   // keysPressed is true if any directional input was given this frame, otherwise false.
   const keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
   const bounce = 1 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
-  const diagScale = .8 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
+  const diagScale = 1 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
 
   // preloads sprite images every so often (every counter number of frames)
   // to prevent sprite flickering from image loading by browser
@@ -128,7 +128,7 @@ const moveEngine = (moveObj) => {
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
   if (keys.Shift.pressed && currentStam > 0) {
-    spriteAnimSpeed = 6
+    spriteAnimSpeed = 2
     maxVel = boostMaxVel
     dashBoost = topDashBoost
     // drains stamina if dash is active and there is directional input

@@ -2,10 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-// import background_1 from '../../assets/backgrounds/test/background_1.png'
-import background_1 from '../../assets/backgrounds/test/forest_background.png'
-// import black_square from '../../assets/sprites/black_square.png'
-// import CanvasContext from '../CanvasContext'
+import background_1 from '../../assets/backgrounds/test/map_test_2.png'
+
 
 import { heroRender } from './HeroRender'
 import inputEngine from './InputEngine'
@@ -14,8 +12,6 @@ import pixelPerfect from './PixelPerfect'
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 
 import sword_fx from '../../assets/sounds/sword/damage_sound.wav'
-
-// import droneSprt from './droneRef'
 
 
 
@@ -29,13 +25,13 @@ const heroBlockSize = 16 * upscale   // size of each grid block in pixels for he
 const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 let heroCropX = 0
 let heroCropY = 0
-const topDashBoost = .2
+const topDashBoost = .4
 let dashBoost = 0
-const boostMaxVel = 1 // maxVel when boosting
-const baseMaxVel = .7 // base maxVel that maxVel will return to when not boosting
+const boostMaxVel = 2 // maxVel when boosting
+const baseMaxVel = .401 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
-let rateAccel = .15 // rate at which movement object accelerates velocity
-let rateDecel = .5 // rate at which velocity decays
+let rateAccel = .2 // rate at which movement object accelerates velocity
+let rateDecel = .2 // rate at which velocity decays
 let heroSprite = hero_spritesheets.down
 let swordSpriteSheet = sword_spritesheets.down
 let heroDirection = 'down'
@@ -59,6 +55,10 @@ let xVel = 0 // current velocity for x and y movement
 let yVel = 0
 
 
+let frameCountLimiter = 0
+const maxFrameCountLimiter = 5
+
+
 
 // defines the outer bounds of the scene for collision purposes
 const outerBoundary = [
@@ -70,12 +70,12 @@ const outerBoundary = [
 
 // defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
-  {x: width / 2 - blockSize * 10, y: 64, xBlocks: 20, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 - blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
-  {x: width / 2 + blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
-  {x: width / 2 - blockSize * 9, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 + blockSize * 4, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
-  {x: width / 2 - blockSize * 12, y: 528, xBlocks: 25, yBlocks: 1, gridSize: blockSize},
+  // {x: width / 2 - blockSize * 10, y: 64, xBlocks: 20, yBlocks: 1, gridSize: blockSize},
+  // {x: width / 2 - blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
+  // {x: width / 2 + blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
+  // {x: width / 2 - blockSize * 9, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  // {x: width / 2 + blockSize * 4, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
+  // {x: width / 2 - blockSize * 12, y: 528, xBlocks: 25, yBlocks: 1, gridSize: blockSize},
 ]
 
 // concats all collision arrays for use in buildCMask
@@ -203,7 +203,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        ctx.drawImage(this.image, this.position.x, this.position.y, width, height - 2)
+        ctx.drawImage(this.image, this.position.x, this.position.y, width, height)
       }
     }
 
@@ -286,13 +286,14 @@ const BasicRender = ({}) => {
       // is true if any directional input is given, otherwise false
       let keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
 
-      // moveEngine runs only if there is a directional input or if there is any x or y velocity
-      // if (keysPressed || xVel || yVel) {
-        // setMoveObj(moveEngine(moveObj))
-        moveObj = moveEngine(moveObj)
-      // }
+      // moveEngine runs less than every frame to keep the hero sprite slower
+        if (frameCountLimiter >= maxFrameCountLimiter) {
+          frameCountLimiter = 0
+          moveObj = moveEngine(moveObj)
 
-      // if (moveObj) {
+        }
+        frameCountLimiter+=2.4
+
 
 
 
@@ -522,7 +523,9 @@ const BasicRender = ({}) => {
 
     }
 
+
     animate();
+
 
   }, [])
 
