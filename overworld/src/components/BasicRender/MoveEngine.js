@@ -1,6 +1,6 @@
-import droneSprt from './droneRef'
-import { hero_down, hero_up, hero_left, hero_right, hero_downleft, hero_downright, hero_upleft, hero_upright } from './spriteRef'
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
+import pixelPerfect from './PixelPerfect'
+
 
 // const moveObj = {  // for reference here
 //   x: x,
@@ -25,12 +25,12 @@ import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 //   heroCropX,
 //   heroCropY,
 //   heroDirection,
+//   baseMoveSpeed,
+//   moveSpeed,
+//   upscale,
 // }
 
-let spriteCounter = 160 // counter is used to only update the sprite periodically
-// const imagePreLoad = Object.values(droneSprt) // values of droneSprt object which are sprite images
-const imagePreLoad = [...hero_down, ...hero_up, ...hero_left, ...hero_right, ...hero_downleft, ...hero_downright, ...hero_upleft, ...hero_upright] // values of droneSprt object which are sprite images
-let spriteIndex = 1 // increments for sprite animation while walking
+
 const baseAnimSpeed = 3
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
 let spriteAnimCounter = 0 // increments to trigger render of next animation frame
@@ -62,27 +62,18 @@ const moveEngine = (moveObj) => {
     heroSpriteSize,
     heroCropX,
     heroCropY,
-    heroDirection
+    heroDirection,
+    baseMoveSpeed,
+    moveSpeed,
+    upscale,
   } = moveObj
 
 
   // keysPressed is true if any directional input was given this frame, otherwise false.
   const keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
   const bounce = 1 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
-  const diagScale = 1 // this var multiplies/reduces the speed of diagonal movement since it is faster than horz and vert movement
+  const diagScale = 1.1 // this var multiplies/reduces the speed of diagonal movement since it is different than horz and vert movement
 
-  // preloads sprite images every so often (every counter number of frames)
-  // to prevent sprite flickering from image loading by browser
-  // if (spriteCounter >= 100) {
-  //   console.log('preloading')
-  //   for (let element of imagePreLoad) {
-  //     const img = new Image()
-  //       img.src = element
-  //   }
-  //   spriteCounter = 0
-  // }
-
-  // spriteCounter++
 
   // get boolean values for each detector of hero hitbox
   // false if it is in collision state
@@ -131,14 +122,16 @@ const moveEngine = (moveObj) => {
     spriteAnimSpeed = 2
     maxVel = boostMaxVel
     dashBoost = topDashBoost
+    moveSpeed = 8
     // drains stamina if dash is active and there is directional input
-    if (currentStam > 0 && (keys.ArrowDown.pressed || keys.ArrowUp.pressed || keys.ArrowRight.pressed || keys.ArrowLeft.pressed)) {
-      currentStam = currentStam - .1
+    if (currentStam > 0 && keysPressed) {
+      currentStam = currentStam - .5
     }
   } else {
     maxVel = baseMaxVel
     dashBoost = 0
     spriteAnimSpeed = baseAnimSpeed
+    moveSpeed = baseMoveSpeed
   }
 
   // if x or y velocity is higher than the current maxVel this brings it back down
@@ -442,8 +435,11 @@ const moveEngine = (moveObj) => {
 // whole integers since sub pixel accuracy is not needed
 
 
-x = Math.round(x + xVel)
-y = Math.round(y + yVel)
+x = pixelPerfect(Math.round(x + xVel), heroDirection, 'x', upscale)
+y = pixelPerfect(Math.round(y + yVel), heroDirection, 'y', upscale)
+
+// x = Math.round(x + xVel)
+// y = Math.round(y + yVel)
 
 
 
@@ -552,7 +548,9 @@ y = Math.round(y + yVel)
       heroSpriteSize,
       heroCropX,
       heroCropY,
-      heroDirection
+      heroDirection,
+      baseMoveSpeed,
+      moveSpeed,
     }
   )
 }

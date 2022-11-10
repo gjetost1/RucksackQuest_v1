@@ -25,13 +25,13 @@ const heroBlockSize = 16 * upscale   // size of each grid block in pixels for he
 const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 let heroCropX = 0
 let heroCropY = 0
-const topDashBoost = .4
+const topDashBoost = 2
 let dashBoost = 0
-const boostMaxVel = 2 // maxVel when boosting
-const baseMaxVel = .401 // base maxVel that maxVel will return to when not boosting
+const boostMaxVel = 5 // maxVel when boosting
+const baseMaxVel = 2 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
-let rateAccel = .2 // rate at which movement object accelerates velocity
-let rateDecel = .2 // rate at which velocity decays
+let rateAccel = 1 // rate at which movement object accelerates velocity
+let rateDecel = 1 // rate at which velocity decays
 let heroSprite = hero_spritesheets.down
 let swordSpriteSheet = sword_spritesheets.down
 let heroDirection = 'down'
@@ -56,7 +56,10 @@ let yVel = 0
 
 
 let frameCountLimiter = 0
-const maxFrameCountLimiter = 5
+const baseMaxFrameCountLimiter = 18
+let maxFrameCountLimiter = baseMaxFrameCountLimiter
+const baseMoveSpeed = 6
+let moveSpeed = baseMoveSpeed
 
 
 
@@ -280,25 +283,36 @@ const BasicRender = ({}) => {
         heroSpriteSize,
         heroCropX: heroCropX,
         heroCropY: heroCropY,
-        heroDirection: heroDirection
+        heroDirection: heroDirection,
+        baseMoveSpeed: baseMoveSpeed,
+        moveSpeed: moveSpeed,
+        upscale,
       }
+
 
       // is true if any directional input is given, otherwise false
       let keysPressed = (keys.ArrowUp.pressed || keys.ArrowDown.pressed || keys.ArrowLeft.pressed || keys.ArrowRight.pressed)
 
       // moveEngine runs less than every frame to keep the hero sprite slower
         if (frameCountLimiter >= maxFrameCountLimiter) {
+          // console.log('running', moveSpeed, xVel, yVel)
           frameCountLimiter = 0
           moveObj = moveEngine(moveObj)
-
         }
-        frameCountLimiter+=2.4
+
+        frameCountLimiter += moveSpeed
+
+        // console.log(moveSpeed)
 
 
 
 
-        playerSprite.position.x = pixelPerfect(moveObj.x, moveObj.heroDirection, 'x', upscale)
-        playerSprite.position.y = pixelPerfect(moveObj.y, moveObj.heroDirection, 'y', upscale)
+        playerSprite.position.x = moveObj.x
+        playerSprite.position.y = moveObj.y
+
+
+        // playerSprite.position.x = pixelPerfect(moveObj.x, moveObj.heroDirection, 'x', upscale)
+        // playerSprite.position.y = pixelPerfect(moveObj.y, moveObj.heroDirection, 'y', upscale)
 
         swordSprite.position.x = playerSprite.position.x
         swordSprite.position.y = playerSprite.position.y
@@ -327,13 +341,16 @@ const BasicRender = ({}) => {
 
         heroCropX = moveObj.heroCropX
 
+        moveSpeed = moveObj.moveSpeed
+
+
         playerSprite.cropChange(heroCropX, heroCropY)
         swordSprite.cropChange(heroCropX, heroCropY)
 
 
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
         if (currentStam < maxStam) {
-          currentStam = currentStam + .03
+          currentStam = currentStam + .05
         } else {
           currentStam = maxStam
         }
