@@ -125,7 +125,7 @@ const moveEngine = (moveObj) => {
     moveSpeed = 8
     // drains stamina if dash is active and there is directional input
     if (currentStam > 0 && keysPressed) {
-      currentStam = currentStam - .5
+      currentStam = currentStam - 1
     }
   } else {
     maxVel = baseMaxVel

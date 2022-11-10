@@ -442,33 +442,47 @@ const BasicRender = ({}) => {
       // ctx.fillStyle = 'black'
       // ctx.font = "14px Arial"
       // ctx.fillText("S", 2, height - 3)
-      ctx.fillStyle = 'rgb(65, 65, 65)'
-      ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
+      // ctx.fillStyle = 'rgb(65, 65, 65)'
+      // ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
       if (currentStam > maxStam - maxStam / 3) {
-        ctx.fillStyle = 'rgb(45, 154, 213)'
+        ctx.fillStyle = 'rgb(57, 201, 237)'
       } else if (currentStam > maxStam - (maxStam / 3) * 2) {
         ctx.fillStyle = 'rgb(240, 143, 33)'
       } else {
         ctx.fillStyle = 'rgb(240, 57, 33)'
       }
 
+      // ctx.fillStyle = 'rgb(65, 65, 65)'
+      // ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
+
       // gradient used for stamina bar
-      const grd = ctx.createLinearGradient(0, 0, 100, 0)
-      grd.addColorStop(0, 'rgb(45, 154, 213)')
-      grd.addColorStop(1, 'rgb(57, 201, 237)')
+      // const grd = ctx.createLinearGradient(0, 0, 100, 0)
+      // grd.addColorStop(0, 'rgb(45, 154, 213)')
+      // grd.addColorStop(1, 'rgb(57, 201, 237)')
 
       // ctx.fillStyle = grd
 
-      const stamDisplay = (currentStam / maxStam) * 100
-      ctx.fillRect(2 + uiDrift, height - 21, stamDisplay, 20)
+      const stamDisplay = (currentStam / maxStam) * (heroBlockSize - (heroBlockSize / 2))
+      // ctx.fillRect(2 + uiDrift, height - 21, stamDisplay, 20)
 
       const grdHighlight = ctx.createLinearGradient(0, height - 18, 0, height - 4)
       grdHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.6)')
       grdHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)')
 
-      ctx.fillStyle = grdHighlight
+      // ctx.fillStyle = grdHighlight
 
-      ctx.fillRect(3 + uiDrift, height - 20, 98, 22)
+      if (currentStam < maxStam) {
+        ctx.fillStyle = 'rgba(65, 65, 65, .5)'
+        ctx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, (heroBlockSize - (heroBlockSize / 2)), 4)
+        if (currentStam > maxStam - maxStam / 3) {
+          ctx.fillStyle = 'rgba(57, 201, 237, .7)'
+        } else if (currentStam > maxStam - (maxStam / 3) * 2) {
+          ctx.fillStyle = 'rgb(240, 143, 33, .7)'
+        } else {
+          ctx.fillStyle = 'rgb(240, 57, 33, .7)'
+        }
+        ctx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, stamDisplay, 4)
+      }
 
 
       // ability display with cooldown level
@@ -506,6 +520,7 @@ const BasicRender = ({}) => {
       // overwrites the walking animation with an attack animation when attack is active
       const attackAnim = () => {
         attackAnimationCounter++
+        console.log(attackAnimationCounter)
         if (attackAnimationCounter < attackAnimationMaxCount / 4) {
           heroCropX = heroSpriteSize * 7
           swordFx.volume = 0.1;
