@@ -9,6 +9,7 @@ import background_1 from '../../assets/backgrounds/test/forest_background.png'
 
 import { heroRender } from './HeroRender'
 import inputEngine from './InputEngine'
+import pixelPerfect from './PixelPerfect'
 
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 
@@ -30,11 +31,11 @@ let heroCropX = 0
 let heroCropY = 0
 const topDashBoost = .2
 let dashBoost = 0
-const boostMaxVel = 2 // maxVel when boosting
-const baseMaxVel = 1 // base maxVel that maxVel will return to when not boosting
+const boostMaxVel = 1 // maxVel when boosting
+const baseMaxVel = .7 // base maxVel that maxVel will return to when not boosting
 let maxVel = baseMaxVel // max acceleration (pixel movement) of velocity per frame
-let rateAccel = .2 // rate at which movement object accelerates velocity
-let rateDecel = .1 // rate at which velocity decays
+let rateAccel = .15 // rate at which movement object accelerates velocity
+let rateDecel = .5 // rate at which velocity decays
 let heroSprite = hero_spritesheets.down
 let swordSpriteSheet = sword_spritesheets.down
 let heroDirection = 'down'
@@ -151,11 +152,15 @@ const BasicRender = ({}) => {
 
 
   useEffect(() => {
-    const ctx = canvasRef.current.getContext('2d');
-    const rectWidth = heroSpriteSize
-    const rectHeight = heroSpriteSize
-    const coordX = (width / 2) - (rectWidth / 2)
-    const coordY = (height / 2) - (rectHeight / 2)
+
+
+  // const canvas = createCanvas(200, 200)
+  const ctx = canvasRef.current.getContext('2d')
+
+  const rectWidth = heroSpriteSize
+  const rectHeight = heroSpriteSize
+  const coordX = (width / 2) - (rectWidth)
+  const coordY = (height / 2) - (rectHeight / 2)
 
 
 
@@ -198,7 +203,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        ctx.drawImage(this.image, this.position.x, this.position.y, width, height)
+        ctx.drawImage(this.image, this.position.x, this.position.y, width, height - 2)
       }
     }
 
@@ -288,12 +293,21 @@ const BasicRender = ({}) => {
       // }
 
       // if (moveObj) {
-        playerSprite.position.x = moveObj.x
-        playerSprite.position.y = moveObj.y
 
-        swordSprite.position.x = moveObj.x
-        swordSprite.position.y = moveObj.y
 
+
+        playerSprite.position.x = pixelPerfect(moveObj.x, moveObj.heroDirection, 'x', upscale)
+        playerSprite.position.y = pixelPerfect(moveObj.y, moveObj.heroDirection, 'y', upscale)
+
+        swordSprite.position.x = playerSprite.position.x
+        swordSprite.position.y = playerSprite.position.y
+
+
+        // playerSprite.position.x = moveObj.x
+        // playerSprite.position.y = moveObj.y
+
+        // swordSprite.position.x = moveObj.x
+        // swordSprite.position.y = moveObj.y
 
 
         heroSprite = moveObj.heroSprite
@@ -398,7 +412,7 @@ const BasicRender = ({}) => {
       ctx.fillStyle = 'rgb(119, 183, 168)'
       // ctx.fillStyle = 'black'
       ctx.fillRect(0, 0, width, height - blockSize)
-      // backgroundSprite.draw()
+      backgroundSprite.draw()
 
       // draws HUD bar at bottom
       ctx.fillStyle = 'gray'
@@ -519,6 +533,7 @@ const BasicRender = ({}) => {
         <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div>
       <div id='canvas-container'>
         <canvas id='canvas' ref={canvasRef} height={height} width={width} />
+        <div className='blur'></div>
         <div className='color-tone'></div>
       </div>
     </div>
