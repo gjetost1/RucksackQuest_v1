@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-import background_1 from '../../assets/backgrounds/test/map_test_2.png'
+// import background_1 from '../../assets/backgrounds/test/map_test_2.png'
+import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
+import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
 
 
 import { heroRender } from './HeroRender'
@@ -20,7 +22,7 @@ import sword_fx from '../../assets/sounds/sword/damage_sound.wav'
 const upscale = 4 // multiplier for resolution
 const height = 192 * upscale
 const width = 336 * upscale
-const blockSize = 24   // size of each grid block in pixels for collison objects
+const blockSize = 16 * upscale   // size of each grid block in pixels for collison objects
 const heroBlockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
 const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 let heroCropX = 0
@@ -64,8 +66,14 @@ let moveSpeed = baseMoveSpeed
 
 
 // defines the outer bounds of the scene for collision purposes
+// const outerBoundary = [
+//   {x: 0, y: 0, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize}, // this one covers the hud bar at the top
+//   {x: -blockSize, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
+//   {x: width, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
+//   {x: -blockSize, y: height, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize},
+// ]
 const outerBoundary = [
-  {x: 0, y: 0, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize}, // this one covers the hud bar at the top
+  {x: -blockSize, y: 0, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize}, // this one covers the hud bar at the top
   {x: -blockSize, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
   {x: width, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
   {x: -blockSize, y: height, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize},
@@ -73,13 +81,21 @@ const outerBoundary = [
 
 // defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
+  {x: blockSize * 7, y: blockSize * 3, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 17, y: blockSize * 2, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 17, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 2, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 11, y: blockSize * 3, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
+]
+
+// const innerBoundary = [
   // {x: width / 2 - blockSize * 10, y: 64, xBlocks: 20, yBlocks: 1, gridSize: blockSize},
   // {x: width / 2 - blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
   // {x: width / 2 + blockSize * 10, y: 64, xBlocks: 1, yBlocks: 16, gridSize: blockSize},
   // {x: width / 2 - blockSize * 9, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
   // {x: width / 2 + blockSize * 4, y: 424, xBlocks: 6, yBlocks: 1, gridSize: blockSize},
   // {x: width / 2 - blockSize * 12, y: 528, xBlocks: 25, yBlocks: 1, gridSize: blockSize},
-]
+// ]
 
 // concats all collision arrays for use in buildCMask
 const collisions = outerBoundary.concat(innerBoundary)
@@ -251,8 +267,19 @@ const BasicRender = ({}) => {
     const background = new Image()
     background.src = background_1
 
+    const foreground = new Image()
+    foreground.src = foreground_1
+
     const backgroundSprite = new Background({
       image: background,
+      position: {
+        x: 0,
+        y: 0
+      }
+    })
+
+    const foregroundSprite = new Background({
+      image: foreground,
       position: {
         x: 0,
         y: 0
@@ -427,14 +454,14 @@ const BasicRender = ({}) => {
       window.requestAnimationFrame(animate);
 
       // draws background of current scene
-      ctx.fillStyle = 'rgb(119, 183, 168)'
+      // ctx.fillStyle = 'rgb(119, 183, 168)'
       // ctx.fillStyle = 'black'
-      ctx.fillRect(0, 0, width, height - blockSize)
+      // ctx.fillRect(0, 0, width, height - blockSize)
       backgroundSprite.draw()
 
       // draws HUD bar at bottom
-      ctx.fillStyle = 'gray'
-      ctx.fillRect(0, height - blockSize, width, blockSize)
+      // ctx.fillStyle = 'gray'
+      // ctx.fillRect(0, height - blockSize, width, blockSize)
 
       const uiDrift = width / 2 - 50
 
@@ -442,33 +469,34 @@ const BasicRender = ({}) => {
       // ctx.fillStyle = 'black'
       // ctx.font = "14px Arial"
       // ctx.fillText("S", 2, height - 3)
-      ctx.fillStyle = 'rgb(65, 65, 65)'
-      ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
+      // ctx.fillStyle = 'rgb(65, 65, 65)'
+      // ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
       if (currentStam > maxStam - maxStam / 3) {
-        ctx.fillStyle = 'rgb(45, 154, 213)'
+        ctx.fillStyle = 'rgb(57, 201, 237)'
       } else if (currentStam > maxStam - (maxStam / 3) * 2) {
         ctx.fillStyle = 'rgb(240, 143, 33)'
       } else {
         ctx.fillStyle = 'rgb(240, 57, 33)'
       }
 
+      // ctx.fillStyle = 'rgb(65, 65, 65)'
+      // ctx.fillRect(1 + uiDrift, height - 22, 102, 22)
+
       // gradient used for stamina bar
-      const grd = ctx.createLinearGradient(0, 0, 100, 0)
-      grd.addColorStop(0, 'rgb(45, 154, 213)')
-      grd.addColorStop(1, 'rgb(57, 201, 237)')
+      // const grd = ctx.createLinearGradient(0, 0, 100, 0)
+      // grd.addColorStop(0, 'rgb(45, 154, 213)')
+      // grd.addColorStop(1, 'rgb(57, 201, 237)')
 
       // ctx.fillStyle = grd
 
-      const stamDisplay = (currentStam / maxStam) * 100
-      ctx.fillRect(2 + uiDrift, height - 21, stamDisplay, 20)
+      // ctx.fillRect(2 + uiDrift, height - 21, stamDisplay, 20)
 
       const grdHighlight = ctx.createLinearGradient(0, height - 18, 0, height - 4)
       grdHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.6)')
       grdHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)')
 
-      ctx.fillStyle = grdHighlight
+      // ctx.fillStyle = grdHighlight
 
-      ctx.fillRect(3 + uiDrift, height - 20, 98, 22)
 
 
       // ability display with cooldown level
@@ -490,11 +518,11 @@ const BasicRender = ({}) => {
 
 
       // this draws all interior objects that have collision
-      for (let i = 0; i < innerBoundary.length; i++) {
-        ctx.fillStyle = 'rgb(0, 116, 81)'
-        let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[i]
-        ctx.fillRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
-      }
+      // for (let i = 0; i < innerBoundary.length; i++) {
+      //   ctx.fillStyle = 'rgb(0, 116, 81)'
+      //   let {x, y, xBlocks, yBlocks, gridSize} = innerBoundary[i]
+      //   ctx.fillRect(x, y, xBlocks * gridSize, yBlocks * gridSize)
+      // }
 
       // renders attack visuals if there is an active attack
       // if (attackActive) {
@@ -530,6 +558,23 @@ const BasicRender = ({}) => {
       // eg typically base player sprite first, then clothing, then equipment
       heroRender([playerSprite, swordSprite])
 
+
+      const stamDisplay = (currentStam / maxStam) * (heroBlockSize - (heroBlockSize / 2))
+
+      if (currentStam < maxStam) {
+        ctx.fillStyle = 'rgba(65, 65, 65, .5)'
+        ctx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, (heroBlockSize - (heroBlockSize / 2)), 4)
+        if (currentStam > maxStam - maxStam / 3) {
+          ctx.fillStyle = 'rgba(57, 201, 237, .7)'
+        } else if (currentStam > maxStam - (maxStam / 3) * 2) {
+          ctx.fillStyle = 'rgb(240, 143, 33, .7)'
+        } else {
+          ctx.fillStyle = 'rgb(240, 57, 33, .7)'
+        }
+        ctx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, stamDisplay, 4)
+      }
+
+      foregroundSprite.draw()
 
 
 
