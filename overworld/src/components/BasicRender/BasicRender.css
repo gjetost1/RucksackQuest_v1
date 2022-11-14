@@ -8,15 +8,13 @@
 }
 
 #canvas-container {
-  /* width: 100vw;
-  height: 100vh; */
   position: relative;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  border: 2px solid rgb(128, 128, 128);
-  border: 2px solid rgba(255, 255, 255, 0);
-  background-color: gray;
+  /* display: flex; */
+  /* justify-content: flex-end; */
+  /* align-items: flex-end; */
+  /* border: 2px solid rgb(128, 128, 128); */
+  /* border: 2px solid rgba(255, 255, 255, 0); */
+  /* background-color: gray; */
   /* background-color: rgb(255, 192, 150); */
   /* background-color: rgb(119, 183, 168); */
   padding: 0px;
@@ -51,7 +49,7 @@
   /* mix-blend-mode: soft-light; */
   /* mix-blend-mode: color; */
   mix-blend-mode: color-burn;
-  opacity: .2;
+  opacity: .1;
 }
 
 .color-tone::after {
@@ -71,7 +69,7 @@
   /* background-size: 4px 4px; */
   pointer-events: none;
   mix-blend-mode: normal;
-  opacity: .3;
+  opacity: .2;
 }
 
 .blur {
@@ -81,7 +79,8 @@
   bottom: 0;
   right: 0;
   /* background-color: white; */
-  backdrop-filter: blur(0px) brightness(120%) contrast(100%) saturate(100%);
+  /* backdrop-filter: blur(0px) brightness(120%) contrast(100%) saturate(100%); */
+  backdrop-filter: blur(0px) brightness(120%) contrast(80%) saturate(100%);
   /* filter: blur(5px); */
   z-index: 103;
   /* mix-blend-mode: color-burn; */
@@ -93,7 +92,9 @@
   /* filter: contrast(160%) saturate(200%) brightness(200%); */
   /* filter: contrast(180%) brightness(130%); */
   /* filter: brightness(110%) contrast(120%) saturate(85%); */
-  /* image-rendering: pixelated; */
+  image-rendering: pixelated;
+  /* width: 99vw; */
+  /* height: 97vh; */
 }
 
 

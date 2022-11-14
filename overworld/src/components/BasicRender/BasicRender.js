@@ -3,7 +3,8 @@ import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
 // import background_1 from '../../assets/backgrounds/test/map_test_2.png'
-import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
+// import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
+import background_1 from '../../assets/backgrounds/river_style_test.png'
 import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
 
 
@@ -81,11 +82,11 @@ const outerBoundary = [
 
 // defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
-  {x: blockSize * 7, y: blockSize * 3, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  {x: blockSize * 17, y: blockSize * 2, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  {x: blockSize * 17, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  {x: blockSize * 2, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  {x: blockSize * 11, y: blockSize * 3, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
+  // {x: blockSize * 7, y: blockSize * 3, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  // {x: blockSize * 17, y: blockSize * 2, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  // {x: blockSize * 17, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  // {x: blockSize * 2, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  // {x: blockSize * 11, y: blockSize * 3, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
 ]
 
 // const innerBoundary = [
@@ -500,21 +501,39 @@ const BasicRender = ({}) => {
 
 
       // ability display with cooldown level
+      if (!attackCooldownOff) {
       const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * 20
       ctx.fillStyle = 'rgb(65, 65, 65)'
-      ctx.fillRect(106 + uiDrift, height - 22, 22, 22)
+      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize, 22, 22)
       if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
         ctx.fillStyle = 'rgb(57, 201, 237)'
-        ctx.fillRect(107 + uiDrift, height - 21, 20, 20)
+        ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize + 1, 20, 20)
       } else {
         ctx.fillStyle = 'rgb(240, 57, 33)'
-        ctx.fillRect(107 + uiDrift, height - cooldownDisplay - 1, 20, cooldownDisplay)
+        ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize + 21 - cooldownDisplay, 20, cooldownDisplay)
       }
 
-      ctx.fillStyle = grdHighlight
-      ctx.fillRect(108 + uiDrift, height - 20, 18, 18)
+      // ctx.fillStyle = grdHighlight
+      // ctx.fillRect(playerSprite.position.x, playerSprite.position.y, 18, 18)
+      ctx.drawImage(swordIcon, playerSprite.position.x - 2, playerSprite.position.y + heroBlockSize - 2, 24, 24)
+    }
 
-      ctx.drawImage(swordIcon, 105 + uiDrift, height - 23, 24, 24)
+      // // ability display with cooldown level
+      // const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * 20
+      // ctx.fillStyle = 'rgb(65, 65, 65)'
+      // ctx.fillRect(106 + uiDrift, height - 22, 22, 22)
+      // if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
+      //   ctx.fillStyle = 'rgb(57, 201, 237)'
+      //   ctx.fillRect(107 + uiDrift, height - 21, 20, 20)
+      // } else {
+      //   ctx.fillStyle = 'rgb(240, 57, 33)'
+      //   ctx.fillRect(107 + uiDrift, height - cooldownDisplay - 1, 20, cooldownDisplay)
+      // }
+
+      // ctx.fillStyle = grdHighlight
+      // ctx.fillRect(108 + uiDrift, height - 20, 18, 18)
+
+      // ctx.drawImage(swordIcon, 105 + uiDrift, height - 23, 24, 24)
 
 
       // this draws all interior objects that have collision
@@ -574,7 +593,7 @@ const BasicRender = ({}) => {
         ctx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, stamDisplay, 4)
       }
 
-      foregroundSprite.draw()
+      // foregroundSprite.draw()
 
 
 
