@@ -28,20 +28,20 @@ const hudRender = (ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, 
   }
 
   // ability display with cooldown level
-  if (!attackCooldownOff) {
-    const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * (upscale * 3)
-    ctx.fillStyle = 'rgb(65, 65, 65)'
-    ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 3, upscale * 3)
-    if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
-      ctx.fillStyle = 'rgb(57, 201, 237)'
-      ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 3, upscale * 3)
-    } else {
-      ctx.fillStyle = 'rgb(240, 57, 33)'
-      ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize + (upscale * 3) - cooldownDisplay, upscale * 3, cooldownDisplay)
-    }
+  // if (!attackCooldownOff) {
+  //   const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * (upscale * 2)
+  //   ctx.fillStyle = 'rgb(65, 65, 65)'
+  //   ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 2, upscale * 2)
+  //   if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
+  //     ctx.fillStyle = 'rgb(57, 201, 237)'
+  //     ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 2, upscale * 2)
+  //   } else {
+  //     ctx.fillStyle = 'rgb(240, 57, 33)'
+  //     ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize + (upscale * 2) - cooldownDisplay, upscale * 2, cooldownDisplay)
+  //   }
 
-    // ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 7, upscale * 7)
-  }
+  //   // ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 7, upscale * 7)
+  // }
 
 }
 

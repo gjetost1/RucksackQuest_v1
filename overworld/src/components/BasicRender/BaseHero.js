@@ -1,12 +1,12 @@
 import { hero_spritesheets, sword_spritesheets } from "./spriteRef"
 
-const upscale = 4
+import globalVars from "./GlobalVars"
 
 const baseHero = {
-  x: 620,
-  y: 380,
-  blockSize: 16 * upscale,
-  upscale: upscale,
+  x: globalVars.width / 2 - globalVars.blockSize,
+  y: globalVars.height / 2 - globalVars.blockSize,
+  blockSize: globalVars.blockSize,
+  upscale: globalVars.upscale,
   heroSpriteSize: 64,
   heroCropX: 0,
   heroCropY: 0,

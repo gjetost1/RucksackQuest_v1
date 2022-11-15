@@ -60,7 +60,7 @@
   /* mix-blend-mode: color-burn; */
   opacity: .2;
   overflow: hidden;
-  animation: pixel_fade 10s ease-in-out;
+  /* animation: pixel_fade 10s ease-in-out; */
 }
 
 .scanline-tone {
@@ -84,7 +84,7 @@
   mix-blend-mode: normal;
   opacity: .3;
   overflow: hidden;
-  animation: scanline-fade 10s ease-in-out;
+  /* animation: scanline-fade 10s ease-in-out; */
 }
 
 .blur {
@@ -105,7 +105,7 @@
 }
 
 
-#canvas {
+#backgroundCanvas {
   /* filter: contrast(160%) saturate(200%) brightness(200%); */
   /* filter: contrast(180%) brightness(130%); */
   /* filter: brightness(110%) contrast(120%) saturate(85%); */
@@ -114,7 +114,34 @@
   image-rendering: pixelated;
   width: fit-content;
   height: fit-content;
-  animation: scale-background 10s ease-in-out;
+  z-index: 2;
+  /* animation: scale-background 10s ease-in-out; */
+}
+
+#spriteCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  z-index: 3;
+  /* animation: scale-background 10s ease-in-out; */
+}
+
+#foregroundCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  z-index: 3;
+  /* animation: scale-background 10s ease-in-out; */
 }
 
 @keyframes pixel_fade {
@@ -153,7 +180,7 @@
 @keyframes scanline-fade {
   0%{
     opacity: 0;
-  } 70%{
+  } 80%{
     opacity: 0;
   } 100% {
     opacity: .3;
