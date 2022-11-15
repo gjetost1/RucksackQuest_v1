@@ -122,7 +122,7 @@ const moveEngine = (moveObj) => {
     spriteAnimSpeed = 2
     maxVel = boostMaxVel
     dashBoost = topDashBoost
-    moveSpeed = 8
+    moveSpeed = 80
     // drains stamina if dash is active and there is directional input
     if (currentStam > 0 && keysPressed) {
       currentStam = currentStam - 1
