@@ -3,8 +3,8 @@ import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
 // import background_1 from '../../assets/backgrounds/test/map_test_2.png'
-// import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
-import background_1 from '../../assets/backgrounds/river_style_test.png'
+import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
+// import background_1 from '../../assets/backgrounds/river_style_test.png'
 import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
 
 
@@ -488,7 +488,7 @@ const BasicRender = ({}) => {
       }
 
 
-      // foregroundSprite.draw()
+      foregroundSprite.draw()
 
 
     }

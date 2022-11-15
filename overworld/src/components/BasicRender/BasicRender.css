@@ -20,6 +20,8 @@
   padding: 0px;
   /* padding-top: -1px; */
   overflow: hidden;
+  width: fit-content;
+  height: fit-content;
 }
 
 #instructions {
