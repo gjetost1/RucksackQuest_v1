@@ -9,15 +9,16 @@
 
 #canvas-container {
   position: relative;
-  /* display: flex; */
-  /* justify-content: flex-end; */
-  /* align-items: flex-end; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   /* border: 2px solid rgb(128, 128, 128); */
   /* border: 2px solid rgba(255, 255, 255, 0); */
   /* background-color: gray; */
   /* background-color: rgb(255, 192, 150); */
   /* background-color: rgb(119, 183, 168); */
   padding: 0px;
+  /* padding-top: -1px; */
   overflow: hidden;
 }
 
@@ -26,14 +27,16 @@
   user-select: none;
 }
 
-.color-tone::before {
+.pixel-tone {
   content: " ";
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  margin-top: -3px;
+  /* width: 100%; */
+  /* height: 100%; */
+  margin-top: -4px;
   /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 100%); */
   /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 80%); */
   /* background: black; */
@@ -41,36 +44,41 @@
   /* background: linear-gradient(rgba(255, 0, 0, .1) 33%, rgba(0, 255, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
   /* background: linear-gradient(rgba(255, 0, 0, .12) 25%, rgba(0, 255, 0, .1) 25%, 50%, rgba(0, 0, 255, .1) 50%, 75%, rgba(0, 0, 0, 0.3) 75%); */
   /* background: linear-gradient(90deg, rgba(0, 255, 0, .1) 33%, rgba(255, 0, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
-  /* background: linear-gradient(90deg, rgba(0, 255, 0, .1) 33%, rgba(255, 0, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
-  z-index: 103;
+  /* background: linear-gradient(90deg, rgba(0, 255, 0, .3) 33%, rgba(255, 0, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
+  z-index: 102;
   /* background-size:  4px 4px; */
   background-size:  4px 4px;
+  background-position: center;
   pointer-events: none;
-  /* mix-blend-mode: hard-light; */
-  /* mix-blend-mode: soft-light; */
+  mix-blend-mode: hard-light;
+  /* mix-blend-mode: soft-light;ssa */
   /* mix-blend-mode: color; */
   /* mix-blend-mode: color-burn; */
-  opacity: .15;
+  opacity: .3;
+  animation: pixel_fade 15s ease-in-out infinite alternate;
 }
 
-.color-tone::after {
+.scanline-tone {
   content: " ";
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  margin-top: -2px;
+  /* width: 100%; */
+  /* height: 100%; */
+  margin-top: -3px;
   /* background: linear-gradient(90deg, rgba(0, 255, 0, .1) 33%, rgba(255, 0, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
   /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, 50%, rgb(0, 0, 0) 100%); */
   /* background: linear-gradient(rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 70%), linear-gradient(90deg, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, .2) 70%); */
   background: linear-gradient(rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 70%);
-  z-index: 102;
+  z-index: 103;
   background-size: 100% 4px;
   /* background-size: 4px 4px; */
   pointer-events: none;
   mix-blend-mode: normal;
-  opacity: .2;
+  opacity: .4;
+  animation: scanline-fade 15s ease-in-out infinite alternate;
 }
 
 .blur {
@@ -81,7 +89,7 @@
   right: 0;
   /* background-color: white; */
   /* backdrop-filter: blur(0px) brightness(120%) contrast(100%) saturate(100%); */
-  backdrop-filter: blur(0px) brightness(110%) contrast(100%) saturate(100%);
+  backdrop-filter: blur(0px) brightness(116%) contrast(100%) saturate(100%);
   /* filter: blur(5px); */
   z-index: 103;
   /* mix-blend-mode: color-burn; */
@@ -93,9 +101,53 @@
   /* filter: contrast(160%) saturate(200%) brightness(200%); */
   /* filter: contrast(180%) brightness(130%); */
   /* filter: brightness(110%) contrast(120%) saturate(85%); */
-  image-rendering: pixelated;
   /* width: 99vw; */
   /* height: 100vh; */
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  animation: scale-background 15s ease-in-out infinite alternate;
+}
+
+@keyframes pixel_fade {
+  0%{
+    /* mix-blend-mode: normal; */
+    background-size:  26px 26px;
+    opacity: 1;
+    margin-top: -27px;
+    /* margin-left: 14px; */
+
+  } 100% {
+    mix-blend-mode: hard-light;
+    background-size:  4px 4px;
+    opacity: .3;
+    margin-top: -4px;
+    /* margin-left: 0px; */
+
+  }
+}
+
+@keyframes scale-background {
+  0%{
+    width: 651%;
+    height: 642%;
+
+
+  } 100% {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@keyframes scanline-fade {
+  0%{
+    opacity: 0;
+
+  } 70%{
+    opacity: 0;
+  } 100% {
+    opacity: .4;
+  }
 }
 
 

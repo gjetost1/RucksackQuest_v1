@@ -34,13 +34,13 @@ const hudRender = (ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, 
     ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 5, upscale * 5)
     if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
       ctx.fillStyle = 'rgb(57, 201, 237)'
-      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize + 1, upscale * 5, upscale * 5)
+      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 5, upscale * 5)
     } else {
       ctx.fillStyle = 'rgb(240, 57, 33)'
-      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize + upscale * 5 - cooldownDisplay, upscale * 5, cooldownDisplay)
+      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize + (upscale * 5) - cooldownDisplay, upscale * 5, cooldownDisplay)
     }
 
-    ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 5, upscale * 5)
+    ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 6, upscale * 5)
   }
 
 }

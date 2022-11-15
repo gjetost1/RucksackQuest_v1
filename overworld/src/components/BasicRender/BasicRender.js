@@ -28,6 +28,8 @@ const height = 192 * upscale
 const width = 336 * upscale
 const blockSize = 16 * upscale   // size of each grid block in pixels for collison objects
 let baseHero = baseHeroGet
+
+
 // const blockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
 // const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 // const heroSpriteSize = 64   // size of sprite we want to grab from the spritesheet (must be actual resolution)
@@ -175,8 +177,6 @@ const BasicRender = ({}) => {
   // let attackCooldownOff = true
   const canvasRef = useRef(null)
 
-
-
   useEffect(() => {
 
 
@@ -295,6 +295,10 @@ const BasicRender = ({}) => {
     })
 
     const animate = () => {
+
+
+
+
 
       // moveObj = { // object passed to MoveEngine to get next frame movement
       //   x: playerSprite.position.x,
@@ -502,8 +506,9 @@ const BasicRender = ({}) => {
         {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id='canvas-container'>
         <canvas id='canvas' ref={canvasRef} height={height} width={width} />
-        <div className='blur'></div>
-        <div className='color-tone'></div>
+        <div className='blur' ></div>
+        <div className='scanline-tone'></div>
+        <div className='pixel-tone'></div>
       </div>
     </div>
   )
