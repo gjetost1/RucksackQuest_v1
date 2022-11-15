@@ -3,8 +3,8 @@ import { hero_spritesheets, sword_spritesheets } from "./spriteRef"
 const upscale = 4
 
 const baseHero = {
-  x: 100,
-  y: 100,
+  x: 620,
+  y: 380,
   blockSize: 16 * upscale,
   upscale: upscale,
   heroSpriteSize: 64,
