@@ -88,11 +88,11 @@ const outerBoundary = [
 
 // defines collision boxes inside scene, also these will be drawn to the canvas
 const innerBoundary = [
-  // {x: blockSize * 7, y: blockSize * 3, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  // {x: blockSize * 17, y: blockSize * 2, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  // {x: blockSize * 17, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  // {x: blockSize * 2, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
-  // {x: blockSize * 11, y: blockSize * 3, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 7, y: blockSize * 3, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 17, y: blockSize * 2, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 17, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 2, y: blockSize * 10, xBlocks: 1, yBlocks: 1, gridSize: blockSize},
+  {x: blockSize * 11, y: blockSize * 3, xBlocks: 3, yBlocks: 1, gridSize: blockSize},
 ]
 
 // const innerBoundary = [

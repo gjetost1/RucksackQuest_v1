@@ -1,5 +1,6 @@
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 import pixelPerfect from './PixelPerfect'
+import baseHero from './BaseHero'
 
 const baseAnimSpeed = 2
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
@@ -481,7 +482,7 @@ baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroD
 // returns false if there is a collision and true if there is not
 const checkCollision = (x, y, cMasks, blockSize, corner) => {
   const colBuffer = 4 // number of pixels away from hero that detectors sit
-  const horzBuffer = 20
+  const horzBuffer = 4
   const vertBuffer = 12
   const heroColBox = [
     // array of coordinates for all detectors of hero object
@@ -489,10 +490,10 @@ const checkCollision = (x, y, cMasks, blockSize, corner) => {
     [colBuffer + horzBuffer, vertBuffer * 2],
     [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
     [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
-    [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer],
-    [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer],
-    [colBuffer + horzBuffer, blockSize - vertBuffer],
-    [horzBuffer, blockSize - colBuffer - vertBuffer]
+    [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (baseHero.upscale * 2)],
+    [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (baseHero.upscale * 2)],
+    [colBuffer + horzBuffer, blockSize - vertBuffer  + (baseHero.upscale * 2)],
+    [horzBuffer, blockSize - colBuffer - vertBuffer  + (baseHero.upscale * 2)]
   ]
 
   // const heroColBox = [
