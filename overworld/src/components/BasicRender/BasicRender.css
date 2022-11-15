@@ -49,8 +49,8 @@
   /* mix-blend-mode: hard-light; */
   /* mix-blend-mode: soft-light; */
   /* mix-blend-mode: color; */
-  mix-blend-mode: color-burn;
-  opacity: .1;
+  /* mix-blend-mode: color-burn; */
+  opacity: .15;
 }
 
 .color-tone::after {
@@ -81,7 +81,7 @@
   right: 0;
   /* background-color: white; */
   /* backdrop-filter: blur(0px) brightness(120%) contrast(100%) saturate(100%); */
-  backdrop-filter: blur(0px) brightness(120%) contrast(80%) saturate(100%);
+  backdrop-filter: blur(0px) brightness(110%) contrast(100%) saturate(100%);
   /* filter: blur(5px); */
   z-index: 103;
   /* mix-blend-mode: color-burn; */

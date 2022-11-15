@@ -1,6 +1,7 @@
 const inputEngine = (keys) => {
-
+  // console.log(keys)
   let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
+
 
   // event listener for directional movement input
   document.addEventListener('keydown', function(playerWalk) {
@@ -9,6 +10,7 @@ const inputEngine = (keys) => {
       case 'W':
       case 'ArrowUp':
         keys.ArrowUp.pressed = true
+        // console.log('up')
         lastKeyDown = 'ArrowUp'
         // console.log('Walk Up')
       break;
@@ -118,7 +120,7 @@ const inputEngine = (keys) => {
   // 1 is middle mouse button
   // 2 is left mouse button
   document.addEventListener('pointerdown', (action) => {
-    console.log(action.button)
+    // console.log(action.button)
     switch(action.button) {
       case 0:
         keys.mouse1.pressed = true

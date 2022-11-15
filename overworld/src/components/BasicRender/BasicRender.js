@@ -12,7 +12,7 @@ import heroRender from './HeroRender'
 import hudRender from './HUDRender'
 import attackRender from './AttackRender'
 import inputEngine from './InputEngine'
-import baseHero from './BaseHero'
+import baseHeroGet from './BaseHero'
 
 
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
@@ -27,7 +27,8 @@ const upscale = 4 // multiplier for resolution - 2 means each visible pixel is 2
 const height = 192 * upscale
 const width = 336 * upscale
 const blockSize = 16 * upscale   // size of each grid block in pixels for collison objects
-// const heroBlockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
+let baseHero = baseHeroGet
+// const blockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
 // const heroSpriteSize = 16 * upscale   // size of sprite we want to grab from the spritesheet
 // const heroSpriteSize = 64   // size of sprite we want to grab from the spritesheet (must be actual resolution)
 // let heroCropX = 0
@@ -162,13 +163,15 @@ const cMasks = buildCMask(collisions)
 //   }
 // }
 
+// let keys = baseHero.keys
+
 
 
 const BasicRender = ({}) => {
 
   const swordFx = new Audio(sword_fx)
-  let moveObj = {}
-  let eventObj = {}
+  // let moveObj = {}
+  // let eventObj = {}
   // let attackCooldownOff = true
   const canvasRef = useRef(null)
 
@@ -180,8 +183,8 @@ const BasicRender = ({}) => {
   // const canvas = createCanvas(200, 200)
   const ctx = canvasRef.current.getContext('2d')
 
-  const rectWidth = heroBlockSize
-  const rectHeight = heroBlockSize
+  const rectWidth = baseHero.blockSize
+  const rectHeight = baseHero.blockSize
   const coordX = (width / 2) - (rectWidth)
   const coordY = (height / 2) - (rectHeight / 2)
 
@@ -190,6 +193,8 @@ const BasicRender = ({}) => {
     // this next function sends the keys object to the inputEngine where all the event listeners are for inputs
     // returns keys object which is checked for what keys are currently pressed each frame
     baseHero.keys = inputEngine(baseHero.keys)
+
+    // keys = baseHero.keys
 
     // Sprite is the main class for hero and enemy sprites
     // image is the .png for the spritesheet you are rendering
@@ -214,7 +219,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        ctx.drawImage(this.image, this.crop.x, this.crop.y, heroSpriteSize, heroSpriteSize, this.position.x, this.position.y, rectWidth, rectHeight)
+        ctx.drawImage(this.image, this.crop.x, this.crop.y, baseHero.heroSpriteSize, baseHero.heroSpriteSize, this.position.x, this.position.y, rectWidth, rectHeight)
         // ctx.drawImage(this.image, this.position.x, this.position.y, rectWidth, rectHeight)
       }
     }
@@ -233,33 +238,33 @@ const BasicRender = ({}) => {
 
 
     const playerImage = new Image()
-    playerImage.src = heroSprite
+    playerImage.src = baseHero.heroSprite
 
     const playerSprite = new Sprite({
       image: playerImage,
       position: {
-        x: coordX,
-        y: coordY
+        x: baseHero.x,
+        y: baseHero.y
       },
       crop: {
-        x: heroCropX,
-        y: heroCropY
+        x: baseHero.heroCropX,
+        y: baseHero.heroCropY
       }
     })
 
     const equipImage = new Image()
-    equipImage.src = swordSpriteSheet
+    equipImage.src = baseHero.swordSpriteSheet
 
 
     const swordSprite = new Sprite({
       image: equipImage,
       position: {
-        x: coordX,
-        y: coordY
+        x: baseHero.x,
+        y: baseHero.y
       },
       crop: {
-        x: heroCropX,
-        y: heroCropY
+        x: baseHero.heroCropX,
+        y: baseHero.heroCropY
       }
     })
 
@@ -307,7 +312,7 @@ const BasicRender = ({}) => {
       //   topDashBoost: topDashBoost,
       //   boostMaxVel: boostMaxVel,
       //   dashBoost: dashBoost,
-      //   blockSize: heroBlockSize,
+      //   blockSize: blockSize,
       //   heroSprite: heroSprite,
       //   equipImage: swordSpriteSheet,
       //   heroSpriteSize,
@@ -323,11 +328,12 @@ const BasicRender = ({}) => {
       // is true if any directional input is given, otherwise false
       // let keysPressed = (baseHero.keys.ArrowUp.pressed || baseHero.keys.ArrowDown.pressed || baseHero.keys.ArrowLeft.pressed || baseHero.keys.ArrowRight.pressed)
 
+      // baseHero.keys = keys
       // moveEngine runs less than every frame to keep the hero sprite slower
         if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
           // console.log('running', moveSpeed, xVel, yVel)
           baseHero.frameCountLimiter = 0
-          baseHero = moveEngine(baseHero)
+          baseHero = moveEngine(baseHero, cMasks, blockSize)
         }
 
         baseHero.frameCountLimiter += baseHero.moveSpeed
@@ -337,8 +343,8 @@ const BasicRender = ({}) => {
 
 
 
-        playerSprite.position.x = moveObj.x
-        playerSprite.position.y = moveObj.y
+        playerSprite.position.x = baseHero.x
+        playerSprite.position.y = baseHero.y
 
 
         // playerSprite.position.x = pixelPerfect(moveObj.x, moveObj.heroDirection, 'x', upscale)
@@ -355,100 +361,98 @@ const BasicRender = ({}) => {
         // swordSprite.position.y = moveObj.y
 
 
-        heroSprite = moveObj.heroSprite
-        playerImage.src = heroSprite
+        // heroSprite = moveObj.heroSprite
+        playerImage.src = baseHero.heroSprite
 
-        swordSpriteSheet = moveObj.equipImage
-        equipImage.src = swordSpriteSheet
+        // swordSpriteSheet = moveObj.equipImage
+        equipImage.src = baseHero.swordSpriteSheet
 
 
-        xVel = moveObj.xVel
-        yVel = moveObj.yVel
+        // xVel = moveObj.xVel
+        // yVel = moveObj.yVel
 
-        currentStam = moveObj.currentStam
+        // currentStam = moveObj.currentStam
 
-        heroDirection = moveObj.heroDirection
+        // heroDirection = moveObj.heroDirection
 
-        heroCropX = moveObj.heroCropX
+        // heroCropX = moveObj.heroCropX
 
-        moveSpeed = moveObj.moveSpeed
+        // moveSpeed = moveObj.moveSpeed
 
 
 
         // regenerates stamina - can't do this in moveEngine because that only runs when there is input or velocity
-        if (currentStam < maxStam) {
-          currentStam = currentStam + .05
-        } else {
-          currentStam = maxStam
-        }
+        // if (baseHero.currentStam < baseHero.maxStam) {
+        //   baseHero.currentStam = baseHero.currentStam + .05
+        // } else {
+        //   baseHero.currentStam = baseHero.maxStam
+        // }
 
 
-        rateAccel = moveObj.rateAccel
-        rateDecel = moveObj.rateDecel
+        // rateAccel = moveObj.rateAccel
+        // rateDecel = moveObj.rateDecel
       // }
 
 
       // calculates and draws attack effects on keypress with cooldown
-      let eventObj = { // object passed to EventEngine to trigger appropriate event
-        x: playerSprite.position.x,
-        y: playerSprite.position.y,
-        heroDirection: heroDirection,
-        eventX: eventX,
-        eventY: eventY,
-        blockSize: blockSize,
-        eventType: 'attack',
-        eventDirection: 'heroFront',
-        eventAreaShape: 'rectangle',
-        eventXDim: 1,
-        eventYDim: 3,
-        eventEffect: {
-          damage: 10
-        },
-        eventDuration: 1,
-        eventTimeout: 1.5,
-        eventAnim: null,
-      }
+      // let eventObj = { // object passed to EventEngine to trigger appropriate event
+      //   x: playerSprite.position.x,
+      //   y: playerSprite.position.y,
+      //   heroDirection: heroDirection,
+      //   eventX: eventX,
+      //   eventY: eventY,
+      //   blockSize: blockSize,
+      //   eventType: 'attack',
+      //   eventDirection: 'heroFront',
+      //   eventAreaShape: 'rectangle',
+      //   eventXDim: 1,
+      //   eventYDim: 3,
+      //   eventEffect: {
+      //     damage: 10
+      //   },
+      //   eventDuration: 1,
+      //   eventTimeout: 1.5,
+      //   eventAnim: null,
+      // }
 
-      if (keys.e.pressed && attackCooldownOff || keys.mouse1.pressed && attackCooldownOff) {
-        attackCooldownOff = false
-        attackActive = true
-        attackAnimation = true
-        coolDownLevel = 0 // sets the var for animating HUD cooldown level
+      if (baseHero.keys.e.pressed && baseHero.attackCooldownOff || baseHero.keys.mouse1.pressed && baseHero.attackCooldownOff) {
+        baseHero.attackCooldownOff = false
+        baseHero.attackActive = true
+        baseHero.attackAnimation = true
+        baseHero.coolDownLevel = 0 // sets the var for animating HUD cooldown level
 
-        // console.log('action')
+        // eventObj = eventEngine(eventObj)
 
-        eventObj = eventEngine(eventObj)
-
-        eventX = eventObj.eventX
-        eventY = eventObj.eventY
+        // eventX = eventObj.eventX
+        // eventY = eventObj.eventY
 
         // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
         const cooldown = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
-          attackCooldownOff = true
+          baseHero.attackCooldownOff = true
           clearTimeout(cooldown)
           // console.log('cooldown over')
-        }, eventObj.eventTimeout * 1000)
+        }, 1500)
 
 
         // sets duration of event, set by eventObj.eventDuration in seconds
         const eventDuration = setTimeout(() => {
           clearTimeout(eventDuration)
-          attackActive = false
+          baseHero.attackActive = false
           // console.log('attack over')
-        }, eventObj.eventDuration * 1000)
+        }, 1000)
 
 
       }
 
       // this increments coolDownLevel which controls the visual cooldown HUD
-      if (!attackCooldownOff) {
-        coolDownLevel += coolDownLevelMax / (eventObj.eventTimeout * 120)
+      if (!baseHero.attackCooldownOff) {
+        baseHero.coolDownLevel += baseHero.coolDownLevelMax / 120
         // coolDownLevel = Math.round(coolDownLevel)
-        if (coolDownLevel >= coolDownLevelMax) {
-          coolDownLevel = coolDownLevelMax
+        if (baseHero.coolDownLevel >= baseHero.coolDownLevelMax) {
+          baseHero.coolDownLevel = baseHero.coolDownLevelMax
         }
       } else {
-        coolDownLevel = 0
+        baseHero.coolDownLevel = 0
       }
 
       window.requestAnimationFrame(animate);
@@ -458,33 +462,29 @@ const BasicRender = ({}) => {
 
 
     // renders stamina bar and cooldown currently
-    hudRender(ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, coolDownLevelMax, upscale, playerSprite, heroBlockSize, swordIcon )
+    hudRender(ctx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, baseHero.upscale, playerSprite, baseHero.blockSize, swordIcon )
 
 
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack
-      if (attackAnimation) {
-        const attackRet = attackRender(heroCropX, heroSpriteSize, swordFx, attackAnimation)
-        heroCropX = attackRet.heroCropX
-        attackAnimation = attackRet.attackAnimation
-        playerSprite.cropChange(heroCropX, heroCropY)
-        swordSprite.cropChange(heroCropX, heroCropY)
+      if (baseHero.attackAnimation) {
+        const attackRet = attackRender(baseHero.heroCropX, baseHero.heroSpriteSize, swordFx, baseHero.attackAnimation)
+        baseHero.heroCropX = attackRet.heroCropX
+        baseHero.attackAnimation = attackRet.attackAnimation
+        playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY)
+        swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY)
         heroRender([playerSprite, swordSprite])
       } else {
         // draws hero sprite image to canvas without attack animation
         // feed in sprite class instances in the order you want them rendered
         // eg typically base player sprite first, then clothing, then equipment
-        playerSprite.cropChange(heroCropX, heroCropY)
-        swordSprite.cropChange(heroCropX, heroCropY)
+        playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY)
+        swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY)
         heroRender([playerSprite, swordSprite])
       }
 
 
       // foregroundSprite.draw()
-
-
-
-
 
 
     }
