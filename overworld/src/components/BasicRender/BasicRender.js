@@ -15,7 +15,8 @@ import inputEngine from './InputEngine'
 import baseHeroGet from './BaseHero'
 
 
-import { hero_spritesheets, sword_spritesheets } from './spriteRef'
+import { hero_spritesheets, sword_spritesheets, arrow_spritesheets } from './spriteRef'
+
 
 import sword_fx from '../../assets/sounds/sword/damage_sound.wav'
 
@@ -28,6 +29,10 @@ const height = 192 * upscale
 const width = 336 * upscale
 const blockSize = 16 * upscale   // size of each grid block in pixels for collison objects
 let baseHero = baseHeroGet
+
+let arrowCropX = 0
+let arrowCropY = 0
+let arrowSpeed = 0
 
 
 // const blockSize = 16 * upscale   // size of each grid block in pixels for hero collison box
@@ -268,6 +273,23 @@ const BasicRender = ({}) => {
       }
     })
 
+    const arrowImage = new Image()
+    arrowImage.src = arrow_spritesheets.indicator_arrow
+
+    const arrowSprite = new Sprite({
+      image: arrowImage,
+      position: {
+        x: baseHero.x,
+        y: baseHero.y - upscale * 3
+      },
+      crop: {
+        x: 0,
+        y: 0
+      }
+    })
+
+    // arrow_spritesheets
+
     const swordIcon = new Image()
     swordIcon.src = sword_spritesheets.icon
 
@@ -356,6 +378,9 @@ const BasicRender = ({}) => {
 
         swordSprite.position.x = playerSprite.position.x
         swordSprite.position.y = playerSprite.position.y
+
+        arrowSprite.position.x = playerSprite.position.x
+        arrowSprite.position.y = playerSprite.position.y - upscale * 4
 
 
         // playerSprite.position.x = moveObj.x
@@ -465,6 +490,7 @@ const BasicRender = ({}) => {
       backgroundSprite.draw()
 
 
+
     // renders stamina bar and cooldown currently
     hudRender(ctx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, baseHero.upscale, playerSprite, baseHero.blockSize, swordIcon )
 
@@ -489,6 +515,17 @@ const BasicRender = ({}) => {
 
 
       foregroundSprite.draw()
+      arrowSpeed++
+      if (arrowSpeed === 12) {
+        if (arrowCropX >= blockSize * 11) {
+          arrowCropX = 0
+        }
+        arrowCropX += blockSize
+        arrowSprite.cropChange(arrowCropX, arrowCropY)
+        arrowSpeed = 0
+      }
+      arrowSprite.draw()
+
 
 
     }

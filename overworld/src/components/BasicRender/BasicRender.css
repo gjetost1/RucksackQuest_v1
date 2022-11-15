@@ -5,6 +5,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow: hidden;
 }
 
 #canvas-container {
@@ -58,6 +59,7 @@
   /* mix-blend-mode: color; */
   /* mix-blend-mode: color-burn; */
   opacity: .2;
+  overflow: hidden;
   animation: pixel_fade 10s ease-in-out;
 }
 
@@ -81,6 +83,7 @@
   pointer-events: none;
   mix-blend-mode: normal;
   opacity: .3;
+  overflow: hidden;
   animation: scanline-fade 10s ease-in-out;
 }
 
@@ -97,7 +100,8 @@
   z-index: 101;
   /* mix-blend-mode: color-burn; */
   /* opacity: .4; */
-  animation: blur 10s ease-in-out;
+  overflow: hidden;
+  /* animation: blur 10s ease-in-out; */
 }
 
 

@@ -29,18 +29,18 @@ const hudRender = (ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, 
 
   // ability display with cooldown level
   if (!attackCooldownOff) {
-    const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * (upscale * 5)
+    const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * (upscale * 3)
     ctx.fillStyle = 'rgb(65, 65, 65)'
-    ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 5, upscale * 5)
+    ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 3, upscale * 3)
     if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
       ctx.fillStyle = 'rgb(57, 201, 237)'
-      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 5, upscale * 5)
+      ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 3, upscale * 3)
     } else {
       ctx.fillStyle = 'rgb(240, 57, 33)'
-      ctx.fillRect(playerSprite.position.x, playerSprite.position.y + heroBlockSize + (upscale * 5) - cooldownDisplay, upscale * 5, cooldownDisplay)
+      ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize + (upscale * 3) - cooldownDisplay, upscale * 3, cooldownDisplay)
     }
 
-    ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 6, upscale * 5)
+    // ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 7, upscale * 7)
   }
 
 }
