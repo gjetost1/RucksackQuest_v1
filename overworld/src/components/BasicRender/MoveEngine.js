@@ -1,6 +1,7 @@
 import { hero_spritesheets, sword_spritesheets } from './spriteRef'
 import pixelPerfect from './PixelPerfect'
 import baseHero from './BaseHero'
+import globalVars from "./GlobalVars"
 
 const baseAnimSpeed = 2
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
@@ -382,8 +383,8 @@ const moveEngine = (baseHero, cMasks, blockSize) => {
 // whole integers since sub pixel accuracy is not needed
 
 
-baseHero.x = pixelPerfect(Math.round(baseHero.x + baseHero.xVel), baseHero.heroDirection, 'x', baseHero.upscale)
-baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroDirection, 'y', baseHero.upscale)
+baseHero.x = pixelPerfect(Math.round(baseHero.x + baseHero.xVel), baseHero.heroDirection, 'x', globalVars.upscale)
+baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroDirection, 'y', globalVars.upscale)
 
 // baseHero.x = Math.round(baseHero.x + baseHero.xVel)
 // baseHero.y = Math.round(baseHero.y + baseHero.yVel)
@@ -490,10 +491,10 @@ const checkCollision = (x, y, cMasks, blockSize, corner) => {
     [colBuffer + horzBuffer, vertBuffer * 2],
     [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
     [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
-    [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (baseHero.upscale * 2)],
-    [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (baseHero.upscale * 2)],
-    [colBuffer + horzBuffer, blockSize - vertBuffer  + (baseHero.upscale * 2)],
-    [horzBuffer, blockSize - colBuffer - vertBuffer  + (baseHero.upscale * 2)]
+    [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
+    [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+    [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+    [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
   ]
 
   // const heroColBox = [

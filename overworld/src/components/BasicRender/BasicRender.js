@@ -6,11 +6,13 @@ import background_1 from '../../assets/backgrounds/test/map_test_2.png'
 // import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
 import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
+import cursor_1 from '../../assets/hand_cursor.png'
 
 import cMasks from './Collisions'
 
 import globalVars from './GlobalVars'
 import heroRender from './HeroRender'
+import cursorRender from './CursorRender'
 import hudRender from './HUDRender'
 import attackRender from './AttackRender'
 import inputEngine from './InputEngine'
@@ -27,7 +29,16 @@ const height = globalVars.height
 const width = globalVars.width
 const blockSize = globalVars.blockSize   // size of each grid block in pixels for collison objects
 let baseHero = baseHeroGet
+let cursorX = 0
+let cursorY = 0
 
+document.addEventListener('mousemove', (action) => {})
+onmousemove = (event) => {
+  // console.log('movement!')
+  cursorX = event.offsetX
+  cursorY = event.offsetY
+  console.log(cursorX, cursorY)
+};
 
 const BasicRender = ({}) => {
 
@@ -40,6 +51,7 @@ const BasicRender = ({}) => {
   const backgroundCanvas = useRef(null)
   const spriteCanvas = useRef(null)
   const foregroundCanvas = useRef(null)
+  const cursorCanvas = useRef(null)
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
@@ -51,6 +63,7 @@ const BasicRender = ({}) => {
   const backgroundCtx = backgroundCanvas.current.getContext('2d')
   const spriteCtx = spriteCanvas.current.getContext('2d')
   const foregroundCtx = foregroundCanvas.current.getContext('2d')
+  const cursorCtx = cursorCanvas.current.getContext('2d')
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .7
@@ -144,10 +157,11 @@ const BasicRender = ({}) => {
 
 
 
+    const cursor = new Image()
+    cursor.src = cursor_1
 
     const swordIcon = new Image()
     swordIcon.src = sword_spritesheets.icon
-
 
     const background = new Image()
     background.src = background_1
@@ -177,6 +191,7 @@ const BasicRender = ({}) => {
       backgroundCtx.clearRect(0, 0, width, height)
       spriteCtx.clearRect(0, 0, width, height)
       foregroundCtx.clearRect(0, 0, width, height)
+      cursorCtx.clearRect(0, 0, width, height)
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
@@ -288,7 +303,7 @@ const BasicRender = ({}) => {
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()
-
+      cursorRender(cursorCtx, cursor, cursorX, cursorY)
     }
 
     animate();
@@ -301,10 +316,12 @@ const BasicRender = ({}) => {
     <div id='main-container'>
         {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id='canvas-container'>
+        <div id='sizing' style={{height: height, width: width}}></div>
         <canvas id='backgroundCanvas' ref={backgroundCanvas} height={height} width={width} />
         <canvas id='spriteCanvas' ref={spriteCanvas} height={height} width={width} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={height} width={width} />
-        <div className='blur' ></div>
+        <canvas id='cursorCanvas' ref={cursorCanvas} height={height} width={width} />
+        <div className='blur'></div>
         <div className='scanline-tone'></div>
         <div className='pixel-tone'></div>
       </div>

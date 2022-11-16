@@ -23,6 +23,8 @@
   overflow: hidden;
   width: fit-content;
   height: fit-content;
+  cursor: none;
+
 }
 
 #instructions {
@@ -60,7 +62,7 @@
   /* mix-blend-mode: color-burn; */
   opacity: .2;
   overflow: hidden;
-  /* animation: pixel_fade 10s ease-in-out; */
+  /* animation: pixel_fade 6s ease-in-out; */
 }
 
 .scanline-tone {
@@ -84,7 +86,7 @@
   mix-blend-mode: normal;
   opacity: .3;
   overflow: hidden;
-  /* animation: scanline-fade 10s ease-in-out; */
+  /* animation: scanline-fade 6s ease-in-out; */
 }
 
 .blur {
@@ -101,7 +103,7 @@
   /* mix-blend-mode: color-burn; */
   /* opacity: .4; */
   overflow: hidden;
-  /* animation: blur 10s ease-in-out; */
+  /* animation: blur 6s ease-in-out; */
 }
 
 
@@ -111,11 +113,16 @@
   /* filter: brightness(110%) contrast(120%) saturate(85%); */
   /* width: 99vw; */
   /* height: 100vh; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   image-rendering: pixelated;
   width: fit-content;
   height: fit-content;
   z-index: 2;
-  /* animation: scale-background 10s ease-in-out; */
+  /* animation: scale-background 6s ease-in-out; */
 }
 
 #spriteCanvas {
@@ -128,7 +135,7 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  /* animation: scale-background 10s ease-in-out; */
+  /* animation: scale-background 6s ease-in-out; */
 }
 
 #foregroundCanvas {
@@ -141,7 +148,20 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  /* animation: scale-background 10s ease-in-out; */
+  /* animation: scale-background 6s ease-in-out; */
+}
+
+#cursorCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  z-index: 3;
+  /* animation: scale-background 6s ease-in-out; */
 }
 
 @keyframes pixel_fade {
@@ -165,13 +185,13 @@
 
 @keyframes scale-background {
   0%{
-    /* width: 660%; */
+    width: 660%;
     height: 653%;
     image-rendering: optimizeSpeed;
     /* width: 651%;
     height: 642%; */
   } 100% {
-    /* width: 100%; */
+    width: 100%;
     height: 100%;
     image-rendering: pixelated;
   }

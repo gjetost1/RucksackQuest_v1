@@ -145,7 +145,7 @@ const inputEngine = (keys) => {
 
   // disables right-click context menu since this messes with input registration
   // and also lets you use the right mouse button for input
-  window.addEventListener('contextmenu', (e) => {
+  document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
   }, false);
 
