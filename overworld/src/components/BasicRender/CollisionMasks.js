@@ -4,7 +4,7 @@ const width = globalVars.width
 const height = globalVars.height
 // defines the outer bounds of the scene for collision purposes
 const outerBoundary = [
-  {x: -blockSize, y: -blockSize / 2, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize}, // this one covers the hud bar at the top
+  {x: -blockSize, y: -blockSize / 2, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize}, 
   {x: -blockSize, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
   {x: width, y: -blockSize, xBlocks: 1, yBlocks: height / blockSize + 2, gridSize: blockSize},
   {x: -blockSize, y: height, xBlocks: width / blockSize + 2, yBlocks: 1, gridSize: blockSize},
@@ -39,7 +39,7 @@ const getDimension = (boundary) => {
 
 // buildCMask takes the collisions array and creates coordinates for each collision object
 // so we can check for collisions
-const buildCMask = (collisions) => {
+export const buildCMask = (collisions) => {
   const cMaskBuild = []
   for (let el of collisions) {
     cMaskBuild.push(getDimension(el))
