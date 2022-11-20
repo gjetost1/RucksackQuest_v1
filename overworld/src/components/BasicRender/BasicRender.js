@@ -438,6 +438,13 @@ const BasicRender = ({}) => {
         }, eventObj.eventDuration * 1000)
 
 
+    // nothing
+
+    grass_2.currentDelayFrame++
+    // console.log(grass_1.currentDelayFrame)
+    if (grass_2.currentDelayFrame >= grass_2.delay) {
+      grass_2.currentAnimFrame++
+    }
       }
 
       // this increments coolDownLevel which controls the visual cooldown HUD
