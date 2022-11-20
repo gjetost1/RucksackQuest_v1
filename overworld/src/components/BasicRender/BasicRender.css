@@ -4,13 +4,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  /* flex-direction: column; */
   overflow: hidden;
 }
 
 #canvas-container {
   position: relative;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   /* border: 2px solid rgb(128, 128, 128); */
@@ -24,7 +24,8 @@
   width: fit-content;
   height: fit-content;
   cursor: none;
-
+  /* animation: canvas_scale 10s ease-in-out; */
+  transform-origin: center;
 }
 
 #instructions {
@@ -62,7 +63,7 @@
   /* mix-blend-mode: color-burn; */
   opacity: .2;
   overflow: hidden;
-  /* animation: pixel_fade 6s ease-in-out; */
+  animation: pixel_fade 20s ease-in-out;
 }
 
 .scanline-tone {
@@ -86,7 +87,7 @@
   mix-blend-mode: normal;
   opacity: .3;
   overflow: hidden;
-  /* animation: scanline-fade 6s ease-in-out; */
+  animation: scanline-fade 20s ease-in-out;
 }
 
 .blur {
@@ -122,7 +123,9 @@
   width: fit-content;
   height: fit-content;
   z-index: 2;
-  /* animation: scale-background 6s ease-in-out; */
+  animation: scale-background 20s ease-in-out;
+  transform-origin: center;
+
 }
 
 #spriteCanvas {
@@ -135,7 +138,9 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  /* animation: scale-background 6s ease-in-out; */
+  animation: scale-background 20s ease-in-out;
+  transform-origin: center;
+
 }
 
 #foregroundCanvas {
@@ -148,7 +153,9 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  /* animation: scale-background 6s ease-in-out; */
+  animation: scale-background 20s ease-in-out;
+  transform-origin: center;
+
 }
 
 #cursorCanvas {
@@ -161,7 +168,9 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  /* animation: scale-background 6s ease-in-out; */
+  animation: scale-background 20s ease-in-out;
+  transform-origin: center;
+
 }
 
 @keyframes pixel_fade {
@@ -182,17 +191,37 @@
 
   }
 }
+@keyframes canvas_scale {
+  0%{
+    /* mix-blend-mode: multiply; */
+    background-size:  26px 26px;
+    /* transform: scale(6.5, 6.5); */
+    margin-top: -26px;
+    margin-left: -13px;
+
+  } 100% {
+    /* mix-blend-mode: hard-light; */
+    background-size:  4px 4px;
+    /* transform: scale(1, 1); */
+    margin-top: -4px;
+    margin-left: 0px;
+    /* mix-blend-mode: multiply; */
+
+  }
+}
 
 @keyframes scale-background {
   0%{
-    width: 660%;
-    height: 653%;
+    /* width: 660%; */
+    /* height: 653%; */
+    transform: scale(6.5, 6.5);
     image-rendering: optimizeSpeed;
     /* width: 651%;
     height: 642%; */
   } 100% {
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
+    transform: scale(1, 1);
     image-rendering: pixelated;
   }
 }

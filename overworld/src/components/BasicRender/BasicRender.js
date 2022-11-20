@@ -43,7 +43,7 @@ onmousemove = (event) => {
   cursorY = event.y - globalVars.windowSpacerHeight
 }
 
-const grassPatch = generatePatch(900, 300, 7, 7, [grass_1, grass_2])
+const grassPatch = generatePatch(500, 300, 7, 7, [grass_1, grass_2])
 // const grassPatch2 = generatePatch(0, 64, 3, 2, grass_1)
 
 
