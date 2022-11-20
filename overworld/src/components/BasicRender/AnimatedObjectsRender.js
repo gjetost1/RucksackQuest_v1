@@ -56,19 +56,21 @@ const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) 
        && baseHero.y + (baseHero.blockSize / 2) > el.y
       && baseHero.x + baseHero.blockSize > el.x + (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
       && baseHero.x < el.x + el.img.blockSize - (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
-      && breakActive
+      && baseHero.attackActive
       ) {
-      continue
-    }
-    if (baseHero.y < el.y
+        el.maxCropMultiply = el.breakImgFrames
+        foregroundCtx.drawImage(el.img.breakImg, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
+    } else if (baseHero.y < el.y
       //  && baseHero.y + (baseHero.blockSize / 2) > el.y
       // && baseHero.x + baseHero.blockSize > el.x + (el.img.blockSize - el.img.blockSize * el.img.xScale)
       // && baseHero.x < el.x + el.img.blockSize - (el.img.blockSize - el.img.blockSize * el.img.xScale)
       ) {
       foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
+    } else {
+
+      backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     }
 
-    backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
   }
 }
 
