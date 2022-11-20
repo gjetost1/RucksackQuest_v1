@@ -305,6 +305,8 @@ const BasicRender = ({}) => {
       grass_1.currentDelayFrame = 0
     }
 
+    // nothing
+
     grass_2.currentDelayFrame++
     // console.log(grass_1.currentDelayFrame)
     if (grass_2.currentDelayFrame >= grass_2.delay) {
