@@ -17,8 +17,6 @@ import sword_upleft from '../../assets/sprites/hero_sword/hero_sword_upleft.png'
 import sword_upright from '../../assets/sprites/hero_sword/hero_sword_upright.png'
 import sword_icon from '../../assets/sprites/hero_sword/sword_icon.png'
 
-import indicator_arrow from '../../assets/sprites/indicator_arrow/indicator_arrow.png'
-
 export const hero_spritesheets = {
   up,
   down,
@@ -40,8 +38,4 @@ export const sword_spritesheets = {
   upleft: sword_upleft,
   upright: sword_upright,
   icon: sword_icon
-}
-
-export const arrow_spritesheets = {
-  indicator_arrow
 }
