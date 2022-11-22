@@ -2,10 +2,13 @@ import globalVars from "./GlobalVars"
 import checkCollision from "./CheckCollision"
 import { buildCMask } from "./CollisionMasks"
 
+import grass_cut_1 from '../../assets/sounds/grass/grass_cut_1.wav'
+
 // const widthBlocks = GlobalVars.width / GlobalVars.blockSize
 // const widthBlocks = GlobalVars.height / GlobalVars.blockSize
 
 let breakActive = false
+const grass_cut_1_fx = new Audio(grass_cut_1)
 
 // generatePatch creates a patch of whatever animateImage you pass as argument img
 // see AnimatedObjects.js for example of format of object to pass here
@@ -14,6 +17,7 @@ let breakActive = false
 // places each image as its full width and height, less than that crunches them
 // together.
 export const generatePatch = (startX, startY, height, width, img) => {
+
   const xSpace = img[0].blockSize * img[0].xScale
   const ySpace = img[0].blockSize * img[0].yScale
   const returnArr = []
@@ -109,6 +113,8 @@ if (!windBlow) {
     && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 3)
 
     if (!collision && !el.img.breaking && !el.img.destroyed) {
+      grass_cut_1_fx.volume = 0.2;
+      grass_cut_1_fx.play();
       el.img.breaking = true
       el.img.cropX = (el.img.maxAnimFrame ) * el.img.blockSize
       el.img.animFrameLimit = 14

@@ -5,8 +5,8 @@ const attackRender = (heroCropX, heroSpriteSize, swordFx, attackAnimation) => {
   attackAnimationCounter++
   if (attackAnimationCounter < attackAnimationMaxCount / 4) {
     heroCropX = heroSpriteSize * 7
-    swordFx.volume = 0.1;
-    swordFx.play();
+    swordFx.volume = 0.05
+    swordFx.play()
   } else if (attackAnimationCounter < (attackAnimationMaxCount / 4) * 2) {
     heroCropX = heroSpriteSize * 8
   } else if (attackAnimationCounter < attackAnimationMaxCount) {

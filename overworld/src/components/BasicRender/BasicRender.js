@@ -7,7 +7,7 @@ import background_1 from '../../assets/backgrounds/test/map_test_2.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
 import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
 import cursor_1 from '../../assets/hand_cursor.png'
-import { grass_1, grass_2, grass_3 } from './AnimatedObjects'
+import { grass_1, grass_2, grass_3, barrel_1 } from './AnimatedObjects'
 
 import cMasks from './CollisionMasks'
 
@@ -50,7 +50,7 @@ const grassPatch2 = generatePatch(980, 628, 5, 4, [grass_1, grass_2, grass_3])
 const grassPatch3 = generatePatch(1000, 140, 5, 4, [grass_1, grass_2, grass_3])
 const grassPatch4 = generatePatch(352, 420, 8, 3, [grass_1, grass_2, grass_3])
 const grassPatch5 = generatePatch(460, 560, 5, 4, [grass_1, grass_2, grass_3])
-
+const barrelPatch = generatePatch(700, 300, 3, 2, [barrel_1])
 
 const BasicRender = ({}) => {
 
@@ -304,6 +304,7 @@ const BasicRender = ({}) => {
     animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
     animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(barrelPatch, baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .7
 
 
