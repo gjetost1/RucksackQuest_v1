@@ -43,7 +43,7 @@ onmousemove = (event) => {
   cursorY = event.y - globalVars.windowSpacerHeight
 }
 
-const grassPatch = generatePatch(500, 300, 7, 7, [grass_1])
+const grassPatch = generatePatch(500, 300, 7, 7, [grass_1, grass_2])
 // const grassPatch2 = generatePatch(0, 64, 3, 2, grass_1)
 
 
@@ -264,6 +264,8 @@ const BasicRender = ({}) => {
       const eventDuration = setTimeout(() => {
         clearTimeout(eventDuration)
         baseHero.attackActive = false
+        baseHero.eventX = -400
+        baseHero.eventY = -400
         // console.log('attack over')
       }, eventObj.eventDuration * 1000)
 
@@ -293,44 +295,46 @@ const BasicRender = ({}) => {
 
     // const grassPatch = [{img: grass_1, x: 64, y: 64}, {img: grass_1, x: 32, y: 32}, {img: grass_1, x: 32, y: 48},  {img: grass_1, x: 64, y: 48},  {img: grass_1, x: 64, y: 64},]
 
-    grass_1.currentDelayFrame++
-    // console.log(grass_1.currentDelayFrame)
-    if (grass_1.currentDelayFrame >= grass_1.delay) {
-      grass_1.currentAnimFrame++
-    }
-    if (grass_1.currentAnimFrame >= grass_1.animFrameLimit) {
-      grass_1.cropX += grass_1.blockSize
-      grass_1.currentAnimFrame = 0
-    }
-    if (grass_1.cropX >= grass_1.blockSize * grass_1.maxAnimFrame) {
-      grass_1.cropX = grass_1.blockSize * grass_1.minAnimFrame
-      grass_1.currentDelayFrame = 0
-    }
+    // grass_1.currentDelayFrame++
+    // // console.log(grass_1.currentDelayFrame)
+    // if (grass_1.currentDelayFrame >= grass_1.delay) {
+    //   grass_1.currentAnimFrame++
+    // }
+    // if (grass_1.currentAnimFrame >= grass_1.animFrameLimit) {
+    //   grass_1.cropX += grass_1.blockSize
+    //   grass_1.currentAnimFrame = 0
+    // }
+    // if (grass_1.cropX >= grass_1.blockSize * grass_1.maxAnimFrame) {
+    //   grass_1.cropX = 0
+    //   grass_1.currentDelayFrame = 0
+    // }
 
 
-    grass_2.currentDelayFrame++
-    // console.log(grass_1.currentDelayFrame)
-    if (grass_2.currentDelayFrame >= grass_2.delay) {
-      grass_2.currentAnimFrame++
-    }
 
-    if (grass_2.currentAnimFrame >= grass_2.animFrameLimit) {
-      grass_2.cropX += grass_2.blockSize
-      grass_2.currentAnimFrame = 0
-    }
-    if (grass_2.cropX >= grass_2.blockSize * grass_2.maxCropMultiply) {
-      grass_2.cropX = 0
-      grass_2.currentDelayFrame = 0
-    }
+    // grass_2.currentDelayFrame++
+    // // console.log(grass_1.currentDelayFrame)
+    // if (grass_2.currentDelayFrame >= grass_2.delay) {
+    //   grass_2.currentAnimFrame++
+    // }
+
+    // if (grass_2.currentAnimFrame >= grass_2.animFrameLimit) {
+    //   grass_2.cropX += grass_2.blockSize
+    //   grass_2.currentAnimFrame = 0
+    // }
+    // if (grass_2.cropX >= grass_2.blockSize * grass_2.maxCropMultiply) {
+    //   grass_2.cropX = 0
+    //   grass_2.currentDelayFrame = 0
+    // }
+
     foregroundCtx.globalAlpha = 1
-    animatedObjectsRender(grassPatch, baseHero, eventObj, backgroundCtx, foregroundCtx)
-    // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch, baseHero, backgroundCtx, foregroundCtx)
+
     foregroundCtx.globalAlpha = .7
 
 
 
     // renders stamina bar and other HUD elements
-    hudRender(spriteCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, baseHero.upscale, playerSprite, baseHero.blockSize, swordIcon )
+    hudRender(spriteCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, swordIcon )
 
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack

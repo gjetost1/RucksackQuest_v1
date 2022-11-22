@@ -8,6 +8,22 @@ const baseAnimSpeed = 2
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
 let spriteAnimCounter = 0 // increments to trigger render of next animation frame
 
+const colBuffer = 4 // number of pixels away from hero that detectors sit
+const horzBuffer = 4
+const vertBuffer = 12
+const blockSize = globalVars.blockSize
+
+const heroColBox = [
+  // array of coordinates for all detectors of hero object
+  [horzBuffer, colBuffer + vertBuffer * 2],
+  [colBuffer + horzBuffer, vertBuffer * 2],
+  [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
+  [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
+  [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
+  [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+  [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+  [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
+]
 
 const moveEngine = (baseHero, cMasks, blockSize) => {
   if (!baseHero) return
@@ -32,14 +48,14 @@ const moveEngine = (baseHero, cMasks, blockSize) => {
   //    6------5
   //
 
-  const col0 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 0)
-  const col1 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 1)
-  const col2 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 2)
-  const col3 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 3)
-  const col4 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 4)
-  const col5 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 5)
-  const col6 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 6)
-  const col7 = checkCollision(baseHero.x, baseHero.y, cMasks, blockSize, 7)
+  const col0 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 0)
+  const col1 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 1)
+  const col2 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 2)
+  const col3 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 3)
+  const col4 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 4)
+  const col5 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 5)
+  const col6 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 6)
+  const col7 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 7)
   const allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7)
 
   // moves hero out of collision

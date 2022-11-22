@@ -33,37 +33,79 @@ export const generatePatch = (startX, startY, height, width, img) => {
       if(j % 2 === 0) {
         offset = xSpace / 2
       }
-      // const randomizeImg = Math.floor(Math.random() * 2)
+      const randomizeImg = Math.floor(Math.random() * img.length)
+      const imgInstance = {...img[randomizeImg]}
+      const x = (startX + i * xSpace) + offset
+      const y = startY + j * ySpace
       returnArr.push({
-        img: img[0],
-        x: (startX + i * xSpace) + offset,
-        y: startY + j * ySpace
+        img: imgInstance,
+        x,
+        y,
+        cMasks: buildCMask([
+          {x, y, xBlocks: 1, yBlocks: 1, gridSize: imgInstance.blockSize}
+        ])
       })
     }
   }
+  // console.log(returnArr)
   return returnArr
 }
 
+
+
 // renders an animated object to the background layer. should be called after main background render in basicRender or it will be covered up
 // objects to be rendered should be passed in format created by generate patch above
-const animatedObjectsRender = (objects, baseHero, eventObj, backgroundCtx, foregroundCtx) => {
+const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
+
+
+
+
   if (baseHero.attackActive && !breakActive) {
     breakActive = true
   }
 
+
+  const colBox = [
+    [0, 0],
+    [baseHero.attackBlockSize, 0],
+    [baseHero.attackBlockSize, baseHero.attackBlockSize],
+    [0, baseHero.attackBlockSize],
+  ]
+
   for (let el of objects) {
-    if (eventObj.eventY < el.y
-       && eventObj.eventY + (eventObj.blockSize / 2) > el.y
-      && eventObj.eventX + eventObj.blockSize > el.x + (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
-      && eventObj.eventX < el.x + el.img.blockSize - (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
-      && baseHero.attackActive
-      ) {
-        console.log('hit!!')
-        el.minAnimFrame = el.maxAnimFrame
-        el.maxAnimFrame = el.maxAnimFrame + el.breakImgFrames
-        el.currentAnimFrame = 0
-        el.currentDelayFrame = el.delay
-        foregroundCtx.drawImage(el.img.breakImg, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
+
+     // animates each object
+  el.img.currentDelayFrame++
+  // console.log(grass_1.currentDelayFrame)
+  if (el.img.currentDelayFrame >= el.img.delay) {
+    el.img.currentAnimFrame++
+  }
+  if (el.img.currentAnimFrame >= el.img.animFrameLimit) {
+    el.img.cropX += el.img.blockSize
+    el.img.currentAnimFrame = 0
+  }
+  if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame) {
+    el.img.cropX = 0
+    el.img.currentDelayFrame = 0
+  }
+
+    const collision = checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 0)
+    && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 1)
+    && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 2)
+    && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 3)
+
+    if (!collision && !el.img.destroyed) {
+      el.img.destroyed = true
+      el.cropX = el.maxAnimFrame + 1
+      el.img.animFrameLimit = 20
+      // el.img.minAnimFrame = el.img.maxAnimFrame
+      el.img.maxAnimFrame = el.img.maxAnimFrame + el.img.breakImgFrames
+      // el.img.currentAnimFrame = 0
+      el.img.delay = 1
+      // console.log(el.img)
+        // foregroundCtx.drawImage(el.img.breakImg, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
+    } else if (el.img.destroyed && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame - 1)) {
+      el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
     } else if (baseHero.y < el.y
       //  && baseHero.y + (baseHero.blockSize / 2) > el.y
       // && baseHero.x + baseHero.blockSize > el.x + (el.img.blockSize - el.img.blockSize * el.img.xScale)

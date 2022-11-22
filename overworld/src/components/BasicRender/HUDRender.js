@@ -11,7 +11,6 @@ const hudRender = (ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, 
   }
 
 
-
   // stamDisplay turns stamina bar into the proper length based on percentage of stamina remaining
   const stamDisplay = (currentStam / maxStam) * (heroBlockSize - (heroBlockSize / 2))
   // renders stamina bar if stamina is less than maximum

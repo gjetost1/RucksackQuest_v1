@@ -13,6 +13,7 @@ grass_2_img.src = grass_2_src
 
 export const grass_1 = {
   spriteSheet: grass_1_img,
+  breakImg: grass_break_1_img,
   blockSize: 64,
   cropX: 0,
   cropY: 0,
@@ -25,16 +26,18 @@ export const grass_1 = {
   xScale: .75,
   yScale: .25,
   destructible: true,
-  breakImg: grass_break_1_img,
-  breakImgFrames: 5
+  breakImgFrames: 5,
+  destroyed: false,
 }
 
 export const grass_2 = {
   spriteSheet: grass_2_img,
+  breakImg: grass_break_1_img,
   blockSize: 64,
   cropX: 0,
   cropY: 0,
-  maxCropMultiply: 9,
+  minAnimFrame: 0,
+  maxAnimFrame: 9,
   animFrameLimit: 20,
   currentAnimFrame: 0,
   currentDelayFrame: 0,
@@ -42,6 +45,6 @@ export const grass_2 = {
   xScale: .75,
   yScale: .25,
   destructible: true,
-  breakImg: grass_break_1_img,
-  breakImgFrames: 4
+  breakImgFrames: 5,
+  destroyed: false,
 }

@@ -25,7 +25,7 @@ const eventEngine = (baseHero) => {
     baseHero.eventY = baseHero.y
   } else if (baseHero.heroDirection === 'down') {
     baseHero.eventX = baseHero.x + middleVal
-    baseHero.eventY = baseHero.y + baseHero.attackBlockSize * 3
+    baseHero.eventY = baseHero.y + baseHero.blockSize - baseHero.attackBlockSize
   } else if (baseHero.heroDirection === 'left') {
     baseHero.eventX = baseHero.x
     baseHero.eventY = baseHero.y + middleVal

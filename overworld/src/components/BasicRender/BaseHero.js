@@ -25,7 +25,7 @@ const baseHero = {
   heroDirection: 'down',
   attackAnimation: false,
   blockSize: globalVars.blockSize,
-  attackBlockSize: 16,
+  attackBlockSize: 4,
   heroSpriteSize: 64,
   coolDownLevel: 0,
   coolDownLevelMax: 100,
@@ -33,8 +33,8 @@ const baseHero = {
   attackActive: false,
   maxStam: 100,
   currentStam: 100,
-  eventX: null,
-  eventY: null,
+  eventX: -400,
+  eventY: -400,
   keys: {
     ArrowUp: {
       pressed:false
