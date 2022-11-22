@@ -43,7 +43,7 @@ onmousemove = (event) => {
   cursorY = event.y - globalVars.windowSpacerHeight
 }
 
-const grassPatch = generatePatch(500, 300, 7, 7, [grass_1, grass_2])
+const grassPatch = generatePatch(500, 300, 7, 7, [grass_1])
 // const grassPatch2 = generatePatch(0, 64, 3, 2, grass_1)
 
 
@@ -222,25 +222,25 @@ const BasicRender = ({}) => {
 
 
     // calculates and draws attack effects on keypress with cooldown
-    // let eventObj = { // object passed to EventEngine to trigger appropriate event
-    //   x: playerSprite.position.x,
-    //   y: playerSprite.position.y,
-    //   heroDirection: heroDirection,
-    //   eventX: eventX,
-    //   eventY: eventY,
-    //   blockSize: blockSize,
-    //   eventType: 'attack',
-    //   eventDirection: 'heroFront',
-    //   eventAreaShape: 'rectangle',
-    //   eventXDim: 1,
-    //   eventYDim: 3,
-    //   eventEffect: {
-    //     damage: 10
-    //   },
-    //   eventDuration: 1,
-    //   eventTimeout: 1.5,
-    //   eventAnim: null,
-    // }
+    let eventObj = { // object passed to EventEngine to trigger appropriate event
+      x: playerSprite.position.x,
+      y: playerSprite.position.y,
+      heroDirection: baseHero.heroDirection,
+      eventX: 0,
+      eventY: 0,
+      blockSize: blockSize,
+      eventType: 'attack',
+      eventDirection: 'heroFront',
+      eventAreaShape: 'rectangle',
+      eventXDim: 1,
+      eventYDim: 3,
+      eventEffect: {
+        damage: 10
+      },
+      eventDuration: 1,
+      eventTimeout: 1.5,
+      eventAnim: null,
+    }
 
     // this handles an attack/ability usage by user - sets vars that will trigger attack/ability animation and
     // puts ability on cooldown. Current cooldown is set manually, but once there are other abilities
@@ -251,12 +251,13 @@ const BasicRender = ({}) => {
       baseHero.attackAnimation = true
       baseHero.coolDownLevel = 0 // sets the var for animating HUD cooldown level
 
+      baseHero = eventEngine(baseHero)
       // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
       const cooldown = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
         baseHero.attackCooldownOff = true
         clearTimeout(cooldown)
         // console.log('cooldown over')
-      }, 1500)
+      }, eventObj.eventTimeout * 1000)
 
 
       // sets duration of event, set by eventObj.eventDuration in seconds
@@ -264,9 +265,11 @@ const BasicRender = ({}) => {
         clearTimeout(eventDuration)
         baseHero.attackActive = false
         // console.log('attack over')
-      }, 1000)
+      }, eventObj.eventDuration * 1000)
 
     }
+    foregroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+    foregroundCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
 
     // this increments coolDownLevel which controls the visual cooldown HUD
     if (!baseHero.attackCooldownOff) {
@@ -295,17 +298,15 @@ const BasicRender = ({}) => {
     if (grass_1.currentDelayFrame >= grass_1.delay) {
       grass_1.currentAnimFrame++
     }
-
     if (grass_1.currentAnimFrame >= grass_1.animFrameLimit) {
       grass_1.cropX += grass_1.blockSize
       grass_1.currentAnimFrame = 0
     }
-    if (grass_1.cropX >= grass_1.blockSize * grass_1.maxCropMultiply) {
-      grass_1.cropX = 0
+    if (grass_1.cropX >= grass_1.blockSize * grass_1.maxAnimFrame) {
+      grass_1.cropX = grass_1.blockSize * grass_1.minAnimFrame
       grass_1.currentDelayFrame = 0
     }
 
-    // nothing
 
     grass_2.currentDelayFrame++
     // console.log(grass_1.currentDelayFrame)
@@ -322,7 +323,7 @@ const BasicRender = ({}) => {
       grass_2.currentDelayFrame = 0
     }
     foregroundCtx.globalAlpha = 1
-    animatedObjectsRender(grassPatch, baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch, baseHero, eventObj, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .7
 

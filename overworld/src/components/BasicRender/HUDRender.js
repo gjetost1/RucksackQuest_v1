@@ -1,5 +1,6 @@
-const hudRender = (ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, coolDownLevelMax, upscale, playerSprite, heroBlockSize, swordIcon, ) => {
-
+import globalVars from "./GlobalVars"
+const hudRender = (ctx, currentStam, maxStam, attackCooldownOff, coolDownLevel, coolDownLevelMax, playerSprite, heroBlockSize, swordIcon, ) => {
+  const upscale = globalVars.upscale
   // sets color of stamina bar based on remaining stamina percentage
   if (currentStam > maxStam - maxStam / 3) {
     ctx.fillStyle = 'rgb(57, 201, 237)'

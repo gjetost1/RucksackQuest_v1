@@ -25,6 +25,7 @@ const baseHero = {
   heroDirection: 'down',
   attackAnimation: false,
   blockSize: globalVars.blockSize,
+  attackBlockSize: 16,
   heroSpriteSize: 64,
   coolDownLevel: 0,
   coolDownLevelMax: 100,

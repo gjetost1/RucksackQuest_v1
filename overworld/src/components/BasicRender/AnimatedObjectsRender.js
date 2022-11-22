@@ -33,9 +33,9 @@ export const generatePatch = (startX, startY, height, width, img) => {
       if(j % 2 === 0) {
         offset = xSpace / 2
       }
-      const randomizeImg = Math.floor(Math.random() * 2)
+      // const randomizeImg = Math.floor(Math.random() * 2)
       returnArr.push({
-        img: img[randomizeImg],
+        img: img[0],
         x: (startX + i * xSpace) + offset,
         y: startY + j * ySpace
       })
@@ -46,19 +46,23 @@ export const generatePatch = (startX, startY, height, width, img) => {
 
 // renders an animated object to the background layer. should be called after main background render in basicRender or it will be covered up
 // objects to be rendered should be passed in format created by generate patch above
-const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
+const animatedObjectsRender = (objects, baseHero, eventObj, backgroundCtx, foregroundCtx) => {
   if (baseHero.attackActive && !breakActive) {
     breakActive = true
   }
 
   for (let el of objects) {
-    if (baseHero.y < el.y
-       && baseHero.y + (baseHero.blockSize / 2) > el.y
-      && baseHero.x + baseHero.blockSize > el.x + (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
-      && baseHero.x < el.x + el.img.blockSize - (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
+    if (eventObj.eventY < el.y
+       && eventObj.eventY + (eventObj.blockSize / 2) > el.y
+      && eventObj.eventX + eventObj.blockSize > el.x + (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
+      && eventObj.eventX < el.x + el.img.blockSize - (el.img.blockSize - el.img.blockSize * (el.img.xScale * .5))
       && baseHero.attackActive
       ) {
-        el.maxCropMultiply = el.breakImgFrames
+        console.log('hit!!')
+        el.minAnimFrame = el.maxAnimFrame
+        el.maxAnimFrame = el.maxAnimFrame + el.breakImgFrames
+        el.currentAnimFrame = 0
+        el.currentDelayFrame = el.delay
         foregroundCtx.drawImage(el.img.breakImg, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     } else if (baseHero.y < el.y
       //  && baseHero.y + (baseHero.blockSize / 2) > el.y

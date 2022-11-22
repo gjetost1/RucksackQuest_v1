@@ -63,7 +63,7 @@
   /* mix-blend-mode: color-burn; */
   opacity: .2;
   overflow: hidden;
-  animation: pixel_fade 20s ease-in-out;
+  /* animation: pixel_fade 20s ease-in-out; */
 }
 
 .scanline-tone {
@@ -87,7 +87,7 @@
   mix-blend-mode: normal;
   opacity: .3;
   overflow: hidden;
-  animation: scanline-fade 20s ease-in-out;
+  /* animation: scanline-fade 20s ease-in-out; */
 }
 
 .blur {
@@ -123,7 +123,7 @@
   width: fit-content;
   height: fit-content;
   z-index: 2;
-  animation: scale-background 20s ease-in-out;
+  /* animation: scale-background 20s ease-in-out; */
   transform-origin: center;
 
 }
@@ -138,7 +138,7 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  animation: scale-background 20s ease-in-out;
+  /* animation: scale-background 20s ease-in-out; */
   transform-origin: center;
 
 }
@@ -153,7 +153,7 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  animation: scale-background 20s ease-in-out;
+  /* animation: scale-background 20s ease-in-out; */
   transform-origin: center;
 
 }
@@ -168,7 +168,7 @@
   width: fit-content;
   height: fit-content;
   z-index: 3;
-  animation: scale-background 20s ease-in-out;
+  /* animation: scale-background 20s ease-in-out; */
   transform-origin: center;
 
 }
