@@ -45,11 +45,11 @@ onmousemove = (event) => {
 }
 
 // const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
-const grassPatch = generatePatch(900, 300, 7, 7, [grass_1, grass_2, grass_3])
-const grassPatch2 = generatePatch(980, 630, 6, 4, [grass_1, grass_2, grass_3])
-const grassPatch3 = generatePatch(980, 100, 6, 4, [grass_1, grass_2, grass_3])
-const grassPatch4 = generatePatch(350, 420, 8, 4, [grass_1, grass_2, grass_3])
-const grassPatch5 = generatePatch(440, 560, 7, 5, [grass_1, grass_2, grass_3])
+const grassPatch = generatePatch(920, 300, 7, 6, [grass_1, grass_2, grass_3])
+const grassPatch2 = generatePatch(980, 628, 5, 4, [grass_1, grass_2, grass_3])
+const grassPatch3 = generatePatch(1000, 140, 5, 4, [grass_1, grass_2, grass_3])
+const grassPatch4 = generatePatch(352, 420, 8, 3, [grass_1, grass_2, grass_3])
+const grassPatch5 = generatePatch(460, 560, 5, 4, [grass_1, grass_2, grass_3])
 
 
 const BasicRender = ({}) => {
