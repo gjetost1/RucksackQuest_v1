@@ -7,7 +7,7 @@ import background_1 from '../../assets/backgrounds/test/map_test_2.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
 import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
 import cursor_1 from '../../assets/hand_cursor.png'
-import { grass_1, grass_2 } from './AnimatedObjects'
+import { grass_1, grass_2, grass_3 } from './AnimatedObjects'
 
 import cMasks from './CollisionMasks'
 
@@ -43,8 +43,9 @@ onmousemove = (event) => {
   cursorY = event.y - globalVars.windowSpacerHeight
 }
 
-const grassPatch = generatePatch(500, 300, 7, 7, [grass_1, grass_2])
-// const grassPatch2 = generatePatch(0, 64, 3, 2, grass_1)
+// const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
+const grassPatch = generatePatch(900, 300, 7, 7, [grass_1, grass_2, grass_3])
+
 
 
 const BasicRender = ({}) => {
@@ -270,8 +271,8 @@ const BasicRender = ({}) => {
       }, eventObj.eventDuration * 1000)
 
     }
-    foregroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-    foregroundCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
+    // foregroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+    // foregroundCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
 
     // this increments coolDownLevel which controls the visual cooldown HUD
     if (!baseHero.attackCooldownOff) {
@@ -292,39 +293,6 @@ const BasicRender = ({}) => {
     // renders current background sprite
     backgroundSprite.draw()
 
-
-    // const grassPatch = [{img: grass_1, x: 64, y: 64}, {img: grass_1, x: 32, y: 32}, {img: grass_1, x: 32, y: 48},  {img: grass_1, x: 64, y: 48},  {img: grass_1, x: 64, y: 64},]
-
-    // grass_1.currentDelayFrame++
-    // // console.log(grass_1.currentDelayFrame)
-    // if (grass_1.currentDelayFrame >= grass_1.delay) {
-    //   grass_1.currentAnimFrame++
-    // }
-    // if (grass_1.currentAnimFrame >= grass_1.animFrameLimit) {
-    //   grass_1.cropX += grass_1.blockSize
-    //   grass_1.currentAnimFrame = 0
-    // }
-    // if (grass_1.cropX >= grass_1.blockSize * grass_1.maxAnimFrame) {
-    //   grass_1.cropX = 0
-    //   grass_1.currentDelayFrame = 0
-    // }
-
-
-
-    // grass_2.currentDelayFrame++
-    // // console.log(grass_1.currentDelayFrame)
-    // if (grass_2.currentDelayFrame >= grass_2.delay) {
-    //   grass_2.currentAnimFrame++
-    // }
-
-    // if (grass_2.currentAnimFrame >= grass_2.animFrameLimit) {
-    //   grass_2.cropX += grass_2.blockSize
-    //   grass_2.currentAnimFrame = 0
-    // }
-    // if (grass_2.cropX >= grass_2.blockSize * grass_2.maxCropMultiply) {
-    //   grass_2.cropX = 0
-    //   grass_2.currentDelayFrame = 0
-    // }
 
     foregroundCtx.globalAlpha = 1
     animatedObjectsRender(grassPatch, baseHero, backgroundCtx, foregroundCtx)

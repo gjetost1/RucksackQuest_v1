@@ -17,17 +17,18 @@ export const generatePatch = (startX, startY, height, width, img) => {
   const xSpace = img[0].blockSize * img[0].xScale
   const ySpace = img[0].blockSize * img[0].yScale
   const returnArr = []
+  const cornerMulti = .4
   for(let j = 0; j < height; j++) {
     for (let i = 0; i < width; i++) {
-      if ((j < height / (height * .5) && i < width / (width * .5)) ||
-      (j > height - (height / (height * .5)) && i > width - (width / (height * .5))) ||
-      (j < height / (height * .5) && i > width - (width / (height * .5))) ||
-      (j > height - (height / (height * .5)) && i < width / (width * .5))
+      if ((j < height / (height * cornerMulti) && i < width / (width * cornerMulti)) ||
+      (j > height - (height / (height * cornerMulti)) && i > width - (width / (height * cornerMulti))) ||
+      (j < height / (height * cornerMulti) && i > width - (width / (height * cornerMulti))) ||
+      (j > height - (height / (height * cornerMulti)) && i < width / (width * cornerMulti))
       ) {
-        // const skip = Math.random() * 10
-        // if (skip > 2) { // gives chance that corner images will not be rendered to create a more organic shape to the patch
+        const skip = Math.random() * 10
+        if (skip > 4) { // gives chance that corner images will not be rendered to create a more organic shape to the patch
           continue
-        // }
+        }
       }
       let offset = 0
       if(j % 2 === 0) {
@@ -84,7 +85,7 @@ const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) 
     el.img.cropX += el.img.blockSize
     el.img.currentAnimFrame = 0
   }
-  if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame) {
+  if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame && !el.img.destroyed && !el.img.breaking) {
     el.img.cropX = 0
     el.img.currentDelayFrame = 0
   }
@@ -94,18 +95,21 @@ const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) 
     && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 2)
     && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 3)
 
-    if (!collision && !el.img.destroyed) {
-      el.img.destroyed = true
-      el.cropX = el.maxAnimFrame + 1
-      el.img.animFrameLimit = 20
-      // el.img.minAnimFrame = el.img.maxAnimFrame
+    if (!collision && !el.img.breaking && !el.img.destroyed) {
+      el.img.breaking = true
+      el.img.cropX = (el.img.maxAnimFrame ) * el.img.blockSize
+      el.img.animFrameLimit = 14
+      el.img.minAnimFrame = el.img.maxAnimFrame
       el.img.maxAnimFrame = el.img.maxAnimFrame + el.img.breakImgFrames
       // el.img.currentAnimFrame = 0
-      el.img.delay = 1
+      el.img.delay = 0
       // console.log(el.img)
         // foregroundCtx.drawImage(el.img.breakImg, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
-    } else if (el.img.destroyed && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame - 1)) {
+    }
+    if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
       el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
+      el.img.destroyed = true
+      backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     } else if (baseHero.y < el.y
       //  && baseHero.y + (baseHero.blockSize / 2) > el.y
       // && baseHero.x + baseHero.blockSize > el.x + (el.img.blockSize - el.img.blockSize * el.img.xScale)
@@ -113,7 +117,6 @@ const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) 
       ) {
       foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     } else {
-
       backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     }
 
