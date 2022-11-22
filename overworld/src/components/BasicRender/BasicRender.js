@@ -36,6 +36,7 @@ let cursorX = -400 // sets cursor starting coordinates outside the canvas so it 
 let cursorY = -400
 
 
+
 // this gets the coordinates of the cursor so it can be rendered on the canvas
 document.addEventListener('mousemove', (action) => {})
 onmousemove = (event) => {
@@ -45,7 +46,10 @@ onmousemove = (event) => {
 
 // const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
 const grassPatch = generatePatch(900, 300, 7, 7, [grass_1, grass_2, grass_3])
-
+const grassPatch2 = generatePatch(980, 630, 6, 4, [grass_1, grass_2, grass_3])
+const grassPatch3 = generatePatch(980, 100, 6, 4, [grass_1, grass_2, grass_3])
+const grassPatch4 = generatePatch(350, 420, 8, 4, [grass_1, grass_2, grass_3])
+const grassPatch5 = generatePatch(440, 560, 7, 5, [grass_1, grass_2, grass_3])
 
 
 const BasicRender = ({}) => {
@@ -296,7 +300,10 @@ const BasicRender = ({}) => {
 
     foregroundCtx.globalAlpha = 1
     animatedObjectsRender(grassPatch, baseHero, backgroundCtx, foregroundCtx)
-
+    animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .7
 
 

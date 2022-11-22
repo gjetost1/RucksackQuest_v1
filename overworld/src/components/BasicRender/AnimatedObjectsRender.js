@@ -36,6 +36,7 @@ export const generatePatch = (startX, startY, height, width, img) => {
       }
       const randomizeImg = Math.floor(Math.random() * img.length)
       const imgInstance = {...img[randomizeImg]}
+      imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1))
       const x = (startX + i * xSpace) + offset
       const y = startY + j * ySpace
       returnArr.push({
@@ -53,12 +54,23 @@ export const generatePatch = (startX, startY, height, width, img) => {
 }
 
 
+let windBlow = true // determines if the grass is animating or not
 
 // renders an animated object to the background layer. should be called after main background render in basicRender or it will be covered up
 // objects to be rendered should be passed in format created by generate patch above
 const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
 
-
+if (!windBlow) {
+  if(Math.floor(Math.random() * 500) === 13) {
+    windBlow = true
+    console.log('start wind')
+  }
+} else {
+  if(Math.floor(Math.random() * 300) === 29) {
+    windBlow = false
+    console.log('stop wind')
+  }
+}
 
 
   if (baseHero.attackActive && !breakActive) {
@@ -75,19 +87,20 @@ const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) 
 
   for (let el of objects) {
 
-     // animates each object
-  el.img.currentDelayFrame++
-  // console.log(grass_1.currentDelayFrame)
-  if (el.img.currentDelayFrame >= el.img.delay) {
-    el.img.currentAnimFrame++
-  }
-  if (el.img.currentAnimFrame >= el.img.animFrameLimit) {
-    el.img.cropX += el.img.blockSize
-    el.img.currentAnimFrame = 0
-  }
-  if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame && !el.img.destroyed && !el.img.breaking) {
-    el.img.cropX = 0
-    el.img.currentDelayFrame = 0
+  if(windBlow || el.img.breaking  || (!windBlow && el.img.cropX < el.img.blockSize * el.img.maxAnimFrame - el.img.blockSize)) {
+    // animates each object
+    el.img.currentDelayFrame++
+    if (el.img.currentDelayFrame >= el.img.delay) {
+      el.img.currentAnimFrame++
+    }
+    if (el.img.currentAnimFrame >= el.img.animFrameLimit) {
+      el.img.cropX += el.img.blockSize
+      el.img.currentAnimFrame = 0
+    }
+    if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame && !el.img.destroyed && !el.img.breaking) {
+      el.img.cropX = 0
+      el.img.currentDelayFrame = 0
+    }
   }
 
     const collision = checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 0)
@@ -101,19 +114,13 @@ const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) 
       el.img.animFrameLimit = 14
       el.img.minAnimFrame = el.img.maxAnimFrame
       el.img.maxAnimFrame = el.img.maxAnimFrame + el.img.breakImgFrames
-      // el.img.currentAnimFrame = 0
       el.img.delay = 0
-      // console.log(el.img)
-        // foregroundCtx.drawImage(el.img.breakImg, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     }
     if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
       el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
       el.img.destroyed = true
       backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     } else if (baseHero.y < el.y
-      //  && baseHero.y + (baseHero.blockSize / 2) > el.y
-      // && baseHero.x + baseHero.blockSize > el.x + (el.img.blockSize - el.img.blockSize * el.img.xScale)
-      // && baseHero.x < el.x + el.img.blockSize - (el.img.blockSize - el.img.blockSize * el.img.xScale)
       ) {
       foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     } else {
