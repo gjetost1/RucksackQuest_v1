@@ -2,13 +2,11 @@ import globalVars from "./GlobalVars"
 import checkCollision from "./CheckCollision"
 import { buildCMask } from "./CollisionMasks"
 
-import grass_cut_1 from '../../assets/sounds/grass/grass_cut_1.wav'
-
 // const widthBlocks = GlobalVars.width / GlobalVars.blockSize
 // const widthBlocks = GlobalVars.height / GlobalVars.blockSize
 
 let breakActive = false
-const grass_cut_1_fx = new Audio(grass_cut_1)
+
 
 // generatePatch creates a patch of whatever animateImage you pass as argument img
 // see AnimatedObjects.js for example of format of object to pass here
@@ -65,12 +63,12 @@ let windBlow = true // determines if the grass is animating or not
 const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
 
 if (!windBlow) {
-  if(Math.floor(Math.random() * 500) === 13) {
+  if(Math.floor(Math.random() * 1000) === 13) {
     windBlow = true
     console.log('start wind')
   }
 } else {
-  if(Math.floor(Math.random() * 300) === 29) {
+  if(Math.floor(Math.random() * 1000) === 29) {
     windBlow = false
     console.log('stop wind')
   }
@@ -113,9 +111,12 @@ if (!windBlow) {
     && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 3)
 
     if (!collision && !el.img.breaking && !el.img.destroyed) {
-      grass_cut_1_fx.volume = 0.2;
-      grass_cut_1_fx.play();
-      el.img.breaking = true
+      //plays sound effect on destroy, if any
+      if(el.img.sfx) {
+        el.img.sfx.volume = 0.2;
+        el.img.sfx.play();
+      }
+      el.img.breaking = true // puts animated element into breaking state, which
       el.img.cropX = (el.img.maxAnimFrame ) * el.img.blockSize
       el.img.animFrameLimit = 14
       el.img.minAnimFrame = el.img.maxAnimFrame

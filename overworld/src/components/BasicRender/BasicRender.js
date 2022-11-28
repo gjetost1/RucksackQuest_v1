@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-import background_1 from '../../assets/backgrounds/test/map_test_2.png'
+import background_1 from '../../assets/backgrounds/test/ruined_cathedral_map_background.png'
 // import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
-import foreground_1 from '../../assets/backgrounds/test/map_test_3_foreground.png'
+import foreground_1 from '../../assets/backgrounds/test/ruined_cathedral_map_foreground.png'
 import cursor_1 from '../../assets/hand_cursor.png'
-import { grass_1, grass_2, grass_3, barrel_1 } from './AnimatedObjects'
+import { grass_1, grass_low_1, grass_2, grass_3, barrel_1, barrel_2, barrel_low_1 } from './AnimatedObjects'
 
 import cMasks from './CollisionMasks'
 
@@ -45,12 +45,17 @@ onmousemove = (event) => {
 }
 
 // const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
-const grassPatch = generatePatch(920, 300, 7, 6, [grass_1, grass_2, grass_3])
-const grassPatch2 = generatePatch(980, 628, 5, 4, [grass_1, grass_2, grass_3])
-const grassPatch3 = generatePatch(1000, 140, 5, 4, [grass_1, grass_2, grass_3])
-const grassPatch4 = generatePatch(352, 420, 8, 3, [grass_1, grass_2, grass_3])
-const grassPatch5 = generatePatch(460, 560, 5, 4, [grass_1, grass_2, grass_3])
-const barrelPatch = generatePatch(700, 300, 3, 2, [barrel_1])
+// const grassPatch = generatePatch(920, 300, 7, 6, [grass_1, grass_2, grass_3])
+// const grassPatch2 = generatePatch(980, 628, 5, 4, [grass_1, grass_2, grass_3])
+// const grassPatch3 = generatePatch(1000, 140, 5, 4, [grass_1, grass_2, grass_3])
+// const grassPatch4 = generatePatch(352, 420, 8, 3, [grass_1, grass_2, grass_3])
+// const grassPatch5 = generatePatch(460, 560, 5, 4, [grass_1, grass_2, grass_3])
+// const barrelPatch = generatePatch(600, 300, 5, 4, [barrel_1, barrel_2])
+
+
+const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
+const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
+
 
 const BasicRender = ({}) => {
 
@@ -78,7 +83,7 @@ const BasicRender = ({}) => {
   const cursorCtx = cursorCanvas.current.getContext('2d')
 
   // makes foreground transparent so you can see sprites under it
-  foregroundCtx.globalAlpha = .7
+  foregroundCtx.globalAlpha = .8
 
     // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
     // for inputs. returns keys object which is checked for what keys are currently pressed each frame
@@ -300,10 +305,10 @@ const BasicRender = ({}) => {
 
     foregroundCtx.globalAlpha = 1
     animatedObjectsRender(grassPatch, baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
+    // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
+    // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
+    // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
+    // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
     animatedObjectsRender(barrelPatch, baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .7
 
@@ -352,7 +357,7 @@ const BasicRender = ({}) => {
         <canvas id='cursorCanvas' ref={cursorCanvas} height={height} width={width} />
         <div className='blur'></div>
         <div className='scanline-tone'></div>
-        <div className='pixel-tone'></div>
+        {/* <div className='pixel-tone'></div> */}
       </div>
     </div>
   )
