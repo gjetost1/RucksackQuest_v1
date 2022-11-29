@@ -170,7 +170,20 @@
   z-index: 3;
   /* animation: scale-background 6s ease-in-out; */
   transform-origin: center;
+}
 
+#collisionCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  z-index: -1000;
+  /* animation: scale-background 6s ease-in-out; */
+  transform-origin: center;
 }
 
 @keyframes pixel_fade {

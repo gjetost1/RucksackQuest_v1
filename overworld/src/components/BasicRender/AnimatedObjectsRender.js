@@ -22,7 +22,6 @@ export class Patch {
   }
 
   generatePatch(startX, startY, width, height, spriteSheets) {
-    console.log('generate')
     this.definitionArr = []
     const xSpace = spriteSheets[0].blockSize * spriteSheets[0].xScale
     const ySpace = spriteSheets[0].blockSize * spriteSheets[0].yScale
@@ -59,7 +58,6 @@ export class Patch {
         })
       }
     }
-    console.log(this.definitionArr)
   }
 
   getOffset() {

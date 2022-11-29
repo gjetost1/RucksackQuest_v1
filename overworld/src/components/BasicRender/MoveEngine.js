@@ -25,7 +25,7 @@ const heroColBox = [
   [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
 ]
 
-const moveEngine = (baseHero, cMasks, blockSize) => {
+const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   if (!baseHero) return
 
 
@@ -35,7 +35,16 @@ const moveEngine = (baseHero, cMasks, blockSize) => {
   const diagScale = .5 // this var multiplies/reduces the speed of diagonal movement since it is different than horz and vert movement
 
 
-  // get boolean values for each detector of hero hitbox
+
+  // imgData checks the collision canvas around the hero in a 64 x 64 pixel grid. getImageData.data contains an array with all color and alpha values
+  // we can use this to see if the collision canvas is transparent or not, and also check for specific colors
+  // this is fed to the collision detector function with an array of the pixel coordinates we want to check.
+  // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
+  const imgData = collisionCtx.getImageData(globalVars.middleX - (globalVars.blockSize / 2), globalVars.middleY - (globalVars.blockSize / 2), globalVars.middleX + (globalVars.blockSize / 2), globalVars.middleY + (globalVars.blockSize / 2))
+
+
+
+  // get boolean values for each detector of hero hitbox (heroColBox)
   // false if it is in collision state
   // true if it is not in collision state
   // there are 8 detectors for better precision - 4 didn't capture some collision states properly
@@ -48,15 +57,23 @@ const moveEngine = (baseHero, cMasks, blockSize) => {
   //    6------5
   //
 
-  const col0 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 0)
-  const col1 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 1)
-  const col2 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 2)
-  const col3 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 3)
-  const col4 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 4)
-  const col5 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 5)
-  const col6 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 6)
-  const col7 = checkCollision(baseHero.x, baseHero.y, heroColBox, cMasks, 7)
-  const allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7)
+  let col0 = checkCollision(imgData, heroColBox, 0)
+  let col1 = checkCollision(imgData, heroColBox, 1)
+  let col2 = checkCollision(imgData, heroColBox, 2)
+  let col3 = checkCollision(imgData, heroColBox, 3)
+  let col4 = checkCollision(imgData, heroColBox, 4)
+  let col5 = checkCollision(imgData, heroColBox, 5)
+  let col6 = checkCollision(imgData, heroColBox, 6)
+  let col7 = checkCollision(imgData, heroColBox, 7)
+  let allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7)
+
+  // console.log(col1, col2)
+
+  // if (imgData.data[0] === 128 && imgData.data[1] === 32 && imgData.data[2] === 32 && imgData.data[3] === 255) {
+  //   col1 = false
+  //   col2 = false
+  //   console.log('collision', col1, col2)
+  // }
 
   // moves hero out of collision
   if (!col0 || !col7) {

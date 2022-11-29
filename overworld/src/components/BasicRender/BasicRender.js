@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-import background_1 from '../../assets/backgrounds/test/cathedral_big_map_background.png'
+import background_1 from '../../assets/backgrounds/test/col_test_1.png'
+import collision_1 from '../../assets/backgrounds/test/col_test_1_collisions.png'
 // import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
-import foreground_1 from '../../assets/backgrounds/test/cathedral_big_map_foreground.png'
+import foreground_1 from '../../assets/backgrounds/test/col_test_1_foreground.png'
 import cursor_1 from '../../assets/hand_cursor.png'
 import { grass_1, grass_low_1, grass_2, grass_3, barrel_1, barrel_2, barrel_low_1 } from './AnimatedObjects'
 
@@ -73,6 +74,7 @@ const BasicRender = ({}) => {
   const spriteCanvas = useRef(null)
   const foregroundCanvas = useRef(null)
   const cursorCanvas = useRef(null)
+  const collisionCanvas = useRef(null)
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
@@ -85,6 +87,7 @@ const BasicRender = ({}) => {
   const spriteCtx = spriteCanvas.current.getContext('2d')
   const foregroundCtx = foregroundCanvas.current.getContext('2d')
   const cursorCtx = cursorCanvas.current.getContext('2d')
+  const collisionCtx = collisionCanvas.current.getContext('2d')
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .8
@@ -159,6 +162,25 @@ const BasicRender = ({}) => {
       }
     }
 
+    class Collisions {
+      constructor({ image, position, crop }) {
+        this.position = position
+        this.image = image
+        this.crop = crop
+      }
+
+      cropChange(cropX, cropY) {
+        this.crop = {
+          x: cropX,
+          y: cropY
+        }
+      }
+
+      draw() {
+        collisionCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+      }
+    }
+
 
 
     // we create the sprite, background, and foreground instances we will be rendering
@@ -210,6 +232,9 @@ const BasicRender = ({}) => {
     // const foregroundWidth = foreground.naturalWidth / 2
     // const foregroundHeight = foreground.naturalHeight / 2
 
+    const collisions = new Image()
+    collisions.src = collision_1
+
     baseHero.x = backgroundWidthCenter
     baseHero.y = backgroundHeightCenter
 
@@ -237,6 +262,18 @@ const BasicRender = ({}) => {
       }
     })
 
+    const collisionSprite = new Collisions({
+      image: collisions,
+      position: {
+        x: 0,
+        y: 0
+      },
+      crop: {
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
+      }
+    })
+
     const animate = () => {
 
       // clears all canvases for a new animation frame
@@ -249,16 +286,20 @@ const BasicRender = ({}) => {
       // moveEngine runs less than every frame to keep the hero sprite slower
       if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
-        baseHero = moveEngine(baseHero, cMasks, blockSize)
+        baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx)
       }
+      collisionCtx.clearRect(0, 0, width, height)
+
 
       baseHero.frameCountLimiter += baseHero.moveSpeed
+
 
       // sets position of heroSprite and equipment, as well as which spritesheet should be used for this frame
       // backgroundSprite.position.x = -baseHero.x
       // backgroundSprite.position.y = -baseHero.y
       backgroundSprite.cropChange(baseHero.x, baseHero.y)
       foregroundSprite.cropChange(baseHero.x, baseHero.y)
+      collisionSprite.cropChange(baseHero.x, baseHero.y)
       grassPatch.move(baseHero.x, baseHero.y)
       barrelPatch.move(baseHero.x, baseHero.y)
 
@@ -338,6 +379,7 @@ const BasicRender = ({}) => {
     window.requestAnimationFrame(animate)
 
 
+    collisionSprite.draw()
     // renders current background sprite
     backgroundSprite.draw()
 
@@ -350,6 +392,7 @@ const BasicRender = ({}) => {
     // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .7
+
 
 
 
@@ -377,9 +420,18 @@ const BasicRender = ({}) => {
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
-    }
 
-    animate();
+      // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
+      // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+      // backgroundCtx.fillRect(globalVars.middleX - (globalVars.blockSize / 2), globalVars.middleY - (globalVars.blockSize / 2), 1, 1)
+
+
+
+      }
+
+
+    animate()
+
 
   }, [])
 
@@ -390,13 +442,14 @@ const BasicRender = ({}) => {
         {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id='canvas-container'>
         <div id='sizing' style={{height: height, width: width}}></div>
+        <canvas id='collisionCanvas' ref={collisionCanvas} height={height} width={width} />
         <canvas id='backgroundCanvas' ref={backgroundCanvas} height={height} width={width} />
         <canvas id='spriteCanvas' ref={spriteCanvas} height={height} width={width} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={height} width={width} />
         <canvas id='cursorCanvas' ref={cursorCanvas} height={height} width={width} />
-        {/* <div className='blur'></div>
+        <div className='blur'></div>
         <div className='scanline-tone'></div>
-        <div className='pixel-tone'></div> */}
+        <div className='pixel-tone'></div>
       </div>
     </div>
   )
