@@ -3,8 +3,8 @@ import { hero_spritesheets, sword_spritesheets } from "./spriteRef"
 import globalVars from "./GlobalVars"
 
 const baseHero = {
-  x: globalVars.width / 2 - globalVars.blockSize,
-  y: globalVars.height / 2 - globalVars.blockSize,
+  x: 0,
+  y: 0,
   topDashBoost: 1,
   dashBoost: 0,
   boostMaxVel: 3,

@@ -7,6 +7,76 @@ import { buildCMask } from "./CollisionMasks"
 
 let breakActive = false
 
+export class Patch {
+  constructor(startX, startY, width, height, spriteSheets) {
+    // console.log(x, y, width, height, spriteSheets)
+    this.startX = globalVars.middleX + startX
+    this.startY = globalVars.middleY + startY
+    this.offsetX = startX
+    this.offsetY = startY
+    this.width = width
+    this.height = height
+    this.spriteSheets = spriteSheets
+    this.definitionArr = []
+    this.generatePatch(this.startX, this.startY, this.width, this.height, this.spriteSheets)
+  }
+
+  generatePatch(startX, startY, width, height, spriteSheets) {
+    console.log('generate')
+    this.definitionArr = []
+    const xSpace = spriteSheets[0].blockSize * spriteSheets[0].xScale
+    const ySpace = spriteSheets[0].blockSize * spriteSheets[0].yScale
+    const returnArr = []
+    const cornerMulti = .4
+    for(let j = 0; j < height; j++) {
+      for (let i = 0; i < width; i++) {
+        if ((j < height / (height * cornerMulti) && i < width / (width * cornerMulti)) ||
+        (j > height - (height / (height * cornerMulti)) && i > width - (width / (height * cornerMulti))) ||
+        (j < height / (height * cornerMulti) && i > width - (width / (height * cornerMulti))) ||
+        (j > height - (height / (height * cornerMulti)) && i < width / (width * cornerMulti))
+        ) {
+          const skip = Math.random() * 10
+          if (skip > 4) { // gives chance that corner images will not be rendered to create a more organic shape to the patch
+            continue
+          }
+        }
+        let offset = 0
+        if(j % 2 === 0) {
+          offset = xSpace / 2
+        }
+        const randomizeImg = Math.floor(Math.random() * spriteSheets.length)
+        const imgInstance = {...spriteSheets[randomizeImg]}
+        imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1))
+        const x = (startX + i * xSpace) + offset
+        const y = startY + j * ySpace
+        this.definitionArr.push({
+          img: imgInstance,
+          x,
+          y,
+          cMasks: buildCMask([
+            {x, y, xBlocks: 1, yBlocks: 1, gridSize: imgInstance.blockSize}
+          ])
+        })
+      }
+    }
+    console.log(this.definitionArr)
+  }
+
+  getOffset() {
+    return {x: this.offsetX, y: this.offsetY}
+  }
+
+  move(x, y) {
+    this.startX = x + this.offsetX
+    this.startY = y + this.offsetY
+    this.generatePatch(this.startX, this.startY, this.width, this.height, this.spriteSheets)
+  }
+
+  definition() {
+    return this.definitionArr
+  }
+}
+
 
 // generatePatch creates a patch of whatever animateImage you pass as argument img
 // see AnimatedObjects.js for example of format of object to pass here

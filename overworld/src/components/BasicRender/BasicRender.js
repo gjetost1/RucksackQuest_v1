@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-import background_1 from '../../assets/backgrounds/test/ruined_cathedral_map_background.png'
+import background_1 from '../../assets/backgrounds/test/cathedral_big_map_background.png'
 // import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
-import foreground_1 from '../../assets/backgrounds/test/ruined_cathedral_map_foreground.png'
+import foreground_1 from '../../assets/backgrounds/test/cathedral_big_map_foreground.png'
 import cursor_1 from '../../assets/hand_cursor.png'
 import { grass_1, grass_low_1, grass_2, grass_3, barrel_1, barrel_2, barrel_low_1 } from './AnimatedObjects'
 
@@ -16,7 +16,7 @@ import heroRender from './HeroRender'
 import cursorRender from './CursorRender'
 import hudRender from './HUDRender'
 import attackRender from './AttackRender'
-import animatedObjectsRender, { generatePatch } from './AnimatedObjectsRender'
+import animatedObjectsRender, { generatePatch, Patch } from './AnimatedObjectsRender'
 
 import inputEngine from './InputEngine'
 import baseHeroGet from './BaseHero'
@@ -53,8 +53,12 @@ onmousemove = (event) => {
 // const barrelPatch = generatePatch(600, 300, 5, 4, [barrel_1, barrel_2])
 
 
-const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
-const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
+// const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
+// const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
+
+const grassPatch = new Patch(0, 0, 5, 6, [grass_low_1])
+const barrelPatch = new Patch(0, 0, 3, 3, [barrel_low_1])
+
 
 
 const BasicRender = ({}) => {
@@ -118,24 +122,40 @@ const BasicRender = ({}) => {
     }
 
     class Background {
-      constructor({ image, position }) {
+      constructor({ image, position, crop }) {
         this.position = position
         this.image = image
+        this.crop = crop
+      }
+
+      cropChange(cropX, cropY) {
+        this.crop = {
+          x: cropX,
+          y: cropY
+        }
       }
 
       draw() {
-        backgroundCtx.drawImage(this.image, this.position.x, this.position.y, width, height)
+        backgroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
     class Foreground {
-      constructor({ image, position }) {
+      constructor({ image, position, crop }) {
         this.position = position
         this.image = image
+        this.crop = crop
+      }
+
+      cropChange(cropX, cropY) {
+        this.crop = {
+          x: cropX,
+          y: cropY
+        }
       }
 
       draw() {
-        foregroundCtx.drawImage(this.image, this.position.x, this.position.y, width, height)
+        foregroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -148,12 +168,12 @@ const BasicRender = ({}) => {
     const playerSprite = new Sprite({
       image: playerImage,
       position: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: globalVars.middleX - (globalVars.blockSize / 2),
+        y: globalVars.middleY - (globalVars.blockSize / 2)
       },
       crop: {
-        x: baseHero.heroCropX,
-        y: baseHero.heroCropY
+        x: 0,
+        y: 0
       }
     })
 
@@ -163,12 +183,12 @@ const BasicRender = ({}) => {
     const swordSprite = new Sprite({
       image: equipImage,
       position: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: globalVars.middleX - (globalVars.blockSize / 2),
+        y: globalVars.middleY - (globalVars.blockSize / 2)
       },
       crop: {
-        x: baseHero.heroCropX,
-        y: baseHero.heroCropY
+        x: 0,
+        y: 0
       }
     })
 
@@ -182,15 +202,26 @@ const BasicRender = ({}) => {
 
     const background = new Image()
     background.src = background_1
+    const backgroundWidthCenter = background.naturalWidth / 2
+    const backgroundHeightCenter = background.naturalHeight / 2
 
     const foreground = new Image()
     foreground.src = foreground_1
+    // const foregroundWidth = foreground.naturalWidth / 2
+    // const foregroundHeight = foreground.naturalHeight / 2
+
+    baseHero.x = backgroundWidthCenter
+    baseHero.y = backgroundHeightCenter
 
     const backgroundSprite = new Background({
       image: background,
       position: {
         x: 0,
         y: 0
+      },
+      crop: {
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -199,6 +230,10 @@ const BasicRender = ({}) => {
       position: {
         x: 0,
         y: 0
+      },
+      crop: {
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -220,11 +255,15 @@ const BasicRender = ({}) => {
       baseHero.frameCountLimiter += baseHero.moveSpeed
 
       // sets position of heroSprite and equipment, as well as which spritesheet should be used for this frame
-      playerSprite.position.x = baseHero.x
-      playerSprite.position.y = baseHero.y
+      // backgroundSprite.position.x = -baseHero.x
+      // backgroundSprite.position.y = -baseHero.y
+      backgroundSprite.cropChange(baseHero.x, baseHero.y)
+      foregroundSprite.cropChange(baseHero.x, baseHero.y)
+      grassPatch.move(baseHero.x, baseHero.y)
+      barrelPatch.move(baseHero.x, baseHero.y)
 
-      swordSprite.position.x = playerSprite.position.x
-      swordSprite.position.y = playerSprite.position.y
+      // foregroundSprite.position.x = -baseHero.x
+      // foregroundSprite.position.y = -baseHero.y
 
       playerImage.src = baseHero.heroSprite
 
@@ -304,12 +343,12 @@ const BasicRender = ({}) => {
 
 
     foregroundCtx.globalAlpha = 1
-    animatedObjectsRender(grassPatch, baseHero, backgroundCtx, foregroundCtx)
+    // animatedObjectsRender(grassPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(barrelPatch, baseHero, backgroundCtx, foregroundCtx)
+    // animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .7
 
 
@@ -355,9 +394,9 @@ const BasicRender = ({}) => {
         <canvas id='spriteCanvas' ref={spriteCanvas} height={height} width={width} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={height} width={width} />
         <canvas id='cursorCanvas' ref={cursorCanvas} height={height} width={width} />
-        <div className='blur'></div>
+        {/* <div className='blur'></div>
         <div className='scanline-tone'></div>
-        {/* <div className='pixel-tone'></div> */}
+        <div className='pixel-tone'></div> */}
       </div>
     </div>
   )

@@ -85,7 +85,7 @@ const moveEngine = (baseHero, cMasks, blockSize) => {
     baseHero.moveSpeed = 80
     // drains stamina if dash is active and there is directional input
     if (baseHero.currentStam > 0 && keysPressed) {
-      baseHero.currentStam = baseHero.currentStam - 1
+      baseHero.currentStam = baseHero.currentStam - .01
     }
   } else {
     baseHero.maxVel = baseHero.baseMaxVel
