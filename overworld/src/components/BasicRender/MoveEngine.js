@@ -54,7 +54,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
   const imgData = collisionCtx.getImageData(baseHero.bounceX, baseHero.bounceY, baseHero.bounceX + globalVars.blockSize, baseHero.bounceY + globalVars.blockSize)
 
-  console.log(baseHero.bounceX, baseHero.bounceY)
+  // console.log(baseHero.bounceX, baseHero.bounceY)
 
   // get boolean values for each detector of hero hitbox (heroColBox)
   // false if it is in collision state
@@ -88,36 +88,48 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   // }
 
   // moves hero out of collision
+  // const moveAmount = globalVars.upscale
   const moveAmount = 8
-
-  if (baseHero.bounceX !== globalVars.heroCenterX || baseHero.bounceY !== globalVars.heroCenterY) {
-    if (baseHero.bounceX < globalVars.heroCenterX) {
-      baseHero.bounceX = baseHero.bounceX + moveAmount / 3
-      // console.log(baseHero.bounceX, globalVars.heroCenterX)
-    }
-    if (baseHero.bounceX > globalVars.heroCenterX) {
-      baseHero.bounceX = baseHero.bounceX - moveAmount  / 3
-      console.log('off')
-
-    }
-    if (baseHero.bounceY < globalVars.heroCenterY) {
-      baseHero.bounceY = baseHero.bounceY + moveAmount / 3
-      console.log('off')
-
-    }
-    if (baseHero.bounceY > globalVars.heroCenterY) {
-      baseHero.bounceY = baseHero.bounceY - moveAmount / 3
-
-      console.log('off')
-    }
-  }
-
   // if (baseHero.bounceX !== globalVars.heroCenterX) {
   //   baseHero.bounceX = globalVars.heroCenterX
   // }
   // if (baseHero.bounceY !== globalVars.heroCenterY) {
   //   baseHero.bounceY = globalVars.heroCenterY
   // }
+
+  // if (baseHero.bounceX !== globalVars.heroCenterX || baseHero.bounceY !== globalVars.heroCenterY) {
+  //   if (baseHero.bounceX < globalVars.heroCenterX) {
+  //     baseHero.bounceX = baseHero.bounceX + moveAmount / 4
+  //     // console.log(baseHero.bounceX, globalVars.heroCenterX)
+  //   }
+  //   if (baseHero.bounceX > globalVars.heroCenterX) {
+  //     baseHero.bounceX = baseHero.bounceX - moveAmount / 4
+
+  //   }
+  //   if (baseHero.bounceY < globalVars.heroCenterY) {
+  //     baseHero.bounceY = baseHero.bounceY + moveAmount / 4
+
+  //   }
+  //   if (baseHero.bounceY > globalVars.heroCenterY) {
+  //     baseHero.bounceY = baseHero.bounceY - moveAmount / 4
+  //   }
+  // }
+
+  // if (baseHero.y + (globalVars.height / 2) - (baseHero.blockSize / 2) < baseHero.bounceY) {
+  //   baseHero.y += moveAmount
+  // }
+  // if (baseHero.y + (globalVars.height / 2) - (baseHero.blockSize / 2) > baseHero.bounceY) {
+  //   baseHero.y -= moveAmount
+  // }
+  // if (baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2) < baseHero.bounceX) {
+  //   baseHero.x += moveAmount
+  // }
+  // if (baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2) > baseHero.bounceX) {
+  //   baseHero.x -= moveAmount
+  // }
+
+  console.log(baseHero.x, globalVars.width / 2, baseHero.blockSize / 2, baseHero.bounceX, globalVars.heroCenterX)
+  // console.log(baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2), baseHero.bounceX)
 
 
 
@@ -513,6 +525,7 @@ baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroD
 
 
 
+
 // baseHero.x = Math.round(baseHero.x + baseHero.xVel)
 // baseHero.y = Math.round(baseHero.y + baseHero.yVel)
 
@@ -600,7 +613,7 @@ baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroD
       baseHero.heroDirection = 'down'
     }
 
-
+// console.log('x:', baseHero.x, baseHero.bounceX, 'y', baseHero.y, baseHero.bounceY)
 
 
   return baseHero

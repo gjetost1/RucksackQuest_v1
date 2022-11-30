@@ -5,8 +5,8 @@ import globalVars from "./GlobalVars"
 const baseHero = {
   x: 0,
   y: 0,
-  bounceX: 0,
-  bounceY: 0,
+  bounceX: globalVars.heroCenterX,
+  bounceY: globalVars.heroCenterY,
   topDashBoost: 1,
   dashBoost: 0,
   boostMaxVel: 3,

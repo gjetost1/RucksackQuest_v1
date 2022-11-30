@@ -41,8 +41,10 @@ let cursorY = -400
 // this gets the coordinates of the cursor so it can be rendered on the canvas
 document.addEventListener('mousemove', (action) => {})
 onmousemove = (event) => {
-  cursorX = event.x - globalVars.windowSpacerWidth
-  cursorY = event.y - globalVars.windowSpacerHeight
+  cursorX = event.x
+  cursorY = event.y
+  // cursorX = event.x - globalVars.windowSpacerWidth
+  // cursorY = event.y - globalVars.windowSpacerHeight
 }
 
 // const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
@@ -61,12 +63,12 @@ const grassPatch = new Patch(0, 0, 5, 6, [grass_low_1])
 const barrelPatch = new Patch(0, 0, 3, 3, [barrel_low_1])
 
 
-baseHero.bounceX = globalVars.heroCenterX
-baseHero.bounceY = globalVars.heroCenterY
 
 
 
 const BasicRender = ({}) => {
+
+
 
   const swordFx = new Audio(sword_fx)
   // let eventObj = {}
@@ -143,7 +145,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        backgroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+        backgroundCtx.drawImage(this.image, this.crop.x, this.crop.y, window.innerWidth, window.innerHeight, this.position.x, this.position.y, window.innerWidth, window.innerHeight,)
       }
     }
 
@@ -162,7 +164,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        foregroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+        foregroundCtx.drawImage(this.image, this.crop.x, this.crop.y, window.innerWidth, window.innerHeight, this.position.x, this.position.y, window.innerWidth, window.innerHeight,)
       }
     }
 
@@ -181,7 +183,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        collisionCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+        collisionCtx.drawImage(this.image, this.crop.x, this.crop.y, window.innerWidth, window.innerHeight, this.position.x, this.position.y, window.innerWidth, window.innerHeight,)
       }
     }
 
@@ -283,10 +285,10 @@ const BasicRender = ({}) => {
     const animate = () => {
 
       // clears all canvases for a new animation frame
-      backgroundCtx.clearRect(0, 0, width, height)
-      spriteCtx.clearRect(0, 0, width, height)
-      foregroundCtx.clearRect(0, 0, width, height)
-      cursorCtx.clearRect(0, 0, width, height)
+      backgroundCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      spriteCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      foregroundCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      cursorCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
@@ -294,7 +296,7 @@ const BasicRender = ({}) => {
         baseHero.frameCountLimiter = 0
         baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx)
       }
-      collisionCtx.clearRect(0, 0, width, height)
+      collisionCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
 
 
       baseHero.frameCountLimiter += baseHero.moveSpeed
@@ -431,8 +433,10 @@ const BasicRender = ({}) => {
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
-      // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-      // backgroundCtx.fillRect(globalVars.middleX - (globalVars.blockSize / 2), globalVars.middleY - (globalVars.blockSize / 2), 1, 1)
+      backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+      backgroundCtx.fillRect(baseHero.bounceX, baseHero.bounceY, 1, 1)
+      backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+      backgroundCtx.fillRect(baseHero.x, baseHero.y, 10, 10)
 
 
 
@@ -446,16 +450,17 @@ const BasicRender = ({}) => {
 
 
 
+
   return (
     <div id='main-container'>
         {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id='canvas-container'>
-        <div id='sizing' style={{height: height, width: width}}></div>
-        <canvas id='collisionCanvas' ref={collisionCanvas} height={height} width={width} />
-        <canvas id='backgroundCanvas' ref={backgroundCanvas} height={height} width={width} />
-        <canvas id='spriteCanvas' ref={spriteCanvas} height={height} width={width} />
-        <canvas id='foregroundCanvas' ref={foregroundCanvas} height={height} width={width} />
-        <canvas id='cursorCanvas' ref={cursorCanvas} height={height} width={width} />
+        <div id='sizing' style={{height: window.innerHeight, width: window.innerWidth}}></div>
+        <canvas id='collisionCanvas' ref={collisionCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='backgroundCanvas' ref={backgroundCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='spriteCanvas' ref={spriteCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='foregroundCanvas' ref={foregroundCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} />
         <div className='blur'></div>
         <div className='scanline-tone'></div>
         <div className='pixel-tone'></div>
