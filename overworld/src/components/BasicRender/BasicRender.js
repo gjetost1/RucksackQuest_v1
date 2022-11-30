@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-import background_1 from '../../assets/backgrounds/test/col_test_1.png'
-import collision_1 from '../../assets/backgrounds/test/col_test_1_collisions.png'
+import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
+import collision_1 from '../../assets/backgrounds/test/big_map_collision_2.png'
 // import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
 // import background_1 from '../../assets/backgrounds/river_style_test.png'
-import foreground_1 from '../../assets/backgrounds/test/col_test_1_foreground.png'
+import foreground_1 from '../../assets/backgrounds/test/big_map_foreground_2.png'
 import cursor_1 from '../../assets/hand_cursor.png'
 import { grass_1, grass_low_1, grass_2, grass_3, barrel_1, barrel_2, barrel_low_1 } from './AnimatedObjects'
 
@@ -59,6 +59,10 @@ onmousemove = (event) => {
 
 const grassPatch = new Patch(0, 0, 5, 6, [grass_low_1])
 const barrelPatch = new Patch(0, 0, 3, 3, [barrel_low_1])
+
+
+baseHero.bounceX = globalVars.heroCenterX
+baseHero.bounceY = globalVars.heroCenterY
 
 
 
@@ -190,8 +194,8 @@ const BasicRender = ({}) => {
     const playerSprite = new Sprite({
       image: playerImage,
       position: {
-        x: globalVars.middleX - (globalVars.blockSize / 2),
-        y: globalVars.middleY - (globalVars.blockSize / 2)
+        x: globalVars.heroCenterX,
+        y: globalVars.heroCenterY
       },
       crop: {
         x: 0,
@@ -205,8 +209,8 @@ const BasicRender = ({}) => {
     const swordSprite = new Sprite({
       image: equipImage,
       position: {
-        x: globalVars.middleX - (globalVars.blockSize / 2),
-        y: globalVars.middleY - (globalVars.blockSize / 2)
+        x: globalVars.heroCenterX,
+        y: globalVars.heroCenterY
       },
       crop: {
         x: 0,
@@ -224,8 +228,10 @@ const BasicRender = ({}) => {
 
     const background = new Image()
     background.src = background_1
-    const backgroundWidthCenter = background.naturalWidth / 2
-    const backgroundHeightCenter = background.naturalHeight / 2
+    // const backgroundWidthCenter = background.naturalWidth / 2
+    // const backgroundHeightCenter = background.naturalHeight / 2
+    const backgroundWidthCenter = 100
+    const backgroundHeightCenter = 100
 
     const foreground = new Image()
     foreground.src = foreground_1
@@ -302,6 +308,9 @@ const BasicRender = ({}) => {
       collisionSprite.cropChange(baseHero.x, baseHero.y)
       grassPatch.move(baseHero.x, baseHero.y)
       barrelPatch.move(baseHero.x, baseHero.y)
+
+      playerSprite.position = {x: baseHero.bounceX, y: baseHero.bounceY}
+      swordSprite.position = {x: baseHero.bounceX, y: baseHero.bounceY}
 
       // foregroundSprite.position.x = -baseHero.x
       // foregroundSprite.position.y = -baseHero.y

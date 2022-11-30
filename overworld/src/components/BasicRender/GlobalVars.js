@@ -8,4 +8,6 @@ const windowSpacerHeight = ((window.innerHeight || document.documentElement.clie
   document.body.clientHeight) - height) / 2
 const windowSpacerWidth = ((window.innerWidth || document.documentElement.clientWidth ||
   document.body.clientWidth) - width) / 2
-export default {upscale, height, width, middleX, middleY, blockSize, windowSpacerHeight, windowSpacerWidth}
+const heroCenterX = middleX - (blockSize / 2)
+const heroCenterY = middleY - (blockSize / 2)
+export default {upscale, height, width, middleX, middleY, blockSize, windowSpacerHeight, windowSpacerWidth, heroCenterX, heroCenterY}

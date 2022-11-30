@@ -8,8 +8,8 @@ const baseAnimSpeed = 2
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
 let spriteAnimCounter = 0 // increments to trigger render of next animation frame
 
-const colBuffer = 4 // number of pixels away from hero that detectors sit
-const horzBuffer = 4
+const colBuffer = 5 // number of pixels away from hero that detectors sit
+const horzBuffer = 16
 const vertBuffer = 12
 const blockSize = globalVars.blockSize
 
@@ -24,6 +24,18 @@ const heroColBox = [
   [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
   [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
 ]
+
+// const heroColBox = [
+//   // array of coordinates for all detectors of hero object
+//   [horzBuffer, colBuffer + vertBuffer * 2],
+//   [colBuffer + horzBuffer, vertBuffer * 2],
+//   [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
+//   [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
+//   [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
+//   [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+//   [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+//   [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
+// ]
 
 const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   if (!baseHero) return
@@ -40,9 +52,9 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   // we can use this to see if the collision canvas is transparent or not, and also check for specific colors
   // this is fed to the collision detector function with an array of the pixel coordinates we want to check.
   // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
-  const imgData = collisionCtx.getImageData(globalVars.middleX - (globalVars.blockSize / 2), globalVars.middleY - (globalVars.blockSize / 2), globalVars.middleX + (globalVars.blockSize / 2), globalVars.middleY + (globalVars.blockSize / 2))
+  const imgData = collisionCtx.getImageData(baseHero.bounceX, baseHero.bounceY, baseHero.bounceX + globalVars.blockSize, baseHero.bounceY + globalVars.blockSize)
 
-
+  console.log(baseHero.bounceX, baseHero.bounceY)
 
   // get boolean values for each detector of hero hitbox (heroColBox)
   // false if it is in collision state
@@ -76,22 +88,101 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   // }
 
   // moves hero out of collision
-  if (!col0 || !col7) {
-    baseHero.x += .4
-    baseHero.xVel = 0
+  const moveAmount = 8
+
+  if (baseHero.bounceX !== globalVars.heroCenterX || baseHero.bounceY !== globalVars.heroCenterY) {
+    if (baseHero.bounceX < globalVars.heroCenterX) {
+      baseHero.bounceX = baseHero.bounceX + moveAmount / 3
+      // console.log(baseHero.bounceX, globalVars.heroCenterX)
+    }
+    if (baseHero.bounceX > globalVars.heroCenterX) {
+      baseHero.bounceX = baseHero.bounceX - moveAmount  / 3
+      console.log('off')
+
+    }
+    if (baseHero.bounceY < globalVars.heroCenterY) {
+      baseHero.bounceY = baseHero.bounceY + moveAmount / 3
+      console.log('off')
+
+    }
+    if (baseHero.bounceY > globalVars.heroCenterY) {
+      baseHero.bounceY = baseHero.bounceY - moveAmount / 3
+
+      console.log('off')
+    }
   }
-  if (!col1 || !col2) {
-    baseHero.y += .4
-    baseHero.yVel = 0
+
+  // if (baseHero.bounceX !== globalVars.heroCenterX) {
+  //   baseHero.bounceX = globalVars.heroCenterX
+  // }
+  // if (baseHero.bounceY !== globalVars.heroCenterY) {
+  //   baseHero.bounceY = globalVars.heroCenterY
+  // }
+
+
+
+
+
+  // if (!col0 || !col7) {
+  //   baseHero.x += moveAmount
+  //   // baseHero.xVel = 0
+  // }
+  // if (!col1 || !col2) {
+  //   baseHero.y += moveAmount
+  //   // baseHero.yVel = 0
+  // }
+  // if (!col3 || !col4) {
+  //   baseHero.x -= moveAmount
+  //   // baseHero.xVel = 0
+  // }
+  // if (!col5 || !col6) {
+  //   baseHero.y -= moveAmount
+  //   // baseHero.yVel = 0
+  // }
+  if (baseHero.keys.ArrowLeft.pressed && !col0 && col7) {
+    baseHero.bounceY += moveAmount
+    // baseHero.y += moveAmount
+    // baseHero.yVel = 0
   }
-  if (!col3 || !col4) {
-    baseHero.x -= .4
-    baseHero.xVel = 0
+  if (baseHero.keys.ArrowLeft.pressed && col0 && !col7) {
+    baseHero.bounceY -= moveAmount
+    // baseHero.y -= moveAmount
+    // baseHero.yVel = 0
   }
-  if (!col5 || !col6) {
-    baseHero.y -= .4
-    baseHero.yVel = 0
+  if (baseHero.keys.ArrowUp.pressed && !col1 && col2) {
+    baseHero.bounceX += moveAmount
+    // baseHero.x += moveAmount
+    // baseHero.xVel = 0
   }
+  if (baseHero.keys.ArrowUp.pressed && col1 && !col2) {
+    baseHero.bounceX -= moveAmount
+    // baseHero.x -= moveAmount
+    // baseHero.xVel = 0
+  }
+  if (baseHero.keys.ArrowRight.pressed && !col3 && col4) {
+    baseHero.bounceY += moveAmount
+    // baseHero.y += moveAmount
+    // baseHero.yVel = 0
+  }
+  if (baseHero.keys.ArrowRight.pressed && col3 && !col4) {
+    baseHero.bounceY -= moveAmount
+    // baseHero.y -= moveAmount
+    // baseHero.yVel = 0
+  }
+  if (baseHero.keys.ArrowDown.pressed && !col5 && col6) {
+    baseHero.bounceX -= moveAmount
+    // baseHero.x -= moveAmount
+    // baseHero.xVel = 0
+  }
+  if (baseHero.keys.ArrowDown.pressed && col5 && !col6) {
+    baseHero.bounceX += moveAmount
+    // baseHero.x += moveAmount
+
+    // baseHero.xVel = 0
+  }
+
+  baseHero.bounceX = pixelPerfect(Math.round(baseHero.bounceX), baseHero.heroDirection, 'x', globalVars.upscale)
+  baseHero.bounceY = pixelPerfect(Math.round(baseHero.bounceY), baseHero.heroDirection, 'y', globalVars.upscale)
 
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
@@ -419,6 +510,8 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
 
 baseHero.x = pixelPerfect(Math.round(baseHero.x + baseHero.xVel), baseHero.heroDirection, 'x', globalVars.upscale)
 baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroDirection, 'y', globalVars.upscale)
+
+
 
 // baseHero.x = Math.round(baseHero.x + baseHero.xVel)
 // baseHero.y = Math.round(baseHero.y + baseHero.yVel)
