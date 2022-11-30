@@ -167,7 +167,7 @@
   image-rendering: pixelated;
   width: fit-content;
   height: fit-content;
-  z-index: 3;
+  z-index: 4;
   /* animation: scale-background 6s ease-in-out; */
   transform-origin: center;
 }
@@ -181,7 +181,7 @@
   image-rendering: pixelated;
   width: fit-content;
   height: fit-content;
-  z-index: 1000;
+  z-index: -1000;
   /* animation: scale-background 6s ease-in-out; */
   transform-origin: center;
 }

@@ -89,7 +89,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
 
   // moves hero out of collision
   // const moveAmount = globalVars.upscale
-  const moveAmount = 8
+  const moveAmount = 2
   // if (baseHero.bounceX !== globalVars.heroCenterX) {
   //   baseHero.bounceX = globalVars.heroCenterX
   // }
@@ -97,23 +97,26 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   //   baseHero.bounceY = globalVars.heroCenterY
   // }
 
-  // if (baseHero.bounceX !== globalVars.heroCenterX || baseHero.bounceY !== globalVars.heroCenterY) {
-  //   if (baseHero.bounceX < globalVars.heroCenterX) {
-  //     baseHero.bounceX = baseHero.bounceX + moveAmount / 4
-  //     // console.log(baseHero.bounceX, globalVars.heroCenterX)
-  //   }
-  //   if (baseHero.bounceX > globalVars.heroCenterX) {
-  //     baseHero.bounceX = baseHero.bounceX - moveAmount / 4
+  baseHero.bounceX = baseHero.x
+  baseHero.bounceY = baseHero.y
 
-  //   }
-  //   if (baseHero.bounceY < globalVars.heroCenterY) {
-  //     baseHero.bounceY = baseHero.bounceY + moveAmount / 4
+  if (baseHero.bounceX !== globalVars.heroCenterX || baseHero.bounceY !== globalVars.heroCenterY) {
+    if (baseHero.bounceX < globalVars.heroCenterX) {
+      baseHero.bounceX = baseHero.bounceX + moveAmount / 4
+      // console.log(baseHero.bounceX, globalVars.heroCenterX)
+    }
+    if (baseHero.bounceX > globalVars.heroCenterX) {
+      baseHero.bounceX = baseHero.bounceX - moveAmount / 4
 
-  //   }
-  //   if (baseHero.bounceY > globalVars.heroCenterY) {
-  //     baseHero.bounceY = baseHero.bounceY - moveAmount / 4
-  //   }
-  // }
+    }
+    if (baseHero.bounceY < globalVars.heroCenterY) {
+      baseHero.bounceY = baseHero.bounceY + moveAmount / 4
+
+    }
+    if (baseHero.bounceY > globalVars.heroCenterY) {
+      baseHero.bounceY = baseHero.bounceY - moveAmount / 4
+    }
+  }
 
   // if (baseHero.y + (globalVars.height / 2) - (baseHero.blockSize / 2) < baseHero.bounceY) {
   //   baseHero.y += moveAmount
@@ -128,7 +131,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   //   baseHero.x -= moveAmount
   // }
 
-  console.log(baseHero.x, globalVars.width / 2, baseHero.blockSize / 2, baseHero.bounceX, globalVars.heroCenterX)
+  // console.log(baseHero.x, globalVars.width / 2, baseHero.blockSize / 2, baseHero.bounceX, globalVars.heroCenterX)
   // console.log(baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2), baseHero.bounceX)
 
 
@@ -152,49 +155,49 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   //   // baseHero.yVel = 0
   // }
   if (baseHero.keys.ArrowLeft.pressed && !col0 && col7) {
-    baseHero.bounceY += moveAmount
-    // baseHero.y += moveAmount
+    // baseHero.bounceY += moveAmount
+    baseHero.y += moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowLeft.pressed && col0 && !col7) {
-    baseHero.bounceY -= moveAmount
-    // baseHero.y -= moveAmount
+    // baseHero.bounceY -= moveAmount
+    baseHero.y -= moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowUp.pressed && !col1 && col2) {
-    baseHero.bounceX += moveAmount
-    // baseHero.x += moveAmount
+    // baseHero.bounceX += moveAmount
+    baseHero.x += moveAmount
     // baseHero.xVel = 0
   }
   if (baseHero.keys.ArrowUp.pressed && col1 && !col2) {
-    baseHero.bounceX -= moveAmount
-    // baseHero.x -= moveAmount
+    // baseHero.bounceX -= moveAmount
+    baseHero.x -= moveAmount
     // baseHero.xVel = 0
   }
   if (baseHero.keys.ArrowRight.pressed && !col3 && col4) {
-    baseHero.bounceY += moveAmount
-    // baseHero.y += moveAmount
+    // baseHero.bounceY += moveAmount
+    baseHero.y += moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowRight.pressed && col3 && !col4) {
-    baseHero.bounceY -= moveAmount
-    // baseHero.y -= moveAmount
+    // baseHero.bounceY -= moveAmount
+    baseHero.y -= moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowDown.pressed && !col5 && col6) {
-    baseHero.bounceX -= moveAmount
-    // baseHero.x -= moveAmount
+    // baseHero.bounceX -= moveAmount
+    baseHero.x -= moveAmount
     // baseHero.xVel = 0
   }
   if (baseHero.keys.ArrowDown.pressed && col5 && !col6) {
-    baseHero.bounceX += moveAmount
-    // baseHero.x += moveAmount
+    // baseHero.bounceX += moveAmount
+    baseHero.x += moveAmount
 
     // baseHero.xVel = 0
   }
 
-  baseHero.bounceX = pixelPerfect(Math.round(baseHero.bounceX), baseHero.heroDirection, 'x', globalVars.upscale)
-  baseHero.bounceY = pixelPerfect(Math.round(baseHero.bounceY), baseHero.heroDirection, 'y', globalVars.upscale)
+  // baseHero.bounceX = pixelPerfect(Math.round(baseHero.bounceX), baseHero.heroDirection, 'x', globalVars.upscale)
+  // baseHero.bounceY = pixelPerfect(Math.round(baseHero.bounceY), baseHero.heroDirection, 'y', globalVars.upscale)
 
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
