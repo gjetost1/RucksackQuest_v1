@@ -12,10 +12,17 @@ const getPixel = (imgData, x, y) => {
 }
 
 
-// checkCollision checks if baseHero.x,baseHero.y coordinates are inside one of the collision masks in cMask
-// returns false if there is a collision and true if there is not
-const checkCollision = (imgData, colBox, corner) => {
-  // the corner value determines which index of the colBox array we are checking for alpha values
-  return getPixel(imgData, colBox[corner][0], colBox[corner][1])[3] === 0
+// checkCollision checks if a coordinate in the colBox is over a pixel with a non zero alpha value
+// in the collision canvas. it takes a colBox object with coordinates for collision detector pixels
+// and returns an object with the same keys and values that are false if there is no collision
+// or true if there is a collision
+
+const checkCollision = (imgData, colBox) => {
+  const collisions = {}
+  for (let el of Object.entries(colBox)) {
+    collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[3] !== 0
+  }
+
+  return collisions
 }
  export default checkCollision

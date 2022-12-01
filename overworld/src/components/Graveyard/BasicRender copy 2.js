@@ -293,10 +293,10 @@ const BasicRender = ({}) => {
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
-      // if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
+      if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
         baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx)
-      // }
+      }
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
