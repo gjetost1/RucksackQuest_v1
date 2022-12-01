@@ -93,7 +93,7 @@ const BasicRender = ({}) => {
   const spriteCtx = spriteCanvas.current.getContext('2d')
   const foregroundCtx = foregroundCanvas.current.getContext('2d')
   const cursorCtx = cursorCanvas.current.getContext('2d')
-  const collisionCtx = collisionCanvas.current.getContext('2d')
+  const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .8
@@ -145,7 +145,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        backgroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, 0, 0, globalVars.width, globalVars.height,)
+        backgroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -164,7 +164,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        foregroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, 0, 0, globalVars.width, globalVars.height,)
+        foregroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -183,7 +183,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        collisionCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, 0, 0, globalVars.width, globalVars.height,)
+        collisionCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -196,8 +196,8 @@ const BasicRender = ({}) => {
     const playerSprite = new Sprite({
       image: playerImage,
       position: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: globalVars.heroCenterX,
+        y: globalVars.heroCenterY
       },
       crop: {
         x: baseHero.heroCropX,
@@ -211,8 +211,8 @@ const BasicRender = ({}) => {
     const swordSprite = new Sprite({
       image: equipImage,
       position: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: globalVars.heroCenterX,
+        y: globalVars.heroCenterY
       },
       crop: {
         x: baseHero.heroCropX,
@@ -230,10 +230,10 @@ const BasicRender = ({}) => {
 
     const background = new Image()
     background.src = background_1
-    // const backgroundWidthCenter = background.naturalWidth / 2
-    // const backgroundHeightCenter = background.naturalHeight / 2
-    const backgroundWidthCenter = 100
-    const backgroundHeightCenter = 100
+    const backgroundWidthCenter = background.naturalWidth / 2
+    const backgroundHeightCenter = background.naturalHeight / 2
+    // const backgroundWidthCenter = 100
+    // const backgroundHeightCenter = 100
 
     const foreground = new Image()
     foreground.src = foreground_1
@@ -243,8 +243,8 @@ const BasicRender = ({}) => {
     const collisions = new Image()
     collisions.src = collision_1
 
-    // baseHero.x = backgroundWidthCenter
-    // baseHero.y = backgroundHeightCenter
+    // baseHero.cameraX = backgroundWidthCenter
+    // baseHero.cameraY = backgroundHeightCenter
 
     const backgroundSprite = new Background({
       image: background,
@@ -253,8 +253,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -265,8 +265,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -277,8 +277,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: baseHero.x,
-        y: baseHero.y
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -286,10 +286,10 @@ const BasicRender = ({}) => {
     const animate = () => {
 
       // clears all canvases for a new animation frame
-      backgroundCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      spriteCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      foregroundCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      cursorCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
@@ -297,38 +297,37 @@ const BasicRender = ({}) => {
         baseHero.frameCountLimiter = 0
         baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx)
       }
-      collisionCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       baseHero.frameCountLimiter += baseHero.moveSpeed
 
 
       // sets position of heroSprite and equipment, as well as which spritesheet should be used for this frame
-      // backgroundSprite.position.x = -baseHero.x
-      // backgroundSprite.position.y = -baseHero.y
-      playerSprite.position.x = baseHero.x
-      playerSprite.position.y = baseHero.y
-      swordSprite.position.x = baseHero.x
-      swordSprite.position.y = baseHero.y
-      backgroundSprite.cropChange(baseHero.x + 1000, baseHero.y + 1000)
-      foregroundSprite.cropChange(baseHero.x + 1000, baseHero.y + 1000)
-      collisionSprite.cropChange(baseHero.x + 1000, baseHero.y + 1000)
-      // backgroundSprite.cropChange(baseHero.x + globalVars.middleX, baseHero.y - globalVars.middleY)
-      // foregroundSprite.cropChange(baseHero.x + globalVars.middleX, baseHero.y - globalVars.middleY)
-      // collisionSprite.cropChange(baseHero.x + globalVars.middleX, baseHero.y - globalVars.middleY)
-    console.log(baseHero.x, baseHero.y)
+      // backgroundSprite.position.x = -baseHero.cameraX
+      // backgroundSprite.position.y = -baseHero.cameraY
+      // console.log(baseHero.cameraX, baseHero.cameraY, baseHero.heroX, baseHero.heroY)
+      backgroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
+      foregroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
+      collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
+      // grassPatch.move(baseHero.cameraX, baseHero.cameraY)
+      // barrelPatch.move(baseHero.cameraX, baseHero.cameraY)
 
 
 
-      // console.log('hero: ', baseHero.x, baseHero.y, 'camera: ', baseHero.x - globalVars.middleX, baseHero.y - globalVars.middleY)
-      // grassPatch.move(baseHero.x, baseHero.y)
-      // barrelPatch.move(baseHero.x, baseHero.y)
 
-      // playerSprite.position = {x: baseHero.bounceX, y: baseHero.bounceY}
-      // swordSprite.position = {x: baseHero.bounceX, y: baseHero.bounceY}
+      // console.log('hero: ', baseHero.cameraX, baseHero.cameraY, 'camera: ', baseHero.cameraX - globalVars.middleX, baseHero.cameraY - globalVars.middleY)
+      // grassPatch.move(baseHero.cameraX, baseHero.cameraY)
+      // barrelPatch.move(baseHero.cameraX, baseHero.cameraY)
 
-      // foregroundSprite.position.x = -baseHero.x
-      // foregroundSprite.position.y = -baseHero.y
+      playerSprite.position = {x: baseHero.heroX, y: baseHero.heroY}
+      swordSprite.position = {x: baseHero.heroX, y: baseHero.heroY}
+      // console.log('x:', baseHero.heroX, 'y:', baseHero.heroY)
+      // console.log(globalVars.heroCenterX, globalVars.heroCenterY)
+      // console.log('camx:', baseHero.cameraX, 'camy:', baseHero.cameraY)
+
+      // foregroundSprite.position.x = -baseHero.cameraX
+      // foregroundSprite.position.y = -baseHero.cameraY
 
       playerImage.src = baseHero.heroSprite
 
@@ -447,12 +446,11 @@ const BasicRender = ({}) => {
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
       backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-      backgroundCtx.fillRect(baseHero.bounceX, baseHero.bounceY, 10, 10)
-      backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-      backgroundCtx.fillRect(baseHero.x, baseHero.y, 10, 10)
+      backgroundCtx.fillRect(baseHero.heroX, baseHero.heroY, 10, 10)
+      // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+      // backgroundCtx.fillRect(baseHero.cameraX, baseHero.cameraY, 10, 10)
 
-
-      }
+    }
 
 
     animate()

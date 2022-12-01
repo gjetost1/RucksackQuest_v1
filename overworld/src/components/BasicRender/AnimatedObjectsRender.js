@@ -195,7 +195,7 @@ if (!windBlow) {
       el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
       el.img.destroyed = true
       backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
-    } else if (baseHero.y < el.y
+    } else if (baseHero.cameraY < el.y
       ) {
       foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
     } else {

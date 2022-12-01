@@ -43,8 +43,8 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
 
   // keysPressed is true if any directional input was given this frame, otherwise false.
   const keysPressed = (baseHero.keys.ArrowUp.pressed || baseHero.keys.ArrowDown.pressed || baseHero.keys.ArrowLeft.pressed || baseHero.keys.ArrowRight.pressed)
-  const bounce = 1 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
-  const diagScale = .5 // this var multiplies/reduces the speed of diagonal movement since it is different than horz and vert movement
+  const bounce = 0 // this var multiplies force of rebound on collision, should probably put this in moveObj eventually
+  const diagScale = 1 // this var multiplies/reduces the speed of diagonal movement since it is different than horz and vert movement
 
 
 
@@ -52,9 +52,9 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   // we can use this to see if the collision canvas is transparent or not, and also check for specific colors
   // this is fed to the collision detector function with an array of the pixel coordinates we want to check.
   // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
-  const imgData = collisionCtx.getImageData(baseHero.bounceX, baseHero.bounceY, baseHero.bounceX + globalVars.blockSize, baseHero.bounceY + globalVars.blockSize)
+  const imgData = collisionCtx.getImageData(baseHero.targetHeroX, baseHero.targetHeroY, baseHero.targetHeroX + globalVars.blockSize, baseHero.targetHeroY + globalVars.blockSize)
 
-  // console.log(baseHero.bounceX, baseHero.bounceY)
+  // console.log(baseHero.targetHeroX, baseHero.targetHeroY)
 
   // get boolean values for each detector of hero hitbox (heroColBox)
   // false if it is in collision state
@@ -89,115 +89,128 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
 
   // moves hero out of collision
   // const moveAmount = globalVars.upscale
-  const moveAmount = 2
-  // if (baseHero.bounceX !== globalVars.heroCenterX) {
-  //   baseHero.bounceX = globalVars.heroCenterX
+  const moveAmount = 4
+  // if (baseHero.targetHeroX !== globalVars.heroCenterX) {
+  //   baseHero.targetHeroX = globalVars.heroCenterX
   // }
-  // if (baseHero.bounceY !== globalVars.heroCenterY) {
-  //   baseHero.bounceY = globalVars.heroCenterY
+  // if (baseHero.targetHeroY !== globalVars.heroCenterY) {
+  //   baseHero.targetHeroY = globalVars.heroCenterY
   // }
 
-  baseHero.bounceX = baseHero.x
-  baseHero.bounceY = baseHero.y
+  // baseHero.targetHeroX = baseHero.targetCameraX
+  // baseHero.targetHeroY = baseHero.targetCameraY
 
-  if (baseHero.bounceX !== globalVars.heroCenterX || baseHero.bounceY !== globalVars.heroCenterY) {
-    if (baseHero.bounceX < globalVars.heroCenterX) {
-      baseHero.bounceX = baseHero.bounceX + moveAmount / 4
-      // console.log(baseHero.bounceX, globalVars.heroCenterX)
+  if (baseHero.targetHeroX !== globalVars.heroCenterX || baseHero.targetHeroY !== globalVars.heroCenterY) {
+    if (baseHero.targetHeroX < globalVars.heroCenterX) {
+      baseHero.targetHeroX = baseHero.targetHeroX + moveAmount / 2
+      // console.log(baseHero.targetHeroX, globalVars.heroCenterX)
     }
-    if (baseHero.bounceX > globalVars.heroCenterX) {
-      baseHero.bounceX = baseHero.bounceX - moveAmount / 4
-
-    }
-    if (baseHero.bounceY < globalVars.heroCenterY) {
-      baseHero.bounceY = baseHero.bounceY + moveAmount / 4
+    if (baseHero.targetHeroX > globalVars.heroCenterX) {
+      baseHero.targetHeroX = baseHero.targetHeroX - moveAmount / 2
 
     }
-    if (baseHero.bounceY > globalVars.heroCenterY) {
-      baseHero.bounceY = baseHero.bounceY - moveAmount / 4
+    if (baseHero.targetHeroY < globalVars.heroCenterY) {
+      baseHero.targetHeroY = baseHero.targetHeroY + moveAmount / 2
+
+    }
+    if (baseHero.targetHeroY > globalVars.heroCenterY) {
+      baseHero.targetHeroY = baseHero.targetHeroY - moveAmount / 2
     }
   }
 
-  // if (baseHero.y + (globalVars.height / 2) - (baseHero.blockSize / 2) < baseHero.bounceY) {
-  //   baseHero.y += moveAmount
+  // if (baseHero.targetCameraY + (globalVars.height / 2) - (baseHero.blockSize / 2) < baseHero.targetHeroY) {
+  //   baseHero.targetCameraY += moveAmount
   // }
-  // if (baseHero.y + (globalVars.height / 2) - (baseHero.blockSize / 2) > baseHero.bounceY) {
-  //   baseHero.y -= moveAmount
+  // if (baseHero.targetCameraY + (globalVars.height / 2) - (baseHero.blockSize / 2) > baseHero.targetHeroY) {
+  //   baseHero.targetCameraY -= moveAmount
   // }
-  // if (baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2) < baseHero.bounceX) {
-  //   baseHero.x += moveAmount
+  // if (baseHero.targetCameraX + (globalVars.width / 2) - (baseHero.blockSize / 2) < baseHero.targetHeroX) {
+  //   baseHero.targetCameraX += moveAmount
   // }
-  // if (baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2) > baseHero.bounceX) {
-  //   baseHero.x -= moveAmount
+  // if (baseHero.targetCameraX + (globalVars.width / 2) - (baseHero.blockSize / 2) > baseHero.targetHeroX) {
+  //   baseHero.targetCameraX -= moveAmount
   // }
 
-  // console.log(baseHero.x, globalVars.width / 2, baseHero.blockSize / 2, baseHero.bounceX, globalVars.heroCenterX)
-  // console.log(baseHero.x + (globalVars.width / 2) - (baseHero.blockSize / 2), baseHero.bounceX)
+  // console.log(baseHero.targetCameraX, globalVars.width / 2, baseHero.blockSize / 2, baseHero.targetHeroX, globalVars.heroCenterX)
+  // console.log(baseHero.targetCameraX + (globalVars.width / 2) - (baseHero.blockSize / 2), baseHero.targetHeroX)
 
 
 
 
 
   // if (!col0 || !col7) {
-  //   baseHero.x += moveAmount
+  //   baseHero.targetCameraX += moveAmount
   //   // baseHero.xVel = 0
   // }
   // if (!col1 || !col2) {
-  //   baseHero.y += moveAmount
+  //   baseHero.targetCameraY += moveAmount
   //   // baseHero.yVel = 0
   // }
   // if (!col3 || !col4) {
-  //   baseHero.x -= moveAmount
+  //   baseHero.targetCameraX -= moveAmount
   //   // baseHero.xVel = 0
   // }
   // if (!col5 || !col6) {
-  //   baseHero.y -= moveAmount
+  //   baseHero.targetCameraY -= moveAmount
   //   // baseHero.yVel = 0
   // }
-  if (baseHero.keys.ArrowLeft.pressed && !col0 && col7) {
-    // baseHero.bounceY += moveAmount
-    baseHero.y += moveAmount
+  if (baseHero.keys.ArrowLeft.pressed && baseHero.keys.ArrowUp.pressed && !col0 && col7) {
+    console.log('upleft col0')
+    // baseHero.targetHeroX -= moveAmount
+    baseHero.targetCameraY += moveAmount
+  } else if (baseHero.keys.ArrowLeft.pressed && !col0 && col7) {
+    // baseHero.targetHeroY += moveAmount
+    baseHero.targetHeroX -= moveAmount
+    baseHero.targetCameraY += moveAmount
     // baseHero.yVel = 0
-  }
-  if (baseHero.keys.ArrowLeft.pressed && col0 && !col7) {
-    // baseHero.bounceY -= moveAmount
-    baseHero.y -= moveAmount
+  } else if (baseHero.keys.ArrowLeft.pressed && baseHero.keys.ArrowUp.pressed && col0 && !col7) {
+    baseHero.targetHeroX += moveAmount
+    baseHero.targetCameraY -= moveAmount
+  } else if (baseHero.keys.ArrowLeft.pressed && col0 && !col7) {
+    // baseHero.targetHeroY -= moveAmount
+    baseHero.targetHeroX -= moveAmount
+    baseHero.targetCameraY -= moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowUp.pressed && !col1 && col2) {
-    // baseHero.bounceX += moveAmount
-    baseHero.x += moveAmount
+    console.log('up col1')
+    // baseHero.targetHeroX += moveAmount
+    baseHero.targetHeroY -= moveAmount
+    baseHero.targetCameraX += moveAmount
     // baseHero.xVel = 0
   }
   if (baseHero.keys.ArrowUp.pressed && col1 && !col2) {
-    // baseHero.bounceX -= moveAmount
-    baseHero.x -= moveAmount
+    // baseHero.targetHeroX -= moveAmount
+    baseHero.targetHeroY -= moveAmount
+    baseHero.targetCameraX -= moveAmount
     // baseHero.xVel = 0
   }
   if (baseHero.keys.ArrowRight.pressed && !col3 && col4) {
-    // baseHero.bounceY += moveAmount
-    baseHero.y += moveAmount
+    // baseHero.targetHeroY += moveAmount
+    baseHero.targetHeroX += moveAmount
+    baseHero.targetCameraY += moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowRight.pressed && col3 && !col4) {
-    // baseHero.bounceY -= moveAmount
-    baseHero.y -= moveAmount
+    // baseHero.targetHeroY -= moveAmount
+    baseHero.targetHeroX += moveAmount
+    baseHero.targetCameraY -= moveAmount
     // baseHero.yVel = 0
   }
   if (baseHero.keys.ArrowDown.pressed && !col5 && col6) {
-    // baseHero.bounceX -= moveAmount
-    baseHero.x -= moveAmount
+    // baseHero.targetHeroX -= moveAmount
+    baseHero.targetHeroY += moveAmount
+    baseHero.targetCameraX -= moveAmount
     // baseHero.xVel = 0
   }
   if (baseHero.keys.ArrowDown.pressed && col5 && !col6) {
-    // baseHero.bounceX += moveAmount
-    baseHero.x += moveAmount
-
+    // baseHero.targetHeroY -= moveAmount
+    baseHero.targetHeroX += moveAmount
+    baseHero.targetCameraX += moveAmount
     // baseHero.xVel = 0
   }
 
-  // baseHero.bounceX = pixelPerfect(Math.round(baseHero.bounceX), baseHero.heroDirection, 'x', globalVars.upscale)
-  // baseHero.bounceY = pixelPerfect(Math.round(baseHero.bounceY), baseHero.heroDirection, 'y', globalVars.upscale)
+
 
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
@@ -205,7 +218,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
     spriteAnimSpeed = 1.9
     baseHero.maxVel = baseHero.maxVel
     baseHero.dashBoost = baseHero.topDashBoost
-    baseHero.moveSpeed = 80
+    baseHero.moveSpeed = 34
     // drains stamina if dash is active and there is directional input
     if (baseHero.currentStam > 0 && keysPressed) {
       baseHero.currentStam = baseHero.currentStam - .01
@@ -223,7 +236,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
     }
   }
 
-  // if baseHero.x or baseHero.y velocity is higher than the current baseHero.maxVel this brings it back down
+  // if baseHero.targetCameraX or baseHero.targetCameraY velocity is higher than the current baseHero.maxVel this brings it back down
   // this handles deceleration when dash is deactivated
   if (baseHero.xVel > baseHero.maxVel) {
     baseHero.xVel = baseHero.xVel - baseHero.rateDecel
@@ -288,15 +301,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
       if (baseHero.xVel > -baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel - baseHero.rateAccel - baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = -baseHero.maxVel * diagScale}
-    } else if (!col0 && !col1) { // if both the forward moving corner detectors collide reverse both baseHero.x and baseHero.y velocity
+    } else if (!col0 && !col1) { // if both the forward moving corner detectors collide reverse both baseHero.targetCameraX and baseHero.targetCameraY velocity
       baseHero.xVel = -baseHero.xVel * bounce
       baseHero.yVel = -baseHero.yVel * bounce
-    } else if (!col1 || !col2) { // if either top corners collide reverse baseHero.y velocity but allow baseHero.x movement
+    } else if (!col1 || !col2) { // if either top corners collide reverse baseHero.targetCameraY velocity but allow baseHero.targetCameraX movement
       baseHero.yVel = -baseHero.yVel * bounce
       if (baseHero.xVel > -baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel - baseHero.rateAccel - baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = -baseHero.maxVel * diagScale}
-    } else if (!col0 || !col7) { // if either side corners collide reverse baseHero.x velocity but allow baseHero.y movement
+    } else if (!col0 || !col7) { // if either side corners collide reverse baseHero.targetCameraX velocity but allow baseHero.targetCameraY movement
       baseHero.xVel = -baseHero.xVel * bounce
       if (baseHero.yVel > -baseHero.maxVel * diagScale) {
         baseHero.yVel = (baseHero.yVel - baseHero.rateAccel - baseHero.dashBoost) * diagScale
@@ -323,15 +336,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
       if (baseHero.xVel < baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel + baseHero.rateAccel + baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = baseHero.maxVel * diagScale}
-    } else if (!col2 && !col3) { // if both the forward moving corner detectors collide reverse both baseHero.x and baseHero.y velocity
+    } else if (!col2 && !col3) { // if both the forward moving corner detectors collide reverse both baseHero.targetCameraX and baseHero.targetCameraY velocity
       baseHero.xVel = -baseHero.xVel * bounce
       baseHero.yVel = -baseHero.yVel * bounce
-    } else if (!col1 || !col2) { // if either top corners collide reverse baseHero.y velocity but allow baseHero.x movement
+    } else if (!col1 || !col2) { // if either top corners collide reverse baseHero.targetCameraY velocity but allow baseHero.targetCameraX movement
       baseHero.yVel = -baseHero.yVel * bounce
       if (baseHero.xVel < baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel + baseHero.rateAccel + baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = baseHero.maxVel * diagScale}
-    } else if (!col3 || !col4) { // if either side corners collide reverse baseHero.x velocity but allow baseHero.y movement
+    } else if (!col3 || !col4) { // if either side corners collide reverse baseHero.targetCameraX velocity but allow baseHero.targetCameraY movement
       baseHero.xVel = -baseHero.xVel * bounce
       if (baseHero.yVel > -baseHero.maxVel * diagScale) {
         baseHero.yVel = (baseHero.yVel - baseHero.rateAccel - baseHero.dashBoost) * diagScale
@@ -358,15 +371,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
       if (baseHero.xVel > -baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel - baseHero.rateAccel - baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = -baseHero.maxVel * diagScale}
-    } else if (!col6 && !col7) { // if both the forward moving corner detectors collide reverse both baseHero.x and baseHero.y velocity
+    } else if (!col6 && !col7) { // if both the forward moving corner detectors collide reverse both baseHero.targetCameraX and baseHero.targetCameraY velocity
       baseHero.xVel = -baseHero.xVel * bounce
       baseHero.yVel = -baseHero.yVel * bounce
-    } else if (!col5 || !col6) { // if either bottom corners collide reverse baseHero.y velocity but allow baseHero.x movement
+    } else if (!col5 || !col6) { // if either bottom corners collide reverse baseHero.targetCameraY velocity but allow baseHero.targetCameraX movement
       baseHero.yVel = -baseHero.yVel * bounce
       if (baseHero.xVel > -baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel - baseHero.rateAccel - baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = -baseHero.maxVel * diagScale}
-    } else if (!col0 || !col7) { // if either side corners collide reverse baseHero.x velocity but allow baseHero.x movement
+    } else if (!col0 || !col7) { // if either side corners collide reverse baseHero.targetCameraX velocity but allow baseHero.targetCameraX movement
       baseHero.xVel = -baseHero.xVel * bounce
       if (baseHero.yVel < baseHero.maxVel * diagScale) {
         baseHero.yVel = (baseHero.yVel + baseHero.rateAccel + baseHero.dashBoost) * diagScale
@@ -393,15 +406,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
       if (baseHero.xVel < baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel + baseHero.rateAccel + baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = baseHero.maxVel * diagScale}
-    } else if (!col4 && !col5) { // if both the forward moving corner detectors collide reverse both baseHero.x and baseHero.y velocity
+    } else if (!col4 && !col5) { // if both the forward moving corner detectors collide reverse both baseHero.targetCameraX and baseHero.targetCameraY velocity
       baseHero.xVel = -baseHero.xVel * bounce
       baseHero.yVel = -baseHero.yVel * bounce
-    } else if (!col5 || !col6) { // if either bottom corners collide reverse baseHero.y velocity but allow baseHero.x movement
+    } else if (!col5 || !col6) { // if either bottom corners collide reverse baseHero.targetCameraY velocity but allow baseHero.targetCameraX movement
       baseHero.yVel = -baseHero.yVel * bounce
       if (baseHero.xVel < baseHero.maxVel * diagScale) {
         baseHero.xVel = (baseHero.xVel + baseHero.rateAccel + baseHero.dashBoost) * diagScale
       } else { baseHero.xVel = baseHero.maxVel * diagScale}
-    } else if (!col3 || !col4) { // if either side corners collide reverse baseHero.x velocity but allow baseHero.y movement
+    } else if (!col3 || !col4) { // if either side corners collide reverse baseHero.targetCameraX velocity but allow baseHero.targetCameraY movement
       baseHero.xVel = -baseHero.xVel * bounce
       if (baseHero.yVel < baseHero.maxVel * diagScale) {
         baseHero.yVel = (baseHero.yVel + baseHero.rateAccel + baseHero.dashBoost) * diagScale
@@ -511,26 +524,46 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
       // baseHero.yVel = 0
     }
   } else {
-    // reduces velocity back to zero for baseHero.x and baseHero.y every frame that input is not given
+    // reduces velocity back to zero for baseHero.targetCameraX and baseHero.targetCameraY every frame that input is not given
     deceleratorX()
     deceleratorY()
   }
 
 
 
-// sets moveObj baseHero.x and baseHero.y coordinates based on current baseHero.xVel and baseHero.yVel values
-// rounding forces the baseHero.x and baseHero.y coordinates to be
+// sets moveObj baseHero.targetCameraX and baseHero.targetCameraY coordinates based on current baseHero.xVel and baseHero.yVel values
+// rounding forces the baseHero.targetCameraX and baseHero.targetCameraY coordinates to be
 // whole integers since sub pixel accuracy is not needed
 
 
-baseHero.x = pixelPerfect(Math.round(baseHero.x + baseHero.xVel), baseHero.heroDirection, 'x', globalVars.upscale)
-baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroDirection, 'y', globalVars.upscale)
+baseHero.targetCameraX = baseHero.targetCameraX + baseHero.xVel
+baseHero.targetCameraY = baseHero.targetCameraY + baseHero.yVel
+
+baseHero.cameraX = pixelPerfect(Math.min(baseHero.targetCameraX + baseHero.xVel), baseHero.heroDirection, 'x', globalVars.upscale)
+baseHero.cameraY = pixelPerfect(Math.min(baseHero.targetCameraY + baseHero.yVel), baseHero.heroDirection, 'y', globalVars.upscale)
+
+baseHero.heroX = pixelPerfect(Math.min(baseHero.targetHeroX), baseHero.heroDirection, 'x', globalVars.upscale)
+baseHero.heroY = pixelPerfect(Math.min(baseHero.targetHeroY), baseHero.heroDirection, 'y', globalVars.upscale)
+
+// const setCameraX = pixelPerfect(Math.min(baseHero.targetCameraX + baseHero.xVel), baseHero.heroDirection, 'x', globalVars.upscale)
+// const setCameraY = pixelPerfect(Math.min(baseHero.targetCameraY + baseHero.yVel), baseHero.heroDirection, 'y', globalVars.upscale)
+
+
+// if (baseHero.cameraX < setCameraX - globalVars.upscale * 10) {
+//   baseHero.cameraX += globalVars.upscale
+// } else if (baseHero.cameraX > setCameraX + globalVars.upscale * 10) {
+//   baseHero.cameraX -= globalVars.upscale
+// }
+// if (baseHero.cameraY < setCameraY - globalVars.upscale * 10) {
+//   baseHero.cameraY += globalVars.upscale
+// } else if (baseHero.cameraY > setCameraY + globalVars.upscale * 10) {
+//   baseHero.cameraY -= globalVars.upscale
+// }
 
 
 
 
-// baseHero.x = Math.round(baseHero.x + baseHero.xVel)
-// baseHero.y = Math.round(baseHero.y + baseHero.yVel)
+
 
 
 
@@ -616,7 +649,7 @@ baseHero.y = pixelPerfect(Math.round(baseHero.y + baseHero.yVel), baseHero.heroD
       baseHero.heroDirection = 'down'
     }
 
-// console.log('x:', baseHero.x, baseHero.bounceX, 'y', baseHero.y, baseHero.bounceY)
+// console.log('x:', baseHero.targetCameraX, baseHero.targetHeroX, 'y', baseHero.targetCameraY, baseHero.targetHeroY)
 
 
   return baseHero
