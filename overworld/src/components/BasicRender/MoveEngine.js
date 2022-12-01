@@ -8,8 +8,9 @@ const baseAnimSpeed = 2
 let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
 let spriteAnimCounter = 0 // increments to trigger render of next animation frame
 
-const colBuffer = 5 // number of pixels away from hero that detectors sit
-const horzBuffer = 16
+const colBuffer = 12 // number of pixels away from hero that detectors sit
+const cornerBuffer = 4
+const horzBuffer = 12
 const vertBuffer = 12
 const blockSize = globalVars.blockSize
 
@@ -19,17 +20,31 @@ const blockSize = globalVars.blockSize
 // within the imgData area to check for collision, and y is the y coordinate
 const heroColBox = {
   0: [horzBuffer, colBuffer + vertBuffer * 2],
-  1: [colBuffer + horzBuffer, vertBuffer * 2],
-  2: [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
-  3: [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
-  4: [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
-  5: [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
-  6: [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
-  7: [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
+  1: [horzBuffer + cornerBuffer, vertBuffer * 2 + cornerBuffer],
+  2: [colBuffer + horzBuffer, vertBuffer * 2],
+  3: [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
+  4: [blockSize - horzBuffer - cornerBuffer, vertBuffer * 2 + cornerBuffer],
+  5: [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
+  6: [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
+  7: [blockSize - horzBuffer - cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
+  8: [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+  9: [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+  10: [horzBuffer + cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
+  11: [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
 }
+// const heroColBox = {
+//   0: [horzBuffer, colBuffer + vertBuffer * 2],
+//   1: [colBuffer + horzBuffer, vertBuffer * 2],
+//   2: [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
+//   3: [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
+//   4: [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
+//   5: [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+//   6: [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+//   7: [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
+// }
 
 
-const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
+const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
   if (!baseHero) return
 
 
@@ -59,7 +74,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   //    6------5
   //
 
-  let heroCollisions = checkCollision(imgData, heroColBox)
+  let heroCollisions = checkCollision(imgData, heroColBox, collisionCtx, cursorCtx)
   const col0 = heroCollisions[0]
   const col1 = heroCollisions[1]
   const col2 = heroCollisions[2]
@@ -68,44 +83,209 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   const col5 = heroCollisions[5]
   const col6 = heroCollisions[6]
   const col7 = heroCollisions[7]
-  let allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7)
+  const col8 = heroCollisions[8]
+  const col9 = heroCollisions[9]
+  const col10 = heroCollisions[10]
+  const col11 = heroCollisions[11]
+  let allCol = (col0 && col1 && col2 && col3 && col4 && col5 && col6 && col7 && col8 && col9 && col10 && col11)
 
-  // if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowLeft.pressed) {
-  //   baseHero.targetCameraY -= baseHero.currentVel
-  //   baseHero.targetCameraX -= baseHero.currentVel
+  let xVel = 0
+  let yVel = 0
+
+  // if shift/dash is active increase the max velocity and add a boost to acceleration
+  if (baseHero.keys.Shift.pressed && baseHero.currentStam > 0) {
+    baseHero.moveSpeed = baseHero.dashSpeed
+    // drains stamina if dash is active and there is directional input
+    if (baseHero.currentStam > 0 && keysPressed) {
+      baseHero.currentStam = baseHero.currentStam - .05
+    }
+  } else {
+    baseHero.moveSpeed = baseHero.baseMoveSpeed
+    // regenerates stamina
+    if (baseHero.currentStam < baseHero.maxStam) {
+      baseHero.currentStam = baseHero.currentStam + 1
+    } else {
+      baseHero.currentStam = baseHero.maxStam
+    }
+  }
+
+  // moves hero based on input
+  // if (col0) {
+  //   if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowLeft.pressed) {
+  //     baseHero.targetCameraY -= baseHero.currentVel
+  //     // baseHero.targetCameraX -= baseHero.currentVel
+  //     console.log('collision')
+  //   }
   // }
-  // if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowRight.pressed) {
-  //   baseHero.targetCameraY -= baseHero.currentVel
-  //   baseHero.targetCameraX += baseHero.currentVel
+  // if (col1) {
+  //   if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowLeft.pressed) {
+  //     baseHero.targetCameraY += baseHero.currentVel
+  //     // baseHero.targetCameraX -= baseHero.currentVel
+  //     console.log('collision')
+  //   }
   // }
-  if (baseHero.keys.ArrowDown.pressed) {
-    baseHero.targetCameraY += baseHero.currentVel
+  // else {
+    const lastTargetCameraX = baseHero.targetCameraX
+    const lastTargetCameraY = baseHero.targetCameraY
+
+
+    if (baseHero.keys.ArrowUp.pressed) { // handles up input movement and collision
+      yVel = -1 // sets velocity which determines the direction hero sprite that is displayed
+      if ((col1 && col4) || (col0 && col5)) {
+        // if all forward corners collide, do nothing to prevent juddering
+      } else if (col1 && col2) { // if top left corner collides but not top right corner, move hero right
+        baseHero.targetCameraX += baseHero.currentVel
+        console.log(1,2)
+      } else if (col3 && col4) {
+        baseHero.targetCameraX -= baseHero.currentVel
+        console.log(3,4)
+      } else if (col2 && col3) {
+        console.log(2,3)
+      } else { // if no top corners collide, move up
+        baseHero.targetCameraY -= baseHero.currentVel
+      }
+    }
+    if (baseHero.keys.ArrowDown.pressed) {
+      yVel = 1
+      if ((col7 && col10) || (col6 && col11)) {
+
+      } else if (col7 && col8) {
+        baseHero.targetCameraX -= baseHero.currentVel
+        console.log(7,8)
+      } else if (col9 && col10) {
+        baseHero.targetCameraX += baseHero.currentVel
+        console.log(9,10)
+      } else if (col8 && col9) {
+        console.log(8,9)
+      } else {
+        baseHero.targetCameraY += baseHero.currentVel
+      }
+    }
+    if (baseHero.keys.ArrowLeft.pressed) {
+      xVel = -1
+      if ((col1 && col10) || (col2 && col9)) {
+
+      } else if (col0 && col1) {
+        baseHero.targetCameraY += baseHero.currentVel
+        console.log(0,1)
+      } else if (col11 && col10) {
+        baseHero.targetCameraY -= baseHero.currentVel
+        console.log(11,10)
+      } else if (col0 && col11) {
+        console.log(0,11)
+      } else {
+        baseHero.targetCameraX -= baseHero.currentVel
+      }
+    }
+    if (baseHero.keys.ArrowRight.pressed) {
+      xVel = 1
+      if ((col4 && col7) || (col3 && col8)) {
+
+      } else if (col4 && col5) {
+        baseHero.targetCameraY += baseHero.currentVel
+        console.log(4,5)
+      } else if (col6 && col7) {
+        baseHero.targetCameraY -= baseHero.currentVel
+        console.log(6,7)
+      } else if (col5 && col6) {
+        console.log(5,6)
+      } else {
+        baseHero.targetCameraX += baseHero.currentVel
+      }
+    }
+
+
+    // if (baseHero.keys.ArrowUp.pressed) { // handles up input movement and collision
+    //   yVel = -1 // sets velocity which determines the direction hero sprite that is displayed
+    //   if (col1 && col2) { // if top left corner collides but not top right corner, move hero right
+    //     baseHero.targetCameraY += baseHero.currentVel
+    //   } else if (col0 && col1) { // if top right corner collides but not top left corner, move hero left
+    //     baseHero.targetCameraX -= baseHero.currentVel
+    //   } else if (!col2 || !col3) { // if no top corners collide, move up
+    //     baseHero.targetCameraY -= baseHero.currentVel
+    //   }
+    // }
+    // if (baseHero.keys.ArrowDown.pressed) {
+    //   yVel = 1
+    //   if (col6 && !col5) {
+    //     baseHero.targetCameraX += baseHero.currentVel
+    //   } else if (!col6 && col5) {
+    //     baseHero.targetCameraX -= baseHero.currentVel
+    //   } else if (!col5 || !col6) {
+    //     baseHero.targetCameraY += baseHero.currentVel
+    //   }
+    // }
+    // if (baseHero.keys.ArrowLeft.pressed) {
+    //   xVel = -1
+    //   if (col0 && !col7) {
+    //     baseHero.targetCameraY += baseHero.currentVel
+    //   } else if (!col0 && col7) {
+    //     baseHero.targetCameraY -= baseHero.currentVel
+    //   } else if (!col0 || !col7) {
+    //     baseHero.targetCameraX -= baseHero.currentVel
+    //   }
+    // }
+    // if (baseHero.keys.ArrowRight.pressed) {
+    //   xVel = 1
+    //   if (col3 && !col4) {
+    //     baseHero.targetCameraY += baseHero.currentVel
+    //   } else if (!col3 && col4) {
+    //     baseHero.targetCameraY -= baseHero.currentVel
+    //   } else if (!col3 || !col4) {
+    //     baseHero.targetCameraX += baseHero.currentVel
+    //   }
+    // }
+
+
+
+
+
+
+  //sets appropriate sprite for direction of movement
+  if (xVel < 0 && yVel < 0) {
+    baseHero.heroSprite = hero_spritesheets.upleft
+    baseHero.swordSpriteSheet = sword_spritesheets.upleft
   }
-  if (baseHero.keys.ArrowLeft.pressed) {
-    baseHero.targetCameraX -= baseHero.currentVel
+  if (xVel > 0 && yVel < 0) {
+    baseHero.heroSprite = hero_spritesheets.upright
+    baseHero.swordSpriteSheet = sword_spritesheets.upright
   }
-  if (baseHero.keys.ArrowRight.pressed) {
-    baseHero.targetCameraX += baseHero.currentVel
+  if (xVel < 0 && yVel > 0) {
+    baseHero.heroSprite = hero_spritesheets.downleft
+    baseHero.swordSpriteSheet = sword_spritesheets.downleft
   }
-  if (baseHero.keys.ArrowUp.pressed) {
-    baseHero.targetCameraY -= baseHero.currentVel
+  if (xVel > 0 && yVel > 0) {
+    baseHero.heroSprite = hero_spritesheets.downright
+    baseHero.swordSpriteSheet = sword_spritesheets.downright
   }
-  if (baseHero.keys.ArrowDown.pressed) {
-    baseHero.targetCameraY += baseHero.currentVel
+  if (xVel === 0 && yVel < 0) {
+    baseHero.heroSprite = hero_spritesheets.up
+    baseHero.swordSpriteSheet = sword_spritesheets.up
   }
-  if (baseHero.keys.ArrowLeft.pressed) {
-    baseHero.targetCameraX -= baseHero.currentVel
+  if (xVel === 0 && yVel > 0) {
+    baseHero.heroSprite = hero_spritesheets.down
+    baseHero.swordSpriteSheet = sword_spritesheets.down
   }
-  if (baseHero.keys.ArrowRight.pressed) {
-    baseHero.targetCameraX += baseHero.currentVel
+  if (xVel < 0 && yVel === 0) {
+    baseHero.heroSprite = hero_spritesheets.left
+    baseHero.swordSpriteSheet = sword_spritesheets.left
+  }
+  if (xVel > 0 && yVel === 0) {
+    baseHero.heroSprite = hero_spritesheets.right
+    baseHero.swordSpriteSheet = sword_spritesheets.right
+  }
+  if (!keysPressed) {
+    baseHero.heroCropX = 0
   }
 
 
   // baseHero.targetCameraX = baseHero.targetCameraX + baseHero.xVel
   // baseHero.targetCameraY = baseHero.targetCameraY + baseHero.yVel
 
-  baseHero.cameraX = pixelPerfect(Math.min(baseHero.targetCameraX), baseHero.heroDirection, 'x', globalVars.upscale)
-  baseHero.cameraY = pixelPerfect(Math.min(baseHero.targetCameraY), baseHero.heroDirection, 'y', globalVars.upscale)
+  // console.log(baseHero.targetCameraX)
+
+  baseHero.cameraX = pixelPerfect(baseHero.targetCameraX, baseHero.heroDirection, 'x', globalVars.upscale)
+  baseHero.cameraY = pixelPerfect(baseHero.targetCameraY, baseHero.heroDirection, 'y', globalVars.upscale)
 
   // baseHero.cameraX = baseHero.targetCameraX
   // baseHero.cameraY = baseHero.targetCameraY

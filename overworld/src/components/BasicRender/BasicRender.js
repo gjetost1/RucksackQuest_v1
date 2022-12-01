@@ -293,10 +293,10 @@ const BasicRender = ({}) => {
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
-      // if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
+      if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
-        baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx)
-      // }
+        baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx, cursorCtx)
+      }
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
@@ -445,8 +445,8 @@ const BasicRender = ({}) => {
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
-      backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-      backgroundCtx.fillRect(baseHero.heroX, baseHero.heroY, 10, 10)
+      // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+      // backgroundCtx.fillRect(baseHero.heroX, baseHero.heroY, 10, 10)
       // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
       // backgroundCtx.fillRect(baseHero.cameraX, baseHero.cameraY, 10, 10)
 
