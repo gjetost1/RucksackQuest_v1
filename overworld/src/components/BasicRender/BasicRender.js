@@ -96,7 +96,7 @@ const BasicRender = ({}) => {
   const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
 
   // makes foreground transparent so you can see sprites under it
-  foregroundCtx.globalAlpha = .8
+  foregroundCtx.globalAlpha = .85
 
     // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
     // for inputs. returns keys object which is checked for what keys are currently pressed each frame
@@ -407,14 +407,14 @@ const BasicRender = ({}) => {
     backgroundSprite.draw()
 
 
-    foregroundCtx.globalAlpha = 1
+    // foregroundCtx.globalAlpha = 1
     // animatedObjectsRender(grassPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
-    foregroundCtx.globalAlpha = .7
+    // foregroundCtx.globalAlpha = .7
 
 
 

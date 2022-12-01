@@ -3,10 +3,10 @@ import { hero_spritesheets, sword_spritesheets } from "./spriteRef"
 import globalVars from "./GlobalVars"
 
 const baseHero = {
-  cameraX: 1000,
-  cameraY: 1000,
-  targetCameraX: 1000,
-  targetCameraY: 1000,
+  cameraX: 3000,
+  cameraY: 3000,
+  targetCameraX: 3000,
+  targetCameraY: 3000,
   heroX: globalVars.heroCenterX,
   heroY: globalVars.heroCenterY,
   targetHeroX: globalVars.heroCenterX,
@@ -31,8 +31,8 @@ const baseHero = {
   coolDownLevelMax: 100,
   attackCooldownOff: true,
   attackActive: false,
-  maxStam: 100,
-  currentStam: 100,
+  maxStam: 10000,
+  currentStam: 10000,
   eventX: -400,
   eventY: -400,
   keys: {
