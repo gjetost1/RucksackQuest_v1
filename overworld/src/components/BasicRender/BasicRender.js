@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
+// import background_1 from '../../assets/backgrounds/test/big_map_background_2_test1.png'
 import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
 import collision_1 from '../../assets/backgrounds/test/big_map_collision_2.png'
 // import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
@@ -256,8 +257,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: baseHero.cameraX,
-        y: baseHero.cameraY
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -268,8 +269,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: baseHero.cameraX,
-        y: baseHero.cameraY
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
@@ -280,8 +281,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: baseHero.cameraX,
-        y: baseHero.cameraY
+        x: backgroundWidthCenter,
+        y: backgroundHeightCenter
       }
     })
 
