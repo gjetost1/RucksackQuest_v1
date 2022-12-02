@@ -79,11 +79,12 @@ const BasicRender = ({}) => {
   // declare the 3 (current) canvases. background is rendered first, then sprite, then foreground on top
   // foregroundCanvas is for scenery and objects that the hero or other sprites can go behind
   // it is partly transparent so you don't lose sprites behind it
-  const backgroundCanvas = useRef(null)
-  const spriteCanvas = useRef(null)
-  const foregroundCanvas = useRef(null)
-  const cursorCanvas = useRef(null)
-  const collisionCanvas = useRef(null)
+  const mainCanvas = useRef(null)
+  // const backgroundCanvas = useRef(null)
+  // const spriteCanvas = useRef(null)
+  // const foregroundCanvas = useRef(null)
+  // const cursorCanvas = useRef(null)
+  // const collisionCanvas = useRef(null)
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
@@ -92,14 +93,15 @@ const BasicRender = ({}) => {
 
   // creates context for each canvas. Invoke all drawing/rendering to canvas
   // using the context for the layer you want to render to
-  const backgroundCtx = backgroundCanvas.current.getContext('2d')
-  const spriteCtx = spriteCanvas.current.getContext('2d')
-  const foregroundCtx = foregroundCanvas.current.getContext('2d')
-  const cursorCtx = cursorCanvas.current.getContext('2d')
-  const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
+  // const backgroundCtx = backgroundCanvas.current.getContext('2d')
+  // const spriteCtx = spriteCanvas.current.getContext('2d')
+  // const foregroundCtx = foregroundCanvas.current.getContext('2d')
+  // const cursorCtx = cursorCanvas.current.getContext('2d')
+  // const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
+  const mainCanvasCtx = mainCanvas.current.getContext('2d', { willReadFrequently: true })
 
   // makes foreground transparent so you can see sprites under it
-  foregroundCtx.globalAlpha = .85
+  // foregroundCtx.globalAlpha = .85
 
     // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
     // for inputs. returns keys object which is checked for what keys are currently pressed each frame
@@ -128,7 +130,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        spriteCtx.drawImage(this.image, this.crop.x, this.crop.y, baseHero.heroSpriteSize, baseHero.heroSpriteSize, this.position.x, this.position.y, baseHero.blockSize, baseHero.blockSize)
+        mainCanvasCtx.drawImage(this.image, this.crop.x, this.crop.y, baseHero.heroSpriteSize, baseHero.heroSpriteSize, this.position.x, this.position.y, baseHero.blockSize, baseHero.blockSize)
         // ctx.drawImage(this.image, this.position.x, this.position.y, rectWidth, rectHeight)
       }
     }
@@ -148,7 +150,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        backgroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+        mainCanvasCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -167,7 +169,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        foregroundCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+        mainCanvasCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -186,7 +188,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        collisionCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
+        mainCanvasCtx.drawImage(this.image, this.crop.x, this.crop.y, globalVars.width, globalVars.height, this.position.x, this.position.y, globalVars.width, globalVars.height,)
       }
     }
 
@@ -290,18 +292,27 @@ const BasicRender = ({}) => {
     const animate = () => {
 
       // clears all canvases for a new animation frame
-      backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
-      spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height)
-      foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
-      cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      mainCanvasCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      // backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      // spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      // foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      // cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
+
+      // renders collision sprite, which is behind the background and not visible on canvas
+      // you can change the z-index of the collision div in the css if you want to see it visualized
+      collisionSprite.draw()
 
       // moveEngine runs less than every frame to keep the hero sprite slower
       if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
-        baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx, cursorCtx)
+        baseHero = moveEngine(baseHero, cMasks, blockSize, mainCanvasCtx)
       }
-      collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+
+      // clears out collisionSprite, currently deactivated because you can't see it anyways
+      // once background is rendered over it
+
+      // mainCanvasCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       baseHero.frameCountLimiter += baseHero.moveSpeed
@@ -406,30 +417,27 @@ const BasicRender = ({}) => {
     // makes the canvases render a frame
     window.requestAnimationFrame(animate)
 
-    // renders collision sprite, which is behind the background and not visible on canvas
-    // you can change the z-index of the collision div in the css if you want to see it visualized
-    collisionSprite.draw()
+
     // renders current background sprite
     backgroundSprite.draw()
 
 
-    foregroundCtx.globalAlpha = 1
+    // foregroundCtx.globalAlpha = 1
 
-    animatedObjectsRender(grassPatch1.definition(), baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch2.definition(), baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch3.definition(), baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch1.definition(), baseHero, mainCanvasCtx)
+    animatedObjectsRender(grassPatch2.definition(), baseHero, mainCanvasCtx)
+    animatedObjectsRender(grassPatch3.definition(), baseHero, mainCanvasCtx)
+    animatedObjectsRender(barrelPatch.definition(), baseHero, mainCanvasCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
-    foregroundCtx.globalAlpha = .85
 
 
 
 
     // renders stamina bar and other HUD elements
-    hudRender(spriteCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, swordIcon )
+    hudRender(mainCanvasCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, swordIcon )
 
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack
@@ -450,8 +458,11 @@ const BasicRender = ({}) => {
     }
 
       // this renders foreground objects with opacity so that you can see the hero behind them
+      mainCanvasCtx.globalAlpha = .85
       foregroundSprite.draw()
-      cursorRender(cursorCtx, cursor, cursorX, cursorY)
+      mainCanvasCtx.globalAlpha = 1
+
+      cursorRender(mainCanvasCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
       // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
@@ -461,9 +472,7 @@ const BasicRender = ({}) => {
 
     }
 
-
-    animate()
-
+      animate()
 
   }, [])
 
@@ -475,11 +484,12 @@ const BasicRender = ({}) => {
         {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id='canvas-container'>
         <div id='sizing' style={{height: window.innerHeight, width: window.innerWidth}}></div>
-        <canvas id='collisionCanvas' ref={collisionCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='mainCanvas' ref={mainCanvas} height={window.innerHeight} width={window.innerWidth} />
+        {/* <canvas id='collisionCanvas' ref={collisionCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='backgroundCanvas' ref={backgroundCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='spriteCanvas' ref={spriteCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={window.innerHeight} width={window.innerWidth} />
-        <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         <div className='blur'></div>
         <div className='scanline-tone'></div>
         <div className='pixel-tone'></div>

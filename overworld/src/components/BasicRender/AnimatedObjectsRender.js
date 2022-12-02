@@ -128,7 +128,7 @@ let windBlow = true // determines if the grass is animating or not
 
 // renders an animated object to the background layer. should be called after main background render in basicRender or it will be covered up
 // objects to be rendered should be passed in format created by generate patch above
-const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
+const animatedObjectsRender = (objects, baseHero, mainCanvasCtx) => {
 if (!windBlow) {
   if(Math.floor(Math.random() * 1000) === 13) {
     windBlow = true
@@ -222,12 +222,14 @@ if (!windBlow) {
           if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
             el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
             el.img.destroyed = true
-            backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+            mainCanvasCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
           } else if (baseHero.heroY < yChange + el.y // renders grass on top of hero if heroY is less than the element's y coord
             ) {
-            foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+              // supposed to render image to foreground, but got rid of that canvas.
+              // need to find a way to make this render after the hero sprite at some point
+              mainCanvasCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
           } else {
-            backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+            mainCanvasCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
           }
 
       }

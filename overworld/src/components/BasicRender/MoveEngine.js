@@ -44,7 +44,7 @@ const heroColBox = {
 // }
 
 
-const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
+const moveEngine = (baseHero, cMasks, blockSize, mainCanvasCtx) => {
   if (!baseHero) return
 
 
@@ -57,7 +57,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
   // we can use this to see if the collision canvas is transparent or not, and also check for specific colors
   // this is fed to the collision detector function with an object of the pixel coordinates we want to check.
   // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
-  const imgData = collisionCtx.getImageData(baseHero.targetHeroX, baseHero.targetHeroY, baseHero.targetHeroX + globalVars.blockSize, baseHero.targetHeroY + globalVars.blockSize)
+  const imgData = mainCanvasCtx.getImageData(baseHero.targetHeroX, baseHero.targetHeroY, baseHero.targetHeroX + globalVars.blockSize, baseHero.targetHeroY + globalVars.blockSize)
 
   // console.log(baseHero.targetHeroX, baseHero.targetHeroY)
 
@@ -74,7 +74,7 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
   //    6------5
   //
 
-  let heroCollisions = checkCollision(imgData, heroColBox, collisionCtx, cursorCtx)
+  let heroCollisions = checkCollision(imgData, heroColBox, mainCanvasCtx)
   const col0 = heroCollisions[0]
   const col1 = heroCollisions[1]
   const col2 = heroCollisions[2]
