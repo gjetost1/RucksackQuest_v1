@@ -8,7 +8,7 @@ import { buildCMask } from "./CollisionMasks"
 let breakActive = false
 
 export class Patch {
-  constructor(startX, startY, width, height, spriteSheets) {
+  constructor(startX, startY, width, height, spriteSheets, density) {
     // console.log(x, y, width, height, spriteSheets)
     this.startX = startX
     this.startY = startY
@@ -17,22 +17,22 @@ export class Patch {
     this.width = width
     this.height = height
     this.spriteSheets = spriteSheets
+    this.density = density
     this.definitionArr = []
-    this.generatePatch(this.startX, this.startY, this.width, this.height, this.spriteSheets)
+    this.generatePatch(this.startX, this.startY, this.width, this.height, this.spriteSheets, this.density)
   }
 
-  generatePatch(startX, startY, width, height, spriteSheets) {
+  generatePatch(startX, startY, width, height, spriteSheets, density) {
     this.definitionArr = []
     const xSpace = spriteSheets[0].blockSize * spriteSheets[0].xScale
     const ySpace = spriteSheets[0].blockSize * spriteSheets[0].yScale
-    const returnArr = []
-    const cornerMulti = .4
+    // const returnArr = []
     for(let j = 0; j < height; j++) {
       for (let i = 0; i < width; i++) {
-        if ((j < height / (height * cornerMulti) && i < width / (width * cornerMulti)) ||
-        (j > height - (height / (height * cornerMulti)) && i > width - (width / (height * cornerMulti))) ||
-        (j < height / (height * cornerMulti) && i > width - (width / (height * cornerMulti))) ||
-        (j > height - (height / (height * cornerMulti)) && i < width / (width * cornerMulti))
+        if ((j < height / (height * density) && i < width / (width * density)) ||
+        (j > height - (height / (height * density)) && i > width - (width / (height * density))) ||
+        (j < height / (height * density) && i > width - (width / (height * density))) ||
+        (j > height - (height / (height * density)) && i < width / (width * density))
         ) {
           const skip = Math.random() * 10
           if (skip > 4) { // gives chance that corner images will not be rendered to create a more organic shape to the patch
@@ -45,7 +45,7 @@ export class Patch {
         }
         const randomizeImg = Math.floor(Math.random() * spriteSheets.length)
         const imgInstance = {...spriteSheets[randomizeImg]}
-        imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1))
+        imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1)) + Math.floor(Math.random() * 50)
         const x = (startX + i * xSpace) + offset
         const y = startY + j * ySpace
         this.definitionArr.push({
@@ -106,7 +106,7 @@ export const generatePatch = (startX, startY, height, width, img) => {
       }
       const randomizeImg = Math.floor(Math.random() * img.length)
       const imgInstance = {...img[randomizeImg]}
-      imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1))
+      imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1) + Math.floor(Math.random() * 300))
       const x = (startX + i * xSpace) + offset
       const y = startY + j * ySpace
       returnArr.push({
@@ -184,9 +184,9 @@ if (!windBlow) {
           let collision = true
           if ((globalX > globalVars.heroCenterX - globalVars.blockSize && globalX < globalVars.heroCenterX + globalVars.blockSize)
           && (globalY > globalVars.heroCenterY - globalVars.blockSize && globalY < globalVars.heroCenterY + globalVars.blockSize)) {
-            // console.log('checking')
             const xChange = el.x - globalX
             const yChange = el.y - globalY
+            // console.log('checking')
             // console.log("before", el.cMasks[0])
             const tempCMasks = [{
               tl: [el.cMasks[0].tl[0] - xChange, el.cMasks[0].tl[1] - yChange],
@@ -216,12 +216,14 @@ if (!windBlow) {
             el.img.maxAnimFrame = el.img.maxAnimFrame + el.img.breakImgFrames
             el.img.delay = 0
           }
+          const yChange = globalY - el.y
+          // console.log(baseHero.heroY, el.y)
 
           if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
             el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
             el.img.destroyed = true
             backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
-          } else if (baseHero.cameraY < el.y
+          } else if (baseHero.heroY < yChange + el.y // renders grass on top of hero if heroY is less than the element's y coord
             ) {
             foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
           } else {

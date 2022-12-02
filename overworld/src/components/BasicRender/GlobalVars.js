@@ -1,6 +1,6 @@
 import pixelPerfect from './PixelPerfect'
 const heroStartXCoord = 1600
-const heroStartYCoord = 3000
+const heroStartYCoord = 1000
 const upscale = 4   // multiplier for resolution - 2 means each visible pixel is 2 x 2 real pixels etc
 // const height = 192 * upscale   // height of canvas, should be the actual pixel res of original artwork, but that artwork should be exported as an upsized version - upscale is the factor by which it is upscaled
 // const width = 336 * upscale   // width of canvas, should be the actual pixel res of original artwork

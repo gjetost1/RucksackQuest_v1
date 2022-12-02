@@ -59,8 +59,10 @@ onmousemove = (event) => {
 // const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
 // const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
 
-const grassPatch = new Patch(100, 500, 5, 6, [grass_low_1])
-const barrelPatch = new Patch(600, 500, 3, 3, [barrel_low_1])
+const grassPatch1 = new Patch(0, 0, 20, 20, [grass_1, grass_2, grass_3], .05)
+const grassPatch2 = new Patch(-500, -500, 20, 20, [grass_1, grass_2, grass_3], .05)
+const grassPatch3 = new Patch(1100, 1000, 20, 20, [grass_1, grass_2, grass_3], .05)
+const barrelPatch = new Patch(600, 500, 10, 10, [barrel_1, barrel_2], .2)
 
 
 
@@ -353,7 +355,7 @@ const BasicRender = ({}) => {
         damage: 10
       },
       eventDuration: .1,
-      eventTimeout: 1.5,
+      eventTimeout: .8,
       eventAnim: null,
     }
 
@@ -410,15 +412,17 @@ const BasicRender = ({}) => {
     backgroundSprite.draw()
 
 
-    // foregroundCtx.globalAlpha = 1
+    foregroundCtx.globalAlpha = 1
 
-    animatedObjectsRender(grassPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch1.definition(), baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch2.definition(), baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch3.definition(), baseHero, backgroundCtx, foregroundCtx)
     animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
-    // foregroundCtx.globalAlpha = .7
+    foregroundCtx.globalAlpha = .85
 
 
 
@@ -449,10 +453,10 @@ const BasicRender = ({}) => {
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
-      backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+      // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
       // backgroundCtx.fillRect( globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
       // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-      backgroundCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
+      // backgroundCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
 
     }
 
