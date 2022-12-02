@@ -59,8 +59,8 @@ onmousemove = (event) => {
 // const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
 // const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
 
-const grassPatch = new Patch(0, 0, 5, 6, [grass_low_1])
-const barrelPatch = new Patch(0, 0, 3, 3, [barrel_low_1])
+const grassPatch = new Patch(100, 500, 5, 6, [grass_low_1])
+const barrelPatch = new Patch(600, 500, 3, 3, [barrel_low_1])
 
 
 
@@ -232,6 +232,7 @@ const BasicRender = ({}) => {
     background.src = background_1
     const backgroundWidthCenter = background.naturalWidth / 2
     const backgroundHeightCenter = background.naturalHeight / 2
+
     // const backgroundWidthCenter = 100
     // const backgroundHeightCenter = 100
 
@@ -253,8 +254,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: backgroundWidthCenter,
-        y: backgroundHeightCenter
+        x: baseHero.cameraX,
+        y: baseHero.cameraY
       }
     })
 
@@ -265,8 +266,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: backgroundWidthCenter,
-        y: backgroundHeightCenter
+        x: baseHero.cameraX,
+        y: baseHero.cameraY
       }
     })
 
@@ -277,8 +278,8 @@ const BasicRender = ({}) => {
         y: 0
       },
       crop: {
-        x: backgroundWidthCenter,
-        y: backgroundHeightCenter
+        x: baseHero.cameraX,
+        y: baseHero.cameraY
       }
     })
 
@@ -310,6 +311,7 @@ const BasicRender = ({}) => {
       backgroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
       foregroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
       collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
+      // console.log(baseHero.cameraX, baseHero.cameraY)
       // grassPatch.move(baseHero.cameraX, baseHero.cameraY)
       // barrelPatch.move(baseHero.cameraX, baseHero.cameraY)
 
@@ -350,7 +352,7 @@ const BasicRender = ({}) => {
       eventEffect: {
         damage: 10
       },
-      eventDuration: 1,
+      eventDuration: .1,
       eventTimeout: 1.5,
       eventAnim: null,
     }
@@ -401,19 +403,21 @@ const BasicRender = ({}) => {
     // makes the canvases render a frame
     window.requestAnimationFrame(animate)
 
-
+    // renders collision sprite, which is behind the background and not visible on canvas
+    // you can change the z-index of the collision div in the css if you want to see it visualized
     collisionSprite.draw()
     // renders current background sprite
     backgroundSprite.draw()
 
 
     // foregroundCtx.globalAlpha = 1
-    // animatedObjectsRender(grassPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
+
+    animatedObjectsRender(grassPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
-    // animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
     // foregroundCtx.globalAlpha = .7
 
 
@@ -445,10 +449,10 @@ const BasicRender = ({}) => {
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
-      // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-      // backgroundCtx.fillRect(baseHero.heroX, baseHero.heroY, 10, 10)
+      backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+      // backgroundCtx.fillRect( globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
       // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-      // backgroundCtx.fillRect(baseHero.cameraX, baseHero.cameraY, 10, 10)
+      backgroundCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
 
     }
 

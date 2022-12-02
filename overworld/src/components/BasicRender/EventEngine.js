@@ -21,29 +21,29 @@ const eventEngine = (baseHero) => {
   // the hero is facing
   const middleVal = (baseHero.blockSize - baseHero.attackBlockSize) / 2
   if (baseHero.heroDirection === 'up') {
-    baseHero.eventX = baseHero.x + middleVal
-    baseHero.eventY = baseHero.y
+    baseHero.eventX = baseHero.heroX + middleVal
+    baseHero.eventY = baseHero.heroY
   } else if (baseHero.heroDirection === 'down') {
-    baseHero.eventX = baseHero.x + middleVal
-    baseHero.eventY = baseHero.y + baseHero.blockSize - baseHero.attackBlockSize
+    baseHero.eventX = baseHero.heroX + middleVal
+    baseHero.eventY = baseHero.heroY + baseHero.blockSize - baseHero.attackBlockSize
   } else if (baseHero.heroDirection === 'left') {
-    baseHero.eventX = baseHero.x
-    baseHero.eventY = baseHero.y + middleVal
+    baseHero.eventX = baseHero.heroX
+    baseHero.eventY = baseHero.heroY + middleVal
   } else if (baseHero.heroDirection === 'right') {
-    baseHero.eventX = baseHero.x + baseHero.blockSize - baseHero.attackBlockSize
-    baseHero.eventY = baseHero.y + middleVal
+    baseHero.eventX = baseHero.heroX + baseHero.blockSize - baseHero.attackBlockSize
+    baseHero.eventY = baseHero.heroY + middleVal
   } else if (baseHero.heroDirection === 'upleft') {
-    baseHero.eventX = baseHero.x + baseHero.attackBlockSize / 2
-    baseHero.eventY = baseHero.y + baseHero.attackBlockSize / 2
+    baseHero.eventX = baseHero.heroX + baseHero.attackBlockSize / 2
+    baseHero.eventY = baseHero.heroY + baseHero.attackBlockSize / 2
   } else if (baseHero.heroDirection === 'upright') {
-    baseHero.eventX = baseHero.x + baseHero.blockSize - baseHero.attackBlockSize
-    baseHero.eventY = baseHero.y + baseHero.attackBlockSize / 2
+    baseHero.eventX = baseHero.heroX + baseHero.blockSize - baseHero.attackBlockSize
+    baseHero.eventY = baseHero.heroY + baseHero.attackBlockSize / 2
   } else if (baseHero.heroDirection === 'downleft') {
-    baseHero.eventX = baseHero.x + baseHero.attackBlockSize / 2
-    baseHero.eventY = baseHero.y + baseHero.blockSize - baseHero.attackBlockSize
+    baseHero.eventX = baseHero.heroX + baseHero.attackBlockSize / 2
+    baseHero.eventY = baseHero.heroY + baseHero.blockSize - baseHero.attackBlockSize
   } else if (baseHero.heroDirection === 'downright') {
-    baseHero.eventX = baseHero.x + baseHero.blockSize - baseHero.attackBlockSize * 2
-    baseHero.eventY = baseHero.y + baseHero.blockSize - baseHero.attackBlockSize
+    baseHero.eventX = baseHero.heroX + baseHero.blockSize - baseHero.attackBlockSize * 2
+    baseHero.eventY = baseHero.heroY + baseHero.blockSize - baseHero.attackBlockSize
   }
 
   return baseHero

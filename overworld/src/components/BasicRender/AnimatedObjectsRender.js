@@ -1,5 +1,5 @@
 import globalVars from "./GlobalVars"
-import checkCollision from "./CheckCollision"
+import checkBoxCollision from "./CheckBoxCollision"
 import { buildCMask } from "./CollisionMasks"
 
 // const widthBlocks = GlobalVars.width / GlobalVars.blockSize
@@ -10,10 +10,10 @@ let breakActive = false
 export class Patch {
   constructor(startX, startY, width, height, spriteSheets) {
     // console.log(x, y, width, height, spriteSheets)
-    this.startX = globalVars.middleX + startX
-    this.startY = globalVars.middleY + startY
-    this.offsetX = startX
-    this.offsetY = startY
+    this.startX = startX
+    this.startY = startY
+    this.offsetX = 0
+    this.offsetY = 0
     this.width = width
     this.height = height
     this.spriteSheets = spriteSheets
@@ -129,7 +129,6 @@ let windBlow = true // determines if the grass is animating or not
 // renders an animated object to the background layer. should be called after main background render in basicRender or it will be covered up
 // objects to be rendered should be passed in format created by generate patch above
 const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
-
 if (!windBlow) {
   if(Math.floor(Math.random() * 1000) === 13) {
     windBlow = true
@@ -156,52 +155,81 @@ if (!windBlow) {
   ]
 
   for (let el of objects) {
-
-  if(windBlow || el.img.breaking  || (!windBlow && el.img.cropX < el.img.blockSize * el.img.maxAnimFrame - el.img.blockSize)) {
-    // animates each object
-    el.img.currentDelayFrame++
-    if (el.img.currentDelayFrame >= el.img.delay) {
-      el.img.currentAnimFrame++
-    }
-    if (el.img.currentAnimFrame >= el.img.animFrameLimit) {
-      el.img.cropX += el.img.blockSize
-      el.img.currentAnimFrame = 0
-    }
-    if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame && !el.img.destroyed && !el.img.breaking) {
-      el.img.cropX = 0
-      el.img.currentDelayFrame = 0
-    }
-  }
-
-    const collision = checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 0)
-    && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 1)
-    && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 2)
-    && checkCollision(baseHero.eventX, baseHero.eventY, colBox, el.cMasks, 3)
-
-    if (!collision && !el.img.breaking && !el.img.destroyed) {
-      //plays sound effect on destroy, if any
-      if(el.img.sfx) {
-        el.img.sfx.volume = 0.2;
-        el.img.sfx.play();
-      }
-      el.img.breaking = true // puts animated element into breaking state, which
-      el.img.cropX = (el.img.maxAnimFrame ) * el.img.blockSize
-      el.img.animFrameLimit = 14
-      el.img.minAnimFrame = el.img.maxAnimFrame
-      el.img.maxAnimFrame = el.img.maxAnimFrame + el.img.breakImgFrames
-      el.img.delay = 0
-    }
-    if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
-      el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
-      el.img.destroyed = true
-      backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
-    } else if (baseHero.cameraY < el.y
+    // el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY
+    const globalX = el.x + globalVars.heroStartXCoord - baseHero.cameraX
+    const globalY = el.y + globalVars.heroStartYCoord - baseHero.cameraY
+    // this first if statement only allows animated elements to render if they are within one blocksize of the visible
+    // canvas. Will need to change this if there are any elements that are larger than one blocksize
+    if (
+      (globalX > -globalVars.blockSize   && globalX < globalVars.width + globalVars.blockSize)
+      && (globalY > -globalVars.blockSize   && globalY < globalVars.height + globalVars.blockSize)
       ) {
-      foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
-    } else {
-      backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x, el.y, el.img.blockSize, el.img.blockSize)
-    }
+        if (windBlow || el.img.breaking  || (!windBlow && el.img.cropX < el.img.blockSize * el.img.maxAnimFrame - el.img.blockSize)) {
+          // animates each object
+          el.img.currentDelayFrame++
+          if (el.img.currentDelayFrame >= el.img.delay) {
+            el.img.currentAnimFrame++
+          }
+          if (el.img.currentAnimFrame >= el.img.animFrameLimit) {
+            el.img.cropX += el.img.blockSize
+            el.img.currentAnimFrame = 0
+          }
+          if (el.img.cropX >= el.img.blockSize * el.img.maxAnimFrame && !el.img.destroyed && !el.img.breaking) {
+            el.img.cropX = 0
+            el.img.currentDelayFrame = 0
+          }
+        }
 
+        // checks for attack collisions if hero is within 2 blocksizes of the element
+          let collision = true
+          if ((globalX > globalVars.heroCenterX - globalVars.blockSize && globalX < globalVars.heroCenterX + globalVars.blockSize)
+          && (globalY > globalVars.heroCenterY - globalVars.blockSize && globalY < globalVars.heroCenterY + globalVars.blockSize)) {
+            // console.log('checking')
+            const xChange = el.x - globalX
+            const yChange = el.y - globalY
+            // console.log("before", el.cMasks[0])
+            const tempCMasks = [{
+              tl: [el.cMasks[0].tl[0] - xChange, el.cMasks[0].tl[1] - yChange],
+              tr: [el.cMasks[0].tr[0] - xChange, el.cMasks[0].tr[1] - yChange],
+              bl: [el.cMasks[0].bl[0] - xChange, el.cMasks[0].bl[1] - yChange],
+              br: [el.cMasks[0].br[0] - xChange, el.cMasks[0].br[1] - yChange],
+            }]
+            // console.log("after", tempCMasks)
+            // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+            // backgroundCtx.fillRect(el.cMasks[0].tl[0] - xChange,  el.cMasks[0].tl[1] - yChange, 64, 64)
+            collision = checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 0)
+            && checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 1)
+            && checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 2)
+            && checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 3)
+          }
+
+          if (!collision && !el.img.breaking && !el.img.destroyed) {
+            //plays sound effect on destroy, if any
+            if(el.img.sfx) {
+              el.img.sfx.volume = 0.2;
+              el.img.sfx.play();
+            }
+            el.img.breaking = true // puts animated element into breaking state, which
+            el.img.cropX = (el.img.maxAnimFrame ) * el.img.blockSize
+            el.img.animFrameLimit = 14
+            el.img.minAnimFrame = el.img.maxAnimFrame
+            el.img.maxAnimFrame = el.img.maxAnimFrame + el.img.breakImgFrames
+            el.img.delay = 0
+          }
+
+          if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
+            el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
+            el.img.destroyed = true
+            backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+          } else if (baseHero.cameraY < el.y
+            ) {
+            foregroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+          } else {
+            backgroundCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+          }
+
+      }
+    // console.log(el.x - baseHero.cameraX - 3000, el.y - baseHero.cameraY - 3000)
   }
 }
 

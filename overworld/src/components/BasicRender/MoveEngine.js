@@ -136,15 +136,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
       if ((col1 && col4) || (col2 && col3)) {
         // if all forward corners collide, do nothing to prevent juddering
       } else if (col1 && col2) { // if top left corner collides but not top right corner, move hero right
-        baseHero.targetCameraX += baseHero.currentVel
+        baseHero.targetCameraX += baseHero.currentXVel
         // console.log(1,2)
       } else if (col3 && col4) {
-        baseHero.targetCameraX -= baseHero.currentVel
+        baseHero.targetCameraX -= baseHero.currentXVel
         // console.log(3,4)
       } else if (col2 && col3) {
         // console.log(2,3)
       } else { // if no top corners collide, move up
-        baseHero.targetCameraY -= baseHero.currentVel
+        baseHero.targetCameraY -= baseHero.currentXVel
       }
     }
     if (baseHero.keys.ArrowDown.pressed) {
@@ -152,15 +152,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
       if ((col7 && col10) || (col8 && col9)) {
 
       } else if (col7 && col8) {
-        baseHero.targetCameraX -= baseHero.currentVel
+        baseHero.targetCameraX -= baseHero.currentXVel
         // console.log(7,8)
       } else if (col9 && col10) {
-        baseHero.targetCameraX += baseHero.currentVel
+        baseHero.targetCameraX += baseHero.currentXVel
         // console.log(9,10)
       } else if (col8 && col9) {
         // console.log(8,9)
       } else {
-        baseHero.targetCameraY += baseHero.currentVel
+        baseHero.targetCameraY += baseHero.currentXVel
       }
     }
     if (baseHero.keys.ArrowLeft.pressed) {
@@ -168,15 +168,15 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
       if ((col1 && col10) || (col0 && col11)) {
 
       } else if (col0 && col1) {
-        baseHero.targetCameraY += baseHero.currentVel
+        baseHero.targetCameraY += baseHero.currentXVel
         // console.log(0,1)
       } else if (col11 && col10) {
-        baseHero.targetCameraY -= baseHero.currentVel
+        baseHero.targetCameraY -= baseHero.currentXVel
         // console.log(11,10)
       } else if (col0 && col11) {
         // console.log(0,11)
       } else {
-        baseHero.targetCameraX -= baseHero.currentVel
+        baseHero.targetCameraX -= baseHero.currentXVel
       }
     }
     if (baseHero.keys.ArrowRight.pressed) {
@@ -184,34 +184,38 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
       if ((col4 && col7) || (col5 && col6)) {
 
       } else if (col4 && col5) {
-        baseHero.targetCameraY += baseHero.currentVel
+        baseHero.targetCameraY += baseHero.currentXVel
         // console.log(4,5)
       } else if (col6 && col7) {
-        baseHero.targetCameraY -= baseHero.currentVel
+        baseHero.targetCameraY -= baseHero.currentXVel
         // console.log(6,7)
       } else if (col5 && col6) {
         // console.log(5,6)
       } else {
-        baseHero.targetCameraX += baseHero.currentVel
+        baseHero.targetCameraX += baseHero.currentXVel
       }
     }
 
     if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowLeft.pressed) {
+      // baseHero.targetCameraY += baseHero.currentYVel
       if (col0 && col1 && col2) {
         baseHero.targetCameraX = lastTargetCameraX
         baseHero.targetCameraY = lastTargetCameraY
       }
     } else if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowRight.pressed) {
+      // baseHero.targetCameraY += baseHero.currentYVel
       if (col3 && col4 && col5) {
         baseHero.targetCameraX = lastTargetCameraX
         baseHero.targetCameraY = lastTargetCameraY
       }
     } else if (baseHero.keys.ArrowDown.pressed && baseHero.keys.ArrowLeft.pressed) {
+      // baseHero.targetCameraY -= baseHero.currentYVel
       if (col9 && col10&& col11) {
         baseHero.targetCameraX = lastTargetCameraX
         baseHero.targetCameraY = lastTargetCameraY
       }
     } else if (baseHero.keys.ArrowDown.pressed && baseHero.keys.ArrowRight.pressed) {
+      // baseHero.targetCameraY -= baseHero.currentYVel
       if (col6 && col7 && col8) {
         baseHero.targetCameraX = lastTargetCameraX
         baseHero.targetCameraY = lastTargetCameraY
@@ -339,34 +343,48 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx, cursorCtx) => {
   if (xVel < 0 && yVel < 0) {
     baseHero.heroSprite = hero_spritesheets.upleft
     baseHero.swordSpriteSheet = sword_spritesheets.upleft
+    baseHero.heroDirection = 'upleft'
   }
   if (xVel > 0 && yVel < 0) {
     baseHero.heroSprite = hero_spritesheets.upright
     baseHero.swordSpriteSheet = sword_spritesheets.upright
+    baseHero.heroDirection = 'upright'
+
   }
   if (xVel < 0 && yVel > 0) {
     baseHero.heroSprite = hero_spritesheets.downleft
     baseHero.swordSpriteSheet = sword_spritesheets.downleft
+    baseHero.heroDirection = 'downleft'
+
   }
   if (xVel > 0 && yVel > 0) {
     baseHero.heroSprite = hero_spritesheets.downright
     baseHero.swordSpriteSheet = sword_spritesheets.downright
+    baseHero.heroDirection = 'downright'
+
   }
   if (xVel === 0 && yVel < 0) {
     baseHero.heroSprite = hero_spritesheets.up
     baseHero.swordSpriteSheet = sword_spritesheets.up
+    baseHero.heroDirection = 'up'
+
   }
   if (xVel === 0 && yVel > 0) {
     baseHero.heroSprite = hero_spritesheets.down
     baseHero.swordSpriteSheet = sword_spritesheets.down
+    baseHero.heroDirection = 'down'
+
   }
   if (xVel < 0 && yVel === 0) {
     baseHero.heroSprite = hero_spritesheets.left
     baseHero.swordSpriteSheet = sword_spritesheets.left
+    baseHero.heroDirection = 'left'
+
   }
   if (xVel > 0 && yVel === 0) {
     baseHero.heroSprite = hero_spritesheets.right
     baseHero.swordSpriteSheet = sword_spritesheets.right
+    baseHero.heroDirection = 'right'
   }
   if (!keysPressed) {
     baseHero.heroCropX = 0
