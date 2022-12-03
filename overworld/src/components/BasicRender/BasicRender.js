@@ -36,7 +36,7 @@ let cursorX = -400 // sets cursor starting coordinates outside the canvas so it 
 let cursorY = -400
 
 // these limit how often a frame is drawn to the screen
-const frameRatePeak = 20
+const frameRatePeak = 3
 let frameRateCounter = 0
 
 // this gets the coordinates of the cursor so it can be rendered on the canvas
@@ -79,13 +79,18 @@ const BasicRender = ({}) => {
   // declare the 3 (current) canvases. background is rendered first, then sprite, then foreground on top
   // foregroundCanvas is for scenery and objects that the hero or other sprites can go behind
   // it is partly transparent so you don't lose sprites behind it
-  const backgroundCanvas = useRef(null)
-  const spriteCanvas = useRef(null)
-  const foregroundCanvas = useRef(null)
-  const cursorCanvas = useRef(null)
-  const collisionCanvas = useRef(null)
-  const comboCanvas = useRef(null)
+  // const backgroundCanvas = useRef(null)
+  // const spriteCanvas = useRef(null)
+  // const foregroundCanvas = useRef(null)
+  // const cursorCanvas = useRef(null)
+  // const collisionCanvas = useRef(null)
+  const backgroundCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
+  const spriteCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
+  const foregroundCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
+  const cursorCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
+  const collisionCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
   const pixelCanvas = useRef(null)
+  const comboCanvas = useRef(null)
 
 
   // this is the main useEffect for rendering - it runs input checks,
@@ -95,13 +100,18 @@ const BasicRender = ({}) => {
 
   // creates context for each canvas. Invoke all drawing/rendering to canvas
   // using the context for the layer you want to render to
-  const backgroundCtx = backgroundCanvas.current.getContext('2d', { alpha: false })
-  const spriteCtx = spriteCanvas.current.getContext('2d')
-  const foregroundCtx = foregroundCanvas.current.getContext('2d')
-  const cursorCtx = cursorCanvas.current.getContext('2d')
-  const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
-  const comboCtx = comboCanvas.current.getContext('2d', { willReadFrequently: true })
-  // const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
+  // const backgroundCtx = backgroundCanvas.current.getContext('2d', { alpha: false })
+  // const spriteCtx = spriteCanvas.current.getContext('2d')
+  // const foregroundCtx = foregroundCanvas.current.getContext('2d')
+  // const cursorCtx = cursorCanvas.current.getContext('2d')
+  // const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
+  const backgroundCtx = backgroundCanvas.getContext('2d')
+  const spriteCtx = spriteCanvas.getContext('2d')
+  const foregroundCtx = foregroundCanvas.getContext('2d')
+  const cursorCtx = cursorCanvas.getContext('2d')
+  const collisionCtx = collisionCanvas.getContext('2d', { willReadFrequently: true })
+  const comboCtx = comboCanvas.current.getContext('2d')
+  const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .85
@@ -467,18 +477,21 @@ const BasicRender = ({}) => {
 
       const drawToComboCanvas = (canvases) => {
         for (let el of canvases) {
-          const canvas = document.getElementById(el)
+          // const canvas = document.getElementById(el)
+          const renderImg = el.transferToImageBitmap()
+          // console.log(renderImg)
           // const canvas = document.getElementById('backgroundCanvas')
           // const dataURL = canvas.toDataURL()
           // console.log(dataURL)
-          comboCtx.drawImage(canvas, 0, 0)
+          comboCtx.drawImage(renderImg, 0, 0)
         }
       }
-      // if (frameRateCounter === frameRatePeak) {
-        // pixelator(comboCtx, pixelCtx, baseHero) // turn this on to burn it all down
-        drawToComboCanvas(['backgroundCanvas', 'spriteCanvas', 'foregroundCanvas', 'cursorCanvas'])
+      if (frameRateCounter === frameRatePeak) {
+        pixelator(comboCtx, pixelCtx, backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas) // turn this on to burn it all down
+        // drawToComboCanvas(['backgroundCanvas', 'spriteCanvas', 'foregroundCanvas', 'cursorCanvas'])
+        drawToComboCanvas([backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas])
         frameRateCounter = 0
-      // }
+      }
       frameRateCounter++
 
 
@@ -498,11 +511,11 @@ const BasicRender = ({}) => {
         {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id='canvas-container'>
         <div id='sizing' style={{height: window.innerHeight, width: window.innerWidth}}></div>
-        <canvas id='collisionCanvas' ref={collisionCanvas} height={window.innerHeight} width={window.innerWidth} />
+        {/* <canvas id='collisionCanvas' ref={collisionCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='backgroundCanvas' ref={backgroundCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='spriteCanvas' ref={spriteCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={window.innerHeight} width={window.innerWidth} />
-        <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         <canvas id='comboCanvas' ref={comboCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} />
         {/* <div className='blur'></div> */}

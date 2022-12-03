@@ -243,7 +243,7 @@
   z-index: 29;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
-  /* display: none; */
+  display: none;
   /* filter: blur(1px); */
   /* mix-blend-mode: hard-light; */
   /* opacity: 1; */
