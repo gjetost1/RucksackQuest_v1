@@ -317,10 +317,11 @@ const BasicRender = ({}) => {
         baseHero.frameCountLimiter = 0
         baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx, cursorCtx)
       }
-      collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       baseHero.frameCountLimiter += baseHero.moveSpeed
+      
+      collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       // sets position of heroSprite and equipment, as well as which spritesheet should be used for this frame
@@ -431,10 +432,10 @@ const BasicRender = ({}) => {
 
     foregroundCtx.globalAlpha = 1
 
-    animatedObjectsRender(grassPatch1.definition(), baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch2.definition(), baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(grassPatch3.definition(), baseHero, backgroundCtx, foregroundCtx)
-    animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx)
+    animatedObjectsRender(grassPatch1.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
+    animatedObjectsRender(grassPatch2.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
+    animatedObjectsRender(grassPatch3.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
+    animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
     // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
     // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
@@ -493,6 +494,7 @@ const BasicRender = ({}) => {
         frameRateCounter = 0
       }
       frameRateCounter++
+
 
 
     }

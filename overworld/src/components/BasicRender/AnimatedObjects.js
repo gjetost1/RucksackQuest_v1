@@ -34,6 +34,7 @@ export const grass_1 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
+  speedChange: .6,
 }
 
 const grass_low_1_img = new Image()
@@ -58,6 +59,7 @@ export const grass_low_1 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
+  speedChange: .6,
 
 }
 
@@ -83,6 +85,7 @@ export const grass_2 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
+  speedChange: .6,
 
 }
 
@@ -108,6 +111,7 @@ export const grass_3 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
+  speedChange: .6,
 
 }
 
@@ -133,6 +137,7 @@ export const barrel_1 = {
   destroyed: false,
   sfx: crate_break_1_fx,
   solid: true,
+  speedChange: false,
 
 }
 
@@ -158,6 +163,7 @@ export const barrel_2 = {
   destroyed: false,
   sfx: crate_break_1_fx,
   solid: true,
+  speedChange: false,
 
 }
 
@@ -183,5 +189,5 @@ export const barrel_low_1 = {
   destroyed: false,
   sfx: crate_break_1_fx,
   solid: true,
-
+  speedChange: false,
 }

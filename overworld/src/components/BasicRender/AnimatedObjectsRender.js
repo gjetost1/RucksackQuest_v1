@@ -128,7 +128,7 @@ let windBlow = true // determines if the grass is animating or not
 
 // renders an animated object to the background layer. should be called after main background render in basicRender or it will be covered up
 // objects to be rendered should be passed in format created by generate patch above
-const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx) => {
+const animatedObjectsRender = (objects, baseHero, backgroundCtx, foregroundCtx, collisionCtx) => {
 if (!windBlow) {
   if(Math.floor(Math.random() * 1000) === 13) {
     windBlow = true
@@ -181,6 +181,7 @@ if (!windBlow) {
         }
 
         // checks for attack collisions if hero is within 2 blocksizes of the element
+        // also renders to collisionCanvas if the object is solid and not destroyed
           let collision = true
           if ((globalX > globalVars.heroCenterX - globalVars.blockSize && globalX < globalVars.heroCenterX + globalVars.blockSize)
           && (globalY > globalVars.heroCenterY - globalVars.blockSize && globalY < globalVars.heroCenterY + globalVars.blockSize)) {
@@ -201,7 +202,14 @@ if (!windBlow) {
             && checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 1)
             && checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 2)
             && checkBoxCollision(baseHero.eventX, baseHero.eventY, colBox, tempCMasks, 3)
+
+            // renders to collisionCanvas if the object is solid and not destroyed or breaking
+            if (el.img.solid && !el.img.destroyed && !el.img.breaking) {
+              console.log('drawing collision')
+              collisionCtx.drawImage(el.img.spriteSheet, el.img.cropX, el.img.cropY, el.img.blockSize, el.img.blockSize, el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY, el.img.blockSize, el.img.blockSize)
+            }
           }
+
 
           if (!collision && !el.img.breaking && !el.img.destroyed) {
             //plays sound effect on destroy, if any
@@ -218,6 +226,16 @@ if (!windBlow) {
           }
           const yChange = globalY - el.y
           // console.log(baseHero.heroY, el.y)
+
+           // if there is a speedChange property to the object (eg grass slows you down) it is applied here
+           if ((globalX + el.img.blockSize / 2 > globalVars.heroCenterX && globalX + el.img.blockSize / 2 < globalVars.heroCenterX + globalVars.blockSize)
+           && (globalY + el.img.blockSize / 2 > globalVars.heroCenterY  && globalY + el.img.blockSize / 2 < globalVars.heroCenterY + globalVars.blockSize - globalVars.blockSize / 3)
+           && el.img.speedChange
+           && !el.img.destroyed
+           && !el.img.breaking
+           ) {
+            baseHero.moveSpeed = baseHero.baseMoveSpeed * el.img.speedChange
+           }
 
           if (el.img.breaking && el.img.cropX >= el.img.blockSize * (el.img.maxAnimFrame) || el.img.destroyed) {
             el.img.cropX = el.img.blockSize * (el.img.maxAnimFrame - 1)
