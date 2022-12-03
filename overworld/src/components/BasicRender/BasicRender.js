@@ -36,7 +36,7 @@ let cursorX = -400 // sets cursor starting coordinates outside the canvas so it 
 let cursorY = -400
 
 // these limit how often a frame is drawn to the screen
-const frameRatePeak = 3
+const frameRatePeak = 20
 let frameRateCounter = 0
 
 // this gets the coordinates of the cursor so it can be rendered on the canvas
@@ -87,6 +87,7 @@ const BasicRender = ({}) => {
   const comboCanvas = useRef(null)
   const pixelCanvas = useRef(null)
 
+
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
   // the animate() function
@@ -100,7 +101,7 @@ const BasicRender = ({}) => {
   const cursorCtx = cursorCanvas.current.getContext('2d')
   const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
   const comboCtx = comboCanvas.current.getContext('2d', { willReadFrequently: true })
-  const pixelCtx = pixelCanvas.current.getContext('2d')
+  // const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .85
@@ -298,6 +299,7 @@ const BasicRender = ({}) => {
       spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+      // comboCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
@@ -472,11 +474,11 @@ const BasicRender = ({}) => {
           comboCtx.drawImage(canvas, 0, 0)
         }
       }
-      if (frameRateCounter === frameRatePeak) {
-        // pixelator(comboCtx, pixelCtx, baseHero)
+      // if (frameRateCounter === frameRatePeak) {
+        // pixelator(comboCtx, pixelCtx, baseHero) // turn this on to burn it all down
         drawToComboCanvas(['backgroundCanvas', 'spriteCanvas', 'foregroundCanvas', 'cursorCanvas'])
         frameRateCounter = 0
-      }
+      // }
       frameRateCounter++
 
 
@@ -503,9 +505,9 @@ const BasicRender = ({}) => {
         <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='comboCanvas' ref={comboCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} />
-        <div className='blur'></div>
-        <div className='scanline-tone'></div>
-        <div className='pixel-tone'></div>
+        {/* <div className='blur'></div> */}
+        {/* <div className='scanline-tone'></div> */}
+        {/* <div className='pixel-tone'></div> */}
         {/* <div className='pixel-mask'></div> */}
       </div>
     </div>

@@ -258,11 +258,13 @@
   image-rendering: pixelated;
   width: fit-content;
   height: fit-content;
-  z-index: 30;
+  z-index: 28;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
   /* mix-blend-mode: hard-light; */
   /* filter: brightness(200%) */
+  /* display: none; */
+
 }
 
 @keyframes pixel_fade {
