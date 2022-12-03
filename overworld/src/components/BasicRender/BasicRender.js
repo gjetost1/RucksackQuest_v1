@@ -89,7 +89,7 @@ const BasicRender = ({}) => {
   const foregroundCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
   const cursorCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
   const collisionCanvas = new OffscreenCanvas(globalVars.width, globalVars.height)
-  const pixelCanvas = useRef(null)
+  // const pixelCanvas = useRef(null)
   const comboCanvas = useRef(null)
 
 
@@ -111,7 +111,7 @@ const BasicRender = ({}) => {
   const cursorCtx = cursorCanvas.getContext('2d')
   const collisionCtx = collisionCanvas.getContext('2d', { willReadFrequently: true })
   const comboCtx = comboCanvas.current.getContext('2d')
-  const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
+  // const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .85
@@ -305,11 +305,11 @@ const BasicRender = ({}) => {
     const animate = () => {
 
       // clears all canvases for a new animation frame
+      // comboCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height)
-      // comboCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
       // moveEngine runs less than every frame to keep the hero sprite slower
@@ -487,7 +487,7 @@ const BasicRender = ({}) => {
         }
       }
       if (frameRateCounter === frameRatePeak) {
-        pixelator(comboCtx, pixelCtx, backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas) // turn this on to burn it all down
+        // pixelator(comboCtx, pixelCtx, backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas) // turn this on to burn it all down
         // drawToComboCanvas(['backgroundCanvas', 'spriteCanvas', 'foregroundCanvas', 'cursorCanvas'])
         drawToComboCanvas([backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas])
         frameRateCounter = 0
@@ -517,7 +517,7 @@ const BasicRender = ({}) => {
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         <canvas id='comboCanvas' ref={comboCanvas} height={window.innerHeight} width={window.innerWidth} />
-        <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} />
+        {/* <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         {/* <div className='blur'></div> */}
         {/* <div className='scanline-tone'></div> */}
         {/* <div className='pixel-tone'></div> */}
