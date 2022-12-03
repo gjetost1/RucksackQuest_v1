@@ -2,11 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import eventEngine from './EventEngine'
-// import background_1 from '../../assets/backgrounds/test/big_map_background_2_test1.png'
+import pixelator from './Pixelator'
 import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
 import collision_1 from '../../assets/backgrounds/test/big_map_collision_2.png'
-// import background_1 from '../../assets/backgrounds/test/map_test_3_background.png'
-// import background_1 from '../../assets/backgrounds/river_style_test.png'
 import foreground_1 from '../../assets/backgrounds/test/big_map_foreground_2.png'
 import cursor_1 from '../../assets/hand_cursor.png'
 import { grass_1, grass_low_1, grass_2, grass_3, barrel_1, barrel_2, barrel_low_1 } from './AnimatedObjects'
@@ -37,7 +35,9 @@ let baseHero = baseHeroGet
 let cursorX = -400 // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400
 
-
+// these limit how often a frame is drawn to the screen
+const frameRatePeak = 3
+let frameRateCounter = 0
 
 // this gets the coordinates of the cursor so it can be rendered on the canvas
 document.addEventListener('mousemove', (action) => {})
@@ -84,6 +84,8 @@ const BasicRender = ({}) => {
   const foregroundCanvas = useRef(null)
   const cursorCanvas = useRef(null)
   const collisionCanvas = useRef(null)
+  const comboCanvas = useRef(null)
+  const pixelCanvas = useRef(null)
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
@@ -92,11 +94,13 @@ const BasicRender = ({}) => {
 
   // creates context for each canvas. Invoke all drawing/rendering to canvas
   // using the context for the layer you want to render to
-  const backgroundCtx = backgroundCanvas.current.getContext('2d')
+  const backgroundCtx = backgroundCanvas.current.getContext('2d', { alpha: false })
   const spriteCtx = spriteCanvas.current.getContext('2d')
   const foregroundCtx = foregroundCanvas.current.getContext('2d')
   const cursorCtx = cursorCanvas.current.getContext('2d')
   const collisionCtx = collisionCanvas.current.getContext('2d', { willReadFrequently: true })
+  const comboCtx = comboCanvas.current.getContext('2d', { willReadFrequently: true })
+  const pixelCtx = pixelCanvas.current.getContext('2d')
 
   // makes foreground transparent so you can see sprites under it
   foregroundCtx.globalAlpha = .85
@@ -459,6 +463,23 @@ const BasicRender = ({}) => {
       // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
       // backgroundCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
 
+      const drawToComboCanvas = (canvases) => {
+        for (let el of canvases) {
+          const canvas = document.getElementById(el)
+          // const canvas = document.getElementById('backgroundCanvas')
+          // const dataURL = canvas.toDataURL()
+          // console.log(dataURL)
+          comboCtx.drawImage(canvas, 0, 0)
+        }
+      }
+      if (frameRateCounter === frameRatePeak) {
+        // pixelator(comboCtx, pixelCtx, baseHero)
+        drawToComboCanvas(['backgroundCanvas', 'spriteCanvas', 'foregroundCanvas', 'cursorCanvas'])
+        frameRateCounter = 0
+      }
+      frameRateCounter++
+
+
     }
 
 
@@ -480,6 +501,8 @@ const BasicRender = ({}) => {
         <canvas id='spriteCanvas' ref={spriteCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='comboCanvas' ref={comboCanvas} height={window.innerHeight} width={window.innerWidth} />
+        <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} />
         <div className='blur'></div>
         <div className='scanline-tone'></div>
         <div className='pixel-tone'></div>

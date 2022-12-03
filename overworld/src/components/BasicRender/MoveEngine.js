@@ -14,6 +14,8 @@ const horzBuffer = 14
 const vertBuffer = 12
 const blockSize = globalVars.blockSize
 
+
+
 // array of coordinates for all detectors of hero object to be fed to checkCollision
 // keys can be anything, checkCollision will return an object with the same keys
 // values here have to be an array [x,y] where x is the x coordinate of the pixel

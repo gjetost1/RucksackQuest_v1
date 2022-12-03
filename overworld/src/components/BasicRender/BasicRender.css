@@ -46,7 +46,8 @@
   /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 100%); */
   /* background: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 80%); */
   /* background: black; */
-  background-image: url('../../assets/backgrounds/crt_pixel_black.png');
+  background-image: url('../../assets/backgrounds/crt_pixel_2.png');
+  /* background-image: url('../../assets/backgrounds/crt_pixel_black.png'); */
   /* background: linear-gradient(rgba(255, 0, 0, .1) 33%, rgba(0, 255, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
   /* background: linear-gradient(rgba(255, 0, 0, .12) 25%, rgba(0, 255, 0, .1) 25%, 50%, rgba(0, 0, 255, .1) 50%, 75%, rgba(0, 0, 0, 0.3) 75%); */
   /* background: linear-gradient(90deg, rgba(0, 255, 0, .1) 33%, rgba(255, 0, 0, .1) 33%, 66%, rgba(0, 0, 255, .1) 66%); */
@@ -57,11 +58,11 @@
   background-position: center;
   pointer-events: none;
   mix-blend-mode: hard-light;
-  /* mix-blend-mode: screen; */
-  /* mix-blend-mode: soft-light; */
+  /* mix-blend-mode: color-dodge; */
+  mix-blend-mode: soft-light;
   /* mix-blend-mode: color; */
   /* mix-blend-mode: color-burn; */
-  opacity: .2;
+  opacity: .4;
   overflow: hidden;
   /* animation: pixel_fade 16s ease-in-out; */
 }
@@ -114,7 +115,7 @@
   /* background: linear-gradient(rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 70%), linear-gradient(90deg, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, .2) 70%); */
   /* background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); */
   /* background: linear-gradient(rgba(0, 0, 0, .8) 0% 30%, rgba(0, 0, 0, 0) 30% 70%, rgba(0, 0, 0, .8) 70% 100%); */
-  background: linear-gradient(rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1));
+  background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1));
   z-index: 103;
   background-size: 100% 4px;
   /* background-size: 4px 4px; */
@@ -134,7 +135,7 @@
   right: 0;
   /* background-color: white; */
   /* backdrop-filter: blur(0px) brightness(120%) contrast(100%) saturate(100%); */
-  backdrop-filter: blur(.5px) brightness(140%) contrast(100%) saturate(100%);
+  backdrop-filter: blur(0px) brightness(140%) contrast(100%) saturate(100%);
   /* filter: blur(5px); */
   z-index: 104;
   /* mix-blend-mode: color-burn; */
@@ -161,6 +162,7 @@
   z-index: 2;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
+  display: none;
 
 }
 
@@ -176,6 +178,8 @@
   z-index: 3;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
+  opacity: 0;
+  display: none;
 
 }
 
@@ -191,6 +195,8 @@
   z-index: 3;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
+  opacity: 0;
+  display: none;
 
 }
 
@@ -206,6 +212,9 @@
   z-index: 10;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
+  opacity: 0;
+  display: none;
+
 }
 
 #collisionCanvas {
@@ -220,6 +229,40 @@
   z-index: -9;
   /* animation: scale-background 16s ease-in-out; */
   transform-origin: center;
+}
+
+#comboCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  z-index: 29;
+  /* animation: scale-background 16s ease-in-out; */
+  transform-origin: center;
+  /* display: none; */
+  /* filter: blur(1px); */
+  /* mix-blend-mode: hard-light; */
+  /* opacity: 1; */
+}
+
+#pixelCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  image-rendering: pixelated;
+  width: fit-content;
+  height: fit-content;
+  z-index: 30;
+  /* animation: scale-background 16s ease-in-out; */
+  transform-origin: center;
+  /* mix-blend-mode: hard-light; */
+  /* filter: brightness(200%) */
 }
 
 @keyframes pixel_fade {
