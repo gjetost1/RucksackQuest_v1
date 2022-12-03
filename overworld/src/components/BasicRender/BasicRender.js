@@ -483,6 +483,7 @@ const BasicRender = ({}) => {
         <div className='blur'></div>
         <div className='scanline-tone'></div>
         <div className='pixel-tone'></div>
+        {/* <div className='pixel-mask'></div> */}
       </div>
     </div>
   )
