@@ -13,7 +13,7 @@ import wolfen_upright from '../../assets/sprites/enemy_sprites/wolfen/wolfen_upr
 const colBuffer = 12 // number of pixels away from hero that detectors sit
 const cornerBuffer = 4
 const horzBuffer = 6
-const vertBuffer = 12
+const vertBuffer = 4
 const blockSize = globalVars.blockSize
 
 export const wolfen = {

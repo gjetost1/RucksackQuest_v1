@@ -44,6 +44,13 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
 //   // console.log('offscreen')
 //   return enemyObject
 // }
+if (
+  enemyObject.x <= -globalVars.blockSize
+  || enemyObject.y <= -globalVars.blockSize
+) {
+  // console.log(enemyObject.x, enemyObject.y)
+  return enemyObject
+}
 
 
 // if (
@@ -78,22 +85,33 @@ const col10 = collisions[10]
 const col11 = collisions[11]
 let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || col8 || col9 || col10 || col11)
 
-  if (allCol) {
-    // console.log('direction change')
-    enemyObject.direction = moveDirections[Math.floor(Math.random() * moveDirections.length)]
-  }
+
 
   if (enemyObject.moving) {
     if (enemyObject.direction === 'down') {
       enemyObject.currentSprite = enemyObject.spriteSheets.down
       if ((col7 && col10) || (col8 && col9)) {
-        // console.log('wolf collides!')
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'up'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'upright'
+        } else {
+          enemyObject.direction = 'upleft'
+        }
       } else if (col7 && col8) {
         enemyObject.x -= enemyObject.xVel
       } else if (col9 && col10) {
         enemyObject.x += enemyObject.xVel
       } else if (col8 && col9) {
-
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'up'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'upright'
+        } else {
+          enemyObject.direction = 'upleft'
+        }
       } else {
         enemyObject.y += enemyObject.yVel
       }
@@ -101,37 +119,81 @@ let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || co
       enemyObject.currentSprite = enemyObject.spriteSheets.up
       if ((col1 && col4) || (col2 && col3)) {
         // if all forward corners collide, do nothing to prevent juddering
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'down'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'downleft'
+        } else {
+          enemyObject.direction = 'downright'
+        }
       } else if (col1 && col2) { // if top left corner collides but not top right corner, move hero right
         enemyObject.x += enemyObject.xVel
       } else if (col3 && col4) {
         enemyObject.x -= enemyObject.xVel
       } else if (col2 && col3) {
-
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'down'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'downleft'
+        } else {
+          enemyObject.direction = 'downright'
+        }
       } else { // if no top corners collide, move up
         enemyObject.y -= enemyObject.yVel
       }
     } else if (enemyObject.direction === 'left') {
       enemyObject.currentSprite = enemyObject.spriteSheets.left
       if ((col1 && col10) || (col0 && col11)) {
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'right'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'upright'
+        } else {
+          enemyObject.direction = 'downright'
+        }
       } else if (col0 && col1) {
         enemyObject.y += enemyObject.yVel
       } else if (col11 && col10) {
         enemyObject.y -= enemyObject.yVel
       } else if (col0 && col11) {
-
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'right'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'upright'
+        } else {
+          enemyObject.direction = 'downright'
+        }
       } else {
         enemyObject.x -= enemyObject.xVel
       }
     } else if (enemyObject.direction === 'right') {
       enemyObject.currentSprite = enemyObject.spriteSheets.right
       if ((col4 && col7) || (col5 && col6)) {
-
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'right'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'upleft'
+        } else {
+          enemyObject.direction = 'downleft'
+        }
       } else if (col4 && col5) {
         enemyObject.y += enemyObject.yVel
       } else if (col6 && col7) {
         enemyObject.y -= enemyObject.yVel
       } else if (col5 && col6) {
-
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'right'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'upleft'
+        } else {
+          enemyObject.direction = 'downleft'
+        }
       } else {
         enemyObject.x += enemyObject.xVel
       }
@@ -139,18 +201,58 @@ let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || co
       enemyObject.currentSprite = enemyObject.spriteSheets.upleft
       enemyObject.x -= enemyObject.xVel
       enemyObject.y -= enemyObject.yVel
+      if (col0 && col1 && col2) {
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'downright'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'right'
+        } else {
+          enemyObject.direction = 'down'
+        }
+      }
     } else if (enemyObject.direction === 'upright') {
       enemyObject.currentSprite = enemyObject.spriteSheets.upright
       enemyObject.x += enemyObject.xVel
       enemyObject.y -= enemyObject.yVel
+      if (col3 && col4 && col5) {
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'downleft'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'left'
+        } else {
+          enemyObject.direction = 'down'
+        }
+      }
     } else if (enemyObject.direction === 'downleft') {
       enemyObject.currentSprite = enemyObject.spriteSheets.downleft
       enemyObject.x -= enemyObject.xVel
       enemyObject.y += enemyObject.yVel
+      if (col9 && col10&& col11) {
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'upright'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'up'
+        } else {
+          enemyObject.direction = 'right'
+        }
+      }
     } else if (enemyObject.direction === 'downright') {
       enemyObject.currentSprite = enemyObject.spriteSheets.downright
       enemyObject.x += enemyObject.xVel
       enemyObject.y += enemyObject.yVel
+      if (col6 && col7 && col8) {
+        const randomDirection = Math.floor(Math.random() * 3)
+        if (randomDirection === 1) {
+          enemyObject.direction = 'upleft'
+        } else if (randomDirection === 2) {
+          enemyObject.direction = 'up'
+        } else {
+          enemyObject.direction = 'left'
+        }
+      }
     }
   }
 

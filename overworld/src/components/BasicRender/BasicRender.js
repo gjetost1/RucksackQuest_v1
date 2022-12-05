@@ -3,6 +3,7 @@ import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import enemyMoveEngine from './EnemyMoveEngine'
 import enemyRender from './EnemyRender'
+import enemyGenerator from './EnemyGenerator'
 import eventEngine from './EventEngine'
 import pixelator from './Pixelator'
 import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
@@ -35,15 +36,15 @@ const width = globalVars.width
 const blockSize = globalVars.blockSize   // size of each grid block in pixels for collison objects
 let baseHero = {...baseHeroGet}
 let wolfen_1 = {...wolfen}
-let wolfen_2 = {...wolfen}
-let wolfen_3 = {...wolfen}
-let wolfen_4 = {...wolfen}
-let wolfen_5 = {...wolfen}
-wolfen_1.x = wolfen_1.x + 64
-wolfen_2.y = wolfen_2.y - 64
-wolfen_3.x = wolfen_3.x - 64
-wolfen_4.y = wolfen_4.y + 64
-wolfen_5.x = wolfen_5.x + 128
+// let wolfen_2 = {...wolfen}
+// let wolfen_3 = {...wolfen}
+// let wolfen_4 = {...wolfen}
+// let wolfen_5 = {...wolfen}
+// wolfen_1.x = wolfen_1.x + 64
+// wolfen_2.y = wolfen_2.y - 64
+// wolfen_3.x = wolfen_3.x - 64
+// wolfen_4.y = wolfen_4.y + 64
+// wolfen_5.x = wolfen_5.x + 128
 let cursorX = -400 // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400
 
@@ -396,7 +397,7 @@ const BasicRender = ({}) => {
 
 
     const animate = () => {
-
+      console.log(wolfenSprite1)
       // clears all canvases for a new animation frame
       // comboCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
