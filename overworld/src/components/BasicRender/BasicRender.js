@@ -36,6 +36,14 @@ const blockSize = globalVars.blockSize   // size of each grid block in pixels fo
 let baseHero = {...baseHeroGet}
 let wolfen_1 = {...wolfen}
 let wolfen_2 = {...wolfen}
+let wolfen_3 = {...wolfen}
+let wolfen_4 = {...wolfen}
+let wolfen_5 = {...wolfen}
+wolfen_1.x = wolfen_1.x + 64
+wolfen_2.y = wolfen_2.y - 64
+wolfen_3.x = wolfen_3.x - 64
+wolfen_4.y = wolfen_4.y + 64
+wolfen_5.x = wolfen_5.x + 128
 let cursorX = -400 // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400
 
@@ -67,7 +75,7 @@ onmousemove = (event) => {
 const grassPatch1 = new Patch(0, 0, 20, 20, [grass_1, grass_2, grass_3], .05)
 const grassPatch2 = new Patch(-500, -500, 20, 20, [grass_1, grass_2, grass_3], .05)
 const grassPatch3 = new Patch(1100, 1000, 20, 20, [grass_1, grass_2, grass_3], .05)
-const barrelPatch = new Patch(600, 500, 10, 10, [barrel_1, barrel_2], .2)
+const barrelPatch = new Patch(100, 500, 4, 4, [barrel_1, barrel_2], .2)
 
 
 
@@ -250,6 +258,15 @@ const BasicRender = ({}) => {
     const wolfenImage2 = new Image()
     wolfenImage2.src = wolfen_2.currentSprite
 
+    const wolfenImage3 = new Image()
+    wolfenImage3.src = wolfen_3.currentSprite
+
+    const wolfenImage4 = new Image()
+    wolfenImage4.src = wolfen_4.currentSprite
+
+    const wolfenImage5 = new Image()
+    wolfenImage5.src = wolfen_5.currentSprite
+
     const wolfenSprite1 = new Sprite({
       image: wolfenImage1,
       position: {
@@ -274,6 +291,45 @@ const BasicRender = ({}) => {
         y: wolfen_2.cropY,
       },
       blockSize: wolfen_2.blockSize
+    })
+
+    const wolfenSprite3 = new Sprite({
+      image: wolfenImage3,
+      position: {
+        x: wolfen_3.x,
+        y: wolfen_3.y,
+      },
+      crop: {
+        x: wolfen_3.cropX,
+        y: wolfen_3.cropY,
+      },
+      blockSize: wolfen_3.blockSize
+    })
+
+    const wolfenSprite4 = new Sprite({
+      image: wolfenImage4,
+      position: {
+        x: wolfen_4.x,
+        y: wolfen_4.y,
+      },
+      crop: {
+        x: wolfen_4.cropX,
+        y: wolfen_4.cropY,
+      },
+      blockSize: wolfen_4.blockSize
+    })
+
+    const wolfenSprite5 = new Sprite({
+      image: wolfenImage5,
+      position: {
+        x: wolfen_5.x,
+        y: wolfen_5.y,
+      },
+      crop: {
+        x: wolfen_5.cropX,
+        y: wolfen_5.cropY,
+      },
+      blockSize: wolfen_5.blockSize
     })
 
 
@@ -357,6 +413,12 @@ const BasicRender = ({}) => {
         wolfen_1.y += baseHero.frameYChange
         wolfen_2.x += baseHero.frameXChange
         wolfen_2.y += baseHero.frameYChange
+        wolfen_3.x += baseHero.frameXChange
+        wolfen_3.y += baseHero.frameYChange
+        wolfen_4.x += baseHero.frameXChange
+        wolfen_4.y += baseHero.frameYChange
+        wolfen_5.x += baseHero.frameXChange
+        wolfen_5.y += baseHero.frameYChange
       }
 
 
@@ -538,6 +600,9 @@ const BasicRender = ({}) => {
     if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
       wolfen_1 = enemyMoveEngine(wolfen_1, collisionCtx, foregroundCtx)
       wolfen_2 = enemyMoveEngine(wolfen_2, collisionCtx, foregroundCtx)
+      wolfen_3 = enemyMoveEngine(wolfen_3, collisionCtx, foregroundCtx)
+      wolfen_4 = enemyMoveEngine(wolfen_4, collisionCtx, foregroundCtx)
+      wolfen_5 = enemyMoveEngine(wolfen_5, collisionCtx, foregroundCtx)
     }
 
     // const enemiesGroup = [
@@ -546,6 +611,8 @@ const BasicRender = ({}) => {
     //   enemySprite: wolfenSprite1
     // }
     // ]
+
+
     let enemiesGroup = [
       {
         enemyObject: wolfen_1,
@@ -556,6 +623,21 @@ const BasicRender = ({}) => {
         enemyObject: wolfen_2,
         enemySprite: wolfenSprite2,
         enemyImg: wolfenImage2
+      },
+      {
+        enemyObject: wolfen_3,
+        enemySprite: wolfenSprite3,
+        enemyImg: wolfenImage3
+      },
+      {
+        enemyObject: wolfen_4,
+        enemySprite: wolfenSprite4,
+        enemyImg: wolfenImage4
+      },
+      {
+        enemyObject: wolfen_5,
+        enemySprite: wolfenSprite5,
+        enemyImg: wolfenImage5
       },
     ]
     enemiesGroup = enemyRender(enemiesGroup)

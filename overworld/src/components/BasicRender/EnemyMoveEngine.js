@@ -45,19 +45,17 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
 //   return enemyObject
 // }
 
-if (enemyObject.x < -globalVars.blockSize) {
-  console.log('less x')
-}
-if (
-  enemyObject.x < -globalVars.blockSize || enemyObject.x > globalVars.width + globalVars.blockSize
-      || enemyObject.y < -globalVars.blockSize || enemyObject.y > globalVars.height + globalVars.blockSize
-) {
-  console.log('offscreen')
-  return enemyObject
-}
+
+// if (
+//   enemyObject.x < -globalVars.blockSize || enemyObject.x > globalVars.width + globalVars.blockSize
+//       || enemyObject.y < -globalVars.blockSize || enemyObject.y > globalVars.height + globalVars.blockSize
+// ) {
+//   // console.log('offscreen')
+//   return enemyObject
+// }
 
 enemyObject = changeDirectionFunc(enemyObject, 200, moveDirections)
-enemyObject = startStopMovementFunc(enemyObject, 200)
+enemyObject = startStopMovementFunc(enemyObject, 100)
 
 // console.log(enemyObject)
 
@@ -81,7 +79,7 @@ const col11 = collisions[11]
 let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || col8 || col9 || col10 || col11)
 
   if (allCol) {
-    console.log('direction change')
+    // console.log('direction change')
     enemyObject.direction = moveDirections[Math.floor(Math.random() * moveDirections.length)]
   }
 
@@ -89,7 +87,7 @@ let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || co
     if (enemyObject.direction === 'down') {
       enemyObject.currentSprite = enemyObject.spriteSheets.down
       if ((col7 && col10) || (col8 && col9)) {
-        console.log('wolf collides!')
+        // console.log('wolf collides!')
       } else if (col7 && col8) {
         enemyObject.x -= enemyObject.xVel
       } else if (col9 && col10) {

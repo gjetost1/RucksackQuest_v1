@@ -12,7 +12,7 @@ import wolfen_upright from '../../assets/sprites/enemy_sprites/wolfen/wolfen_upr
 // used to create the collision box colBox
 const colBuffer = 12 // number of pixels away from hero that detectors sit
 const cornerBuffer = 4
-const horzBuffer = 14
+const horzBuffer = 6
 const vertBuffer = 12
 const blockSize = globalVars.blockSize
 
@@ -24,7 +24,7 @@ export const wolfen = {
   xVel: 4,
   yVel: 4,
   direction: 'down',
-  moving: true,
+  moving: false,
   currentSprite: wolfen_down,
   spriteSheets: {
     down: wolfen_down,
@@ -42,12 +42,12 @@ export const wolfen = {
   spriteAnimCounter: 0,
   blockSize: 64,
   colBox: {
-    0: [horzBuffer, colBuffer + vertBuffer * 2],
-    1: [horzBuffer + cornerBuffer, vertBuffer * 2 + cornerBuffer],
-    2: [colBuffer + horzBuffer, vertBuffer * 2],
-    3: [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
-    4: [blockSize - horzBuffer - cornerBuffer, vertBuffer * 2 + cornerBuffer],
-    5: [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
+    0: [horzBuffer, colBuffer + vertBuffer ],
+    1: [horzBuffer + cornerBuffer, vertBuffer  + cornerBuffer],
+    2: [colBuffer + horzBuffer, vertBuffer ],
+    3: [blockSize - colBuffer - horzBuffer, vertBuffer ],
+    4: [blockSize - horzBuffer - cornerBuffer, vertBuffer  + cornerBuffer],
+    5: [blockSize - horzBuffer, colBuffer + vertBuffer ],
     6: [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
     7: [blockSize - horzBuffer - cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
     8: [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],

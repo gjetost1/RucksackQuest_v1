@@ -7,8 +7,8 @@ const height = window.innerHeight   // height of canvas, should be the actual pi
 const width = window.innerWidth  // width of canvas, should be the actual pixel res of original artwork
 const middleX = width / 2
 const middleY = height / 2
-const heroStartXCoord = 1500
-const heroStartYCoord = 1000
+const heroStartXCoord = 200
+const heroStartYCoord = 500
 const blockSize = 16 * upscale   // size of each grid block in pixels for collison objects and hero sprites
 const windowSpacerHeight = ((window.innerHeight || document.documentElement.clientHeight||
   document.body.clientHeight) - height) / 2
