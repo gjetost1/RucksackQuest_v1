@@ -31,26 +31,34 @@ const startStopMovementFunc = (target, probability) => {
     target.moving = !target.moving
   }
   return target
+}
 
+const dashFunc = (target, probability) => {
+  const dash = Math.floor(Math.random() * probability)
+  if (dash === 11) {
+    target.dashing = !target.dashing
+    // console.log('flip')
+  }
+  return target
 }
 
 const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   // console.log(enemyObject.x, enemyObject.y)
 
-// if (
-//   (enemyObject.x <= 0 || enemyObject.x >= globalVars.width)
-//       || (enemyObject.y <= 0 || enemyObject.y >= globalVars.height )
-// ) {
-//   // console.log('offscreen')
-//   return enemyObject
-// }
 if (
-  enemyObject.x <= -globalVars.blockSize
-  || enemyObject.y <= -globalVars.blockSize
+  (enemyObject.x <= 0 || enemyObject.x >= globalVars.width)
+      || (enemyObject.y <= 0 || enemyObject.y >= globalVars.height )
 ) {
-  // console.log(enemyObject.x, enemyObject.y)
+  // console.log('offscreen')
   return enemyObject
 }
+// if (
+//   enemyObject.x <= -globalVars.blockSize
+//   || enemyObject.y <= -globalVars.blockSize
+// ) {
+//   // console.log(enemyObject.x, enemyObject.y)
+//   return enemyObject
+// }
 
 
 // if (
@@ -61,8 +69,10 @@ if (
 //   return enemyObject
 // }
 
-enemyObject = changeDirectionFunc(enemyObject, 200, moveDirections)
+enemyObject = changeDirectionFunc(enemyObject, 100, moveDirections)
 enemyObject = startStopMovementFunc(enemyObject, 100)
+enemyObject = dashFunc(enemyObject, 100)
+
 
 // console.log(enemyObject)
 
@@ -86,6 +96,25 @@ const col11 = collisions[11]
 let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || col8 || col9 || col10 || col11)
 
 
+  // if dash is active increase the max velocity and add a boost to acceleration
+  if (enemyObject.dashing) {
+    enemyObject.moveSpeed = enemyObject.dashSpeed
+    // drains stamina if dash is active and there is directional input
+    // if (baseHero.currentStam > 0 && keysPressed) {
+    //   baseHero.currentStam = baseHero.currentStam - 1
+    // }
+    // console.log('dashing')
+  } else {
+    enemyObject.moveSpeed = enemyObject.baseMoveSpeed
+    // console.log('not dashing')
+
+    // regenerates stamina
+    // if (baseHero.currentStam < baseHero.maxStam) {
+    //   baseHero.currentStam = baseHero.currentStam + 1
+    // } else {
+    //   baseHero.currentStam = baseHero.maxStam
+    // }
+  }
 
   if (enemyObject.moving) {
     if (enemyObject.direction === 'down') {

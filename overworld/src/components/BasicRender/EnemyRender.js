@@ -1,20 +1,13 @@
+import enemyMoveEngine from "./EnemyMoveEngine"
 
-const enemyRender = (enemyArr) => {
+const enemyRender = (enemyArr, spriteCtx) => {
   if (!enemyArr) return
 
   for (let el of enemyArr) {
-    // set the sprite position to the current enemyObject coordinates
-    el.enemySprite.position = {
-      x: el.enemyObject.x,
-      y: el.enemyObject.y,
-    }
-    // set the animation crop of the sprite
-    el.enemySprite.cropChange(el.enemyObject.cropX, el.enemyObject.cropY)
-
-    // sets the right direction spriteSheet for the sprite
-    el.enemyImg.src = el.enemyObject.currentSprite
-
-    el.enemySprite.draw()
+    // console.log(el.position.x, el.position.y, el.data.x, el.data.y)
+    spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
+    // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+    // spriteCtx.fillRect(el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
   }
   return enemyArr
 }

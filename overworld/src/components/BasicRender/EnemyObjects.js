@@ -24,7 +24,8 @@ export const wolfen = {
   xVel: 4,
   yVel: 4,
   direction: 'down',
-  moving: false,
+  moving: true,
+  dashing: false,
   currentSprite: wolfen_down,
   spriteSheets: {
     down: wolfen_down,
@@ -40,6 +41,11 @@ export const wolfen = {
   baseAnimSpeed: 2,
   spriteAnimSpeed: 2,
   spriteAnimCounter: 0,
+  baseMoveSpeed: 20,
+  moveSpeed: 20,
+  dashSpeed: 34,
+  frameCountLimiter: 0,
+  maxFrameCountLimiter: 100,
   blockSize: 64,
   colBox: {
     0: [horzBuffer, colBuffer + vertBuffer ],

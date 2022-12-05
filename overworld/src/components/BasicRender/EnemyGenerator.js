@@ -1,4 +1,4 @@
-class Sprite {
+class EnemySprite {
   constructor({ data, image, position, crop}) {
     this.data = data
     this.image = image
@@ -21,15 +21,16 @@ const enemyGenerator = (enemyArr) => {
   const enemyGroupArr = [] // array with all enemies in this group
 
   for (let enemy of enemyArr) {
+    const enemyData = {...enemy.base} // makes a copy of the base enemy
     // create image of current sprite
     const enemyImg = new Image()
-    enemyImg.src = enemy.base.currentSprite
+    enemyImg.src = enemyData.currentSprite
 
-    enemy.base.x = enemy.x
-    enemy.base.y = enemy.y
+    enemyData.x = enemy.x
+    enemyData.y = enemy.y
 
-    const enemySprite = new Sprite({
-      data: enemy.base,
+    const enemySprite = new EnemySprite({
+      data: enemyData,
       image: enemyImg,
       position: {
         x: enemy.x,

@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
 import enemyMoveEngine from './EnemyMoveEngine'
+import enemyUpdate from './EnemyUpdate'
 import enemyRender from './EnemyRender'
 import enemyGenerator from './EnemyGenerator'
+import coordinateChange from './CoordinateChange'
 import eventEngine from './EventEngine'
 import pixelator from './Pixelator'
 import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
@@ -35,16 +37,6 @@ const height = globalVars.height
 const width = globalVars.width
 const blockSize = globalVars.blockSize   // size of each grid block in pixels for collison objects
 let baseHero = {...baseHeroGet}
-let wolfen_1 = {...wolfen}
-// let wolfen_2 = {...wolfen}
-// let wolfen_3 = {...wolfen}
-// let wolfen_4 = {...wolfen}
-// let wolfen_5 = {...wolfen}
-// wolfen_1.x = wolfen_1.x + 64
-// wolfen_2.y = wolfen_2.y - 64
-// wolfen_3.x = wolfen_3.x - 64
-// wolfen_4.y = wolfen_4.y + 64
-// wolfen_5.x = wolfen_5.x + 128
 let cursorX = -400 // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400
 
@@ -105,6 +97,36 @@ const BasicRender = ({}) => {
   // const pixelCanvas = useRef(null)
   const comboCanvas = useRef(null)
 
+  const wolfenGroupCreator = [
+    {
+      base: wolfen,
+      x: 500,
+      y: 500
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 500
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 500
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 500
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 500
+    },
+
+  ]
+
+  let wolfenGroup = enemyGenerator(wolfenGroupCreator)
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
@@ -253,86 +275,6 @@ const BasicRender = ({}) => {
       blockSize: baseHero.blockSize
     })
 
-    const wolfenImage1 = new Image()
-    wolfenImage1.src = wolfen_1.currentSprite
-
-    const wolfenImage2 = new Image()
-    wolfenImage2.src = wolfen_2.currentSprite
-
-    const wolfenImage3 = new Image()
-    wolfenImage3.src = wolfen_3.currentSprite
-
-    const wolfenImage4 = new Image()
-    wolfenImage4.src = wolfen_4.currentSprite
-
-    const wolfenImage5 = new Image()
-    wolfenImage5.src = wolfen_5.currentSprite
-
-    const wolfenSprite1 = new Sprite({
-      image: wolfenImage1,
-      position: {
-        x: wolfen_1.x,
-        y: wolfen_1.y,
-      },
-      crop: {
-        x: wolfen_1.cropX,
-        y: wolfen_1.cropY,
-      },
-      blockSize: wolfen_1.blockSize
-    })
-
-    const wolfenSprite2 = new Sprite({
-      image: wolfenImage2,
-      position: {
-        x: wolfen_2.x,
-        y: wolfen_2.y,
-      },
-      crop: {
-        x: wolfen_2.cropX,
-        y: wolfen_2.cropY,
-      },
-      blockSize: wolfen_2.blockSize
-    })
-
-    const wolfenSprite3 = new Sprite({
-      image: wolfenImage3,
-      position: {
-        x: wolfen_3.x,
-        y: wolfen_3.y,
-      },
-      crop: {
-        x: wolfen_3.cropX,
-        y: wolfen_3.cropY,
-      },
-      blockSize: wolfen_3.blockSize
-    })
-
-    const wolfenSprite4 = new Sprite({
-      image: wolfenImage4,
-      position: {
-        x: wolfen_4.x,
-        y: wolfen_4.y,
-      },
-      crop: {
-        x: wolfen_4.cropX,
-        y: wolfen_4.cropY,
-      },
-      blockSize: wolfen_4.blockSize
-    })
-
-    const wolfenSprite5 = new Sprite({
-      image: wolfenImage5,
-      position: {
-        x: wolfen_5.x,
-        y: wolfen_5.y,
-      },
-      crop: {
-        x: wolfen_5.cropX,
-        y: wolfen_5.cropY,
-      },
-      blockSize: wolfen_5.blockSize
-    })
-
 
     const cursor = new Image()
     cursor.src = cursor_1
@@ -396,8 +338,10 @@ const BasicRender = ({}) => {
     })
 
 
+
+
     const animate = () => {
-      console.log(wolfenSprite1)
+
       // clears all canvases for a new animation frame
       // comboCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
@@ -406,28 +350,25 @@ const BasicRender = ({}) => {
       cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
+
+      // baseHero.frameXChange = 0
+      // baseHero.frameYChange = 0
       // moveEngine runs less than every frame to keep the hero sprite slower
       if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
+        // moveEngine handles inputs and collisions for hero sprite
         baseHero = moveEngine(baseHero, collisionCtx, foregroundCtx)
-        wolfen_1.x += baseHero.frameXChange
-        wolfen_1.y += baseHero.frameYChange
-        wolfen_2.x += baseHero.frameXChange
-        wolfen_2.y += baseHero.frameYChange
-        wolfen_3.x += baseHero.frameXChange
-        wolfen_3.y += baseHero.frameYChange
-        wolfen_4.x += baseHero.frameXChange
-        wolfen_4.y += baseHero.frameYChange
-        wolfen_5.x += baseHero.frameXChange
-        wolfen_5.y += baseHero.frameYChange
+        wolfenGroup = coordinateChange(baseHero, wolfenGroup)
+        // coordinateChange moves elements in relation to the hero to keep them at the right coordinates
       }
-
-
 
 
       baseHero.frameCountLimiter += baseHero.moveSpeed
 
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+
+      // wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
+
 
 
       // sets position of heroSprite and equipment, as well as which spritesheet should be used for this frame
@@ -593,18 +534,20 @@ const BasicRender = ({}) => {
       heroRender([playerSprite, swordSprite])
     }
 
+
+
     // wolfenSprite.position = {
     //   x: wolfen_1.x + baseHero.xChange,
     //   y: wolfen_1.y + baseHero.yChange
     // }
 
-    if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
-      wolfen_1 = enemyMoveEngine(wolfen_1, collisionCtx, foregroundCtx)
-      wolfen_2 = enemyMoveEngine(wolfen_2, collisionCtx, foregroundCtx)
-      wolfen_3 = enemyMoveEngine(wolfen_3, collisionCtx, foregroundCtx)
-      wolfen_4 = enemyMoveEngine(wolfen_4, collisionCtx, foregroundCtx)
-      wolfen_5 = enemyMoveEngine(wolfen_5, collisionCtx, foregroundCtx)
-    }
+    // if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
+    //   wolfen_1 = enemyMoveEngine(wolfen_1, collisionCtx, foregroundCtx)
+    //   wolfen_2 = enemyMoveEngine(wolfen_2, collisionCtx, foregroundCtx)
+    //   wolfen_3 = enemyMoveEngine(wolfen_3, collisionCtx, foregroundCtx)
+    //   wolfen_4 = enemyMoveEngine(wolfen_4, collisionCtx, foregroundCtx)
+    //   wolfen_5 = enemyMoveEngine(wolfen_5, collisionCtx, foregroundCtx)
+    // }
 
     // const enemiesGroup = [
     //   {
@@ -614,35 +557,39 @@ const BasicRender = ({}) => {
     // ]
 
 
-    let enemiesGroup = [
-      {
-        enemyObject: wolfen_1,
-        enemySprite: wolfenSprite1,
-        enemyImg: wolfenImage1
-      },
-      {
-        enemyObject: wolfen_2,
-        enemySprite: wolfenSprite2,
-        enemyImg: wolfenImage2
-      },
-      {
-        enemyObject: wolfen_3,
-        enemySprite: wolfenSprite3,
-        enemyImg: wolfenImage3
-      },
-      {
-        enemyObject: wolfen_4,
-        enemySprite: wolfenSprite4,
-        enemyImg: wolfenImage4
-      },
-      {
-        enemyObject: wolfen_5,
-        enemySprite: wolfenSprite5,
-        enemyImg: wolfenImage5
-      },
-    ]
-    enemiesGroup = enemyRender(enemiesGroup)
+    // let enemiesGroup = [
+    //   {
+    //     enemyObject: wolfen_1,
+    //     enemySprite: wolfenSprite1,
+    //     enemyImg: wolfenImage1
+    //   },
+    //   {
+    //     enemyObject: wolfen_2,
+    //     enemySprite: wolfenSprite2,
+    //     enemyImg: wolfenImage2
+    //   },
+    //   {
+    //     enemyObject: wolfen_3,
+    //     enemySprite: wolfenSprite3,
+    //     enemyImg: wolfenImage3
+    //   },
+    //   {
+    //     enemyObject: wolfen_4,
+    //     enemySprite: wolfenSprite4,
+    //     enemyImg: wolfenImage4
+    //   },
+    //   {
+    //     enemyObject: wolfen_5,
+    //     enemySprite: wolfenSprite5,
+    //     enemyImg: wolfenImage5
+    //   },
+    // ]
+    // enemiesGroup = enemyRender(enemiesGroup)
 
+      enemyRender(wolfenGroup, spriteCtx)
+      wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
+
+      // console.log(wolfenGroup)
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()
