@@ -46,7 +46,7 @@ const checkBoxCollision = (x, y, colBox, cMasks, corner) => {
         x + colBox[corner][0] < br[0] &&
         y + colBox[corner][1] < br[1]
       ) {
-        console.log('!!!COLLISION ', corner)
+        // console.log('!!!COLLISION ', corner)
         return false;
       }
   }

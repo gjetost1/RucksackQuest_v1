@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import './BasicRender.css'
 import moveEngine from './MoveEngine'
+import enemyMoveEngine from './EnemyMoveEngine'
+import enemyRender from './EnemyRender'
 import eventEngine from './EventEngine'
 import pixelator from './Pixelator'
 import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
@@ -18,11 +20,11 @@ import hudRender from './HUDRender'
 import attackRender from './AttackRender'
 import animatedObjectsRender, { generatePatch, Patch } from './AnimatedObjectsRender'
 
+import { wolfen } from './EnemyObjects'
+
 import inputEngine from './InputEngine'
 import baseHeroGet from './BaseHero'
 
-
-import { hero_spritesheets, sword_spritesheets, arrow_spritesheets } from './spriteRef'
 
 
 import sword_fx from '../../assets/sounds/sword/damage_sound.wav'
@@ -31,7 +33,9 @@ const upscale = globalVars.upscale // multiplier for resolution - 2 means each v
 const height = globalVars.height
 const width = globalVars.width
 const blockSize = globalVars.blockSize   // size of each grid block in pixels for collison objects
-let baseHero = baseHeroGet
+let baseHero = {...baseHeroGet}
+let wolfen_1 = {...wolfen}
+let wolfen_2 = {...wolfen}
 let cursorX = -400 // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400
 
@@ -129,10 +133,11 @@ const BasicRender = ({}) => {
     // currently set globally
 
     class Sprite {
-      constructor({ image, position, crop }) {
+      constructor({ image, position, crop, blockSize }) {
         this.position = position
         this.image = image
         this.crop = crop
+        this.blocksize = blockSize
       }
 
       cropChange(cropX, cropY) {
@@ -143,8 +148,7 @@ const BasicRender = ({}) => {
       }
 
       draw() {
-        spriteCtx.drawImage(this.image, this.crop.x, this.crop.y, baseHero.heroSpriteSize, baseHero.heroSpriteSize, this.position.x, this.position.y, baseHero.blockSize, baseHero.blockSize)
-        // ctx.drawImage(this.image, this.position.x, this.position.y, rectWidth, rectHeight)
+        spriteCtx.drawImage(this.image, this.crop.x, this.crop.y, this.blocksize, this.blocksize, this.position.x, this.position.y, this.blocksize, this.blocksize)
       }
     }
 
@@ -209,7 +213,7 @@ const BasicRender = ({}) => {
 
     // we create the sprite, background, and foreground instances we will be rendering
     const playerImage = new Image()
-    playerImage.src = baseHero.heroSprite
+    playerImage.src = baseHero.currentHeroSprite
 
     const playerSprite = new Sprite({
       image: playerImage,
@@ -220,11 +224,12 @@ const BasicRender = ({}) => {
       crop: {
         x: baseHero.heroCropX,
         y: baseHero.heroCropY
-      }
+      },
+      blockSize: baseHero.blockSize
     })
 
     const equipImage = new Image()
-    equipImage.src = baseHero.swordSpriteSheet
+    equipImage.src = baseHero.currentEquipmentSprite
 
     const swordSprite = new Sprite({
       image: equipImage,
@@ -235,16 +240,48 @@ const BasicRender = ({}) => {
       crop: {
         x: baseHero.heroCropX,
         y: baseHero.heroCropY
-      }
+      },
+      blockSize: baseHero.blockSize
     })
 
+    const wolfenImage1 = new Image()
+    wolfenImage1.src = wolfen_1.currentSprite
+
+    const wolfenImage2 = new Image()
+    wolfenImage2.src = wolfen_2.currentSprite
+
+    const wolfenSprite1 = new Sprite({
+      image: wolfenImage1,
+      position: {
+        x: wolfen_1.x,
+        y: wolfen_1.y,
+      },
+      crop: {
+        x: wolfen_1.cropX,
+        y: wolfen_1.cropY,
+      },
+      blockSize: wolfen_1.blockSize
+    })
+
+    const wolfenSprite2 = new Sprite({
+      image: wolfenImage2,
+      position: {
+        x: wolfen_2.x,
+        y: wolfen_2.y,
+      },
+      crop: {
+        x: wolfen_2.cropX,
+        y: wolfen_2.cropY,
+      },
+      blockSize: wolfen_2.blockSize
+    })
 
 
     const cursor = new Image()
     cursor.src = cursor_1
 
-    const swordIcon = new Image()
-    swordIcon.src = sword_spritesheets.icon
+    // const swordIcon = new Image()
+    // swordIcon.src = sword_spritesheets.icon
 
     const background = new Image()
     background.src = background_1
@@ -315,12 +352,18 @@ const BasicRender = ({}) => {
       // moveEngine runs less than every frame to keep the hero sprite slower
       if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
-        baseHero = moveEngine(baseHero, cMasks, blockSize, collisionCtx, cursorCtx)
+        baseHero = moveEngine(baseHero, collisionCtx, foregroundCtx)
+        wolfen_1.x += baseHero.frameXChange
+        wolfen_1.y += baseHero.frameYChange
+        wolfen_2.x += baseHero.frameXChange
+        wolfen_2.y += baseHero.frameYChange
       }
 
 
+
+
       baseHero.frameCountLimiter += baseHero.moveSpeed
-      
+
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
 
@@ -351,10 +394,11 @@ const BasicRender = ({}) => {
       // foregroundSprite.position.x = -baseHero.cameraX
       // foregroundSprite.position.y = -baseHero.cameraY
 
-      playerImage.src = baseHero.heroSprite
+      playerImage.src = baseHero.currentHeroSprite
 
-      equipImage.src = baseHero.swordSpriteSheet
+      equipImage.src = baseHero.currentEquipmentSprite
 
+      // wolfenImage.src = wolfen_1.currentSprite
 
     // calculates and draws attack effects on keypress with cooldown
     let eventObj = { // object passed to EventEngine to trigger appropriate event
@@ -420,6 +464,26 @@ const BasicRender = ({}) => {
     }
 
 
+
+    // wolfenSprite1.position = {
+    //   x: wolfen_1.x,
+    //   y: wolfen_1.y
+    // }
+
+    // wolfenSprite2.position = {
+    //   x: wolfen_2.x,
+    //   y: wolfen_2.y
+    // }
+
+    // wolfenSprite1.cropChange(wolfen_1.cropX, wolfen_1.cropY)
+    // wolfenSprite2.cropChange(wolfen_2.cropX, wolfen_2.cropY)
+
+    // console.log(wolfen_1.direction, wolfen_1.currentSprite)
+    // wolfenSprite.image = wolfen_1.currentSprite
+    // wolfenImage1.src = wolfen_1.currentSprite
+    // wolfenImage2.src = wolfen_2.currentSprite
+
+
     // makes the canvases render a frame
     window.requestAnimationFrame(animate)
 
@@ -446,7 +510,7 @@ const BasicRender = ({}) => {
 
 
     // renders stamina bar and other HUD elements
-    hudRender(spriteCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, swordIcon )
+    hudRender(spriteCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, baseHero.equipment.spriteSheets.swordIcon )
 
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack
@@ -465,6 +529,37 @@ const BasicRender = ({}) => {
       swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY)
       heroRender([playerSprite, swordSprite])
     }
+
+    // wolfenSprite.position = {
+    //   x: wolfen_1.x + baseHero.xChange,
+    //   y: wolfen_1.y + baseHero.yChange
+    // }
+
+    if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
+      wolfen_1 = enemyMoveEngine(wolfen_1, collisionCtx, foregroundCtx)
+      wolfen_2 = enemyMoveEngine(wolfen_2, collisionCtx, foregroundCtx)
+    }
+
+    // const enemiesGroup = [
+    //   {
+    //   enemyObject: wolfen_1,
+    //   enemySprite: wolfenSprite1
+    // }
+    // ]
+    let enemiesGroup = [
+      {
+        enemyObject: wolfen_1,
+        enemySprite: wolfenSprite1,
+        enemyImg: wolfenImage1
+      },
+      {
+        enemyObject: wolfen_2,
+        enemySprite: wolfenSprite2,
+        enemyImg: wolfenImage2
+      },
+    ]
+    enemiesGroup = enemyRender(enemiesGroup)
+
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()

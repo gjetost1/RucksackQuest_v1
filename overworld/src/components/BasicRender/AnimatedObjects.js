@@ -34,7 +34,7 @@ export const grass_1 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
-  speedChange: .6,
+  speedChange: .4,
 }
 
 const grass_low_1_img = new Image()
@@ -59,7 +59,7 @@ export const grass_low_1 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
-  speedChange: .6,
+  speedChange: .4,
 
 }
 
@@ -85,7 +85,7 @@ export const grass_2 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
-  speedChange: .6,
+  speedChange: .4,
 
 }
 
@@ -111,7 +111,7 @@ export const grass_3 = {
   destroyed: false,
   sfx: grass_cut_1_fx,
   solid: false,
-  speedChange: .6,
+  speedChange: .4,
 
 }
 
