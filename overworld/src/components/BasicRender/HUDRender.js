@@ -1,5 +1,5 @@
 import globalVars from "./GlobalVars"
-import { hudHeart, bloodContainer_1 } from "./HudObjects"
+import { hudHeart, bloodContainer_1, bloodContainer_2 } from "./HudObjects"
 import veins from '../../assets/hud/veins_2.png'
 import ui_background from '../../assets/hud/UI_background.png'
 
@@ -23,16 +23,22 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, currentStam, maxStam, at
   // }
   // console.log(hudHeart.animFramesBase * (currentStam / maxStam))
 
-  cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, 32, 256, 64)
+  // cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, 32, 256, 64)
+  // foregroundCtx.globalAlpha = 1
+  // foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, 0, 384, 192)
+  // foregroundCtx.globalAlpha = .85
+
+  cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, globalVars.perfectHeight - 100, 256, 64)
   foregroundCtx.globalAlpha = 1
-  foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, 0, 384, 192)
+  foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, globalVars.perfectHeight - 136, 384, 192)
   foregroundCtx.globalAlpha = .85
   const bloodStaminaLevel = 72 + Math.round((256 * (currentStam / maxStam)) / globalVars.upscale) * globalVars.upscale
   // cursorCtx.clearRect(Math.round((320 * (health / maxHealth)) / globalVars.upscale) * globalVars.upscale , 32, 256, 64)
-  cursorCtx.clearRect(bloodStaminaLevel, 32, 256, 64)
+  cursorCtx.clearRect(bloodStaminaLevel, globalVars.perfectHeight - 100, 256, 64)
 
 
   cursorCtx.drawImage(bloodContainer_1.image, bloodContainer_1.crop.x, bloodContainer_1.crop.y, bloodContainer_1.blockSize, bloodContainer_1.blockSize, bloodContainer_1.position.x, bloodContainer_1.position.y, bloodContainer_1.blockSize, bloodContainer_1.blockSize)
+  cursorCtx.drawImage(bloodContainer_2.image, bloodContainer_1.crop.x, bloodContainer_1.crop.y, bloodContainer_2.blockSize, bloodContainer_2.blockSize, bloodContainer_2.position.x, bloodContainer_2.position.y, bloodContainer_2.blockSize, bloodContainer_2.blockSize)
 
   //animate blood container
   if (bloodContainer_1.animCounter >= bloodContainer_1.animFrames) {

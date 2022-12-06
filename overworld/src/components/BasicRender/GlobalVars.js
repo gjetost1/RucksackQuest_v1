@@ -5,6 +5,8 @@ const upscale = 4   // multiplier for resolution - 2 means each visible pixel is
 // const width = 336 * upscale   // width of canvas, should be the actual pixel res of original artwork
 const height = window.innerHeight   // height of canvas, should be the actual pixel res of original artwork, but that artwork should be exported as an upsized version - upscale is the factor by which it is upscaled
 const width = window.innerWidth  // width of canvas, should be the actual pixel res of original artwork
+const perfectHeight = pixelPerfect(window.innerHeight, 'down', 'x', upscale)   // height of canvas, should be the actual pixel res of original artwork, but that artwork should be exported as an upsized version - upscale is the factor by which it is upscaled
+const perfectWidth = pixelPerfect(window.innerWidth, 'down', 'x', upscale)  // width of canvas, should be the actual pixel res of original artwork
 const middleX = width / 2
 const middleY = height / 2
 const heroStartXCoord = 1000
@@ -18,4 +20,4 @@ const windowSpacerWidth = ((window.innerWidth || document.documentElement.client
 // const heroCenterY = middleY - (blockSize / 2)
 const heroCenterX = pixelPerfect(Math.round((window.innerWidth / 2) - (blockSize / 2)), 'down', 'x', upscale)
 const heroCenterY = pixelPerfect(Math.round((window.innerHeight / 2) - (blockSize / 2)), 'down', 'x', upscale)
-export default {heroStartXCoord, heroStartYCoord, upscale, height, width, middleX, middleY, blockSize, windowSpacerHeight, windowSpacerWidth, heroCenterX, heroCenterY}
+export default {heroStartXCoord, heroStartYCoord, upscale, height, width, perfectHeight, perfectWidth, middleX, middleY, blockSize, windowSpacerHeight, windowSpacerWidth, heroCenterX, heroCenterY}

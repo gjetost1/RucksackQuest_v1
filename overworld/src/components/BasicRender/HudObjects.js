@@ -1,3 +1,4 @@
+import globalVars from './GlobalVars'
 import heart_1 from '../../assets/hud/heart_1.png'
 import blood_container_1 from '../../assets/hud/blood_container_1.png'
 
@@ -29,7 +30,7 @@ export const hudHeart = new HudSprite({
   image: heart_img,
   position: {
     x: 0,
-    y: 0
+    y: globalVars.perfectHeight - 136
   },
   crop: {
     x: 0,
@@ -47,8 +48,24 @@ blood_container_img.src = blood_container_1
 export const bloodContainer_1 = new HudSprite({
   image: blood_container_img,
   position: {
-    x: 34,
-    y: 128
+    x: 36,
+    y: globalVars.perfectHeight - 200
+  },
+  crop: {
+    x: 0,
+    y: 0
+  },
+  blockSize: 64,
+  animFramesBase: 18,
+  animFramesMin: 8,
+  totalAnimFrames: 8
+})
+
+export const bloodContainer_2 = new HudSprite({
+  image: blood_container_img,
+  position: {
+    x: 36,
+    y: globalVars.perfectHeight - 264
   },
   crop: {
     x: 0,
