@@ -1,9 +1,14 @@
+import { buildCMask } from "./CollisionMasks"
+
 class EnemySprite {
   constructor({ data, image, position, crop}) {
     this.data = data
     this.image = image
     this.position = position
     this.crop = crop
+    this.cMasks = buildCMask([
+      {x: position.x, y: position.y, xBlocks: 1, yBlocks: 1, gridSize: data.blockSize}
+    ])
   }
 
   cropChange(cropX, cropY) {
@@ -12,8 +17,8 @@ class EnemySprite {
       y: cropY
     }
   }
-
 }
+
 
 const enemyGenerator = (enemyArr) => {
   if (!enemyArr) return
@@ -41,6 +46,7 @@ const enemyGenerator = (enemyArr) => {
         y: enemy.base.cropY
       }
     })
+
 
     enemyGroupArr.push(enemySprite)
 

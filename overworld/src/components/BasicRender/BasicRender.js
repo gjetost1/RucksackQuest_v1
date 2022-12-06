@@ -588,7 +588,7 @@ const BasicRender = ({}) => {
     // ]
     // enemiesGroup = enemyRender(enemiesGroup)
 
-      enemyRender(wolfenGroup, spriteCtx)
+      // enemyRender(wolfenGroup, spriteCtx)
       wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
 
       // console.log(wolfenGroup)

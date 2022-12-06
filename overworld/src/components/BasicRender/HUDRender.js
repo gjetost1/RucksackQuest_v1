@@ -19,6 +19,7 @@ const perfectYPos = (element) => {
     return element.position.y
   }
   if (element.data.currentVolume <= 0) {
+
     return element.position.y + element.blockSize - element.blockSize / 4
   }
   // console.log(element.blockSize - (Math.round(element.blockSize * (element.data.currentVolume / element.data.maxVolume) / globalVars.upscale)* globalVars.upscale))
@@ -49,9 +50,7 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
   if (stamDrain > 0) {
     bloodContainer_2.data.currentVolume -= stamDrain
     bloodAnimation = true
-  }
-  // animates blood container during drain
-  if (baseHero.currentStam >= baseHero.maxStam && bloodContainer_2.crop.x === 0) {
+  } else if (baseHero.currentStam >= baseHero.maxStam && bloodContainer_2.crop.x === 0) {
     bloodAnimation = false
     bloodContainer_2.crop.x = 0
     bloodContainer_2.animCounter = 0

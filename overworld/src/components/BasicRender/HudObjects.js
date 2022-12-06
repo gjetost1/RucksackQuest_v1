@@ -97,8 +97,8 @@ export const bloodContainer_2 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 200,
-    maxVolume: 200,
+    currentVolume: 800,
+    maxVolume: 800,
     type: 'vitality'
   }
 })

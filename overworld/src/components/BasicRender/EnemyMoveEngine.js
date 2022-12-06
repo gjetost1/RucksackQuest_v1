@@ -45,13 +45,13 @@ const dashFunc = (target, probability) => {
 const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   // console.log(enemyObject.x, enemyObject.y)
 
-// if (
-//   (enemyObject.x <= 0 || enemyObject.x >= globalVars.width)
-//       || (enemyObject.y <= 0 || enemyObject.y >= globalVars.height )
-// ) {
-//   // console.log('offscreen')
-//   return enemyObject
-// }
+if (
+  (enemyObject.x <= 0 || enemyObject.x >= globalVars.width)
+      || (enemyObject.y <= 0 || enemyObject.y >= globalVars.height )
+) {
+  // console.log('offscreen')
+  return enemyObject
+}
 // if (
 //   enemyObject.x <= -globalVars.blockSize
 //   || enemyObject.y <= -globalVars.blockSize
