@@ -514,7 +514,6 @@ const BasicRender = ({}) => {
 
 
     // renders stamina bar and other HUD elements
-    hudRender(spriteCtx, cursorCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, baseHero.equipment.spriteSheets.swordIcon )
 
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack
@@ -593,6 +592,7 @@ const BasicRender = ({}) => {
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()
+      hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, baseHero.equipment.spriteSheets.swordIcon )
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that

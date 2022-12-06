@@ -1,19 +1,16 @@
 import globalVars from "./GlobalVars"
 import { hudHeart, bloodContainer_1 } from "./HudObjects"
 import veins from '../../assets/hud/veins_2.png'
-import veins_depleted from '../../assets/hud/veins_2_depleted.png'
+import ui_background from '../../assets/hud/UI_background.png'
 
 const veins_img = new Image()
 veins_img.src = veins
 
-const veins_depleted_img = new Image()
-veins_depleted_img.src = veins_depleted
-
-const maxHealth = 100
-let health = 100
+const ui_background_img = new Image()
+ui_background_img.src = ui_background
 
 
-const hudRender = (spriteCtx, cursorCtx, currentStam, maxStam, attackCooldownOff, coolDownLevel, coolDownLevelMax, playerSprite, heroBlockSize, swordIcon, ) => {
+const hudRender = (spriteCtx, cursorCtx, foregroundCtx, currentStam, maxStam, attackCooldownOff, coolDownLevel, coolDownLevelMax, playerSprite, heroBlockSize, swordIcon, ) => {
   const upscale = globalVars.upscale
 
     // sets color of stamina bar based on remaining stamina percentage
@@ -26,17 +23,19 @@ const hudRender = (spriteCtx, cursorCtx, currentStam, maxStam, attackCooldownOff
   // }
   // console.log(hudHeart.animFramesBase * (currentStam / maxStam))
 
-  cursorCtx.drawImage(veins_depleted_img, 0, 0, 256, 64, 64, 32, 256, 64)
-  cursorCtx.drawImage(veins_img, 1 - (health / maxHealth), 0, 256, 64, 64, 32, 256, 64)
+  cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, 32, 256, 64)
+  foregroundCtx.globalAlpha = 1
+  foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, 0, 384, 192)
+  foregroundCtx.globalAlpha = .85
+  const bloodStaminaLevel = 72 + Math.round((256 * (currentStam / maxStam)) / globalVars.upscale) * globalVars.upscale
+  // cursorCtx.clearRect(Math.round((320 * (health / maxHealth)) / globalVars.upscale) * globalVars.upscale , 32, 256, 64)
+  cursorCtx.clearRect(bloodStaminaLevel, 32, 256, 64)
+
 
   cursorCtx.drawImage(bloodContainer_1.image, bloodContainer_1.crop.x, bloodContainer_1.crop.y, bloodContainer_1.blockSize, bloodContainer_1.blockSize, bloodContainer_1.position.x, bloodContainer_1.position.y, bloodContainer_1.blockSize, bloodContainer_1.blockSize)
 
   //animate blood container
   if (bloodContainer_1.animCounter >= bloodContainer_1.animFrames) {
-    health--
-    if (health <= 0) {
-      health = maxHealth
-    }
     bloodContainer_1.crop.x += bloodContainer_1.blockSize
     bloodContainer_1.animCounter = 0
     if (bloodContainer_1.crop.x >= bloodContainer_1.blockSize * bloodContainer_1.totalAnimFrames) {

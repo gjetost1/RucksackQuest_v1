@@ -36,7 +36,7 @@ export const hudHeart = new HudSprite({
     y: 0
   },
   blockSize: 128,
-  animFramesBase: 30,
+  animFramesBase: 26,
   animFramesMin: 8,
   totalAnimFrames: 6
 })
