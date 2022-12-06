@@ -428,7 +428,10 @@ const BasicRender = ({}) => {
     // this handles an attack/ability usage by user - sets vars that will trigger attack/ability animation and
     // puts ability on cooldown. Current cooldown is set manually, but once there are other abilities
     // we will use their specific attributes to set the cooldown and effect duration
-    if (baseHero.keys.e.pressed && baseHero.attackCooldownOff || baseHero.keys.mouse1.pressed && baseHero.attackCooldownOff) {
+    // activates if there is enough stamina for attack
+    if (baseHero.currentStam >= baseHero.stamDrain * baseHero.stamAttack
+      && ((baseHero.keys.e.pressed && baseHero.attackCooldownOff)
+    || (baseHero.keys.mouse1.pressed && baseHero.attackCooldownOff))) {
       baseHero.attackCooldownOff = false
       baseHero.attackActive = true
       baseHero.attackAnimation = true
@@ -592,7 +595,7 @@ const BasicRender = ({}) => {
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()
-      hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, baseHero.equipment.spriteSheets.swordIcon )
+      hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHero )
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that

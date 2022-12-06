@@ -51,11 +51,11 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
   const lastTargetCameraX = baseHero.targetCameraX
   const lastTargetCameraY = baseHero.targetCameraY
 
-  const lastTotalXChange = baseHero.totalXChange
-  const lastTotalYChange = baseHero.totalYChange
+  // const lastTotalXChange = baseHero.totalXChange
+  // const lastTotalYChange = baseHero.totalYChange
 
-  const lastFrameXChange = baseHero.totalXChange
-  const lastFrameYChange = baseHero.totalYChange
+  // const lastFrameXChange = baseHero.totalXChange
+  // const lastFrameYChange = baseHero.totalYChange
 
   baseHero.frameXChange = 0
   baseHero.frameYChange = 0

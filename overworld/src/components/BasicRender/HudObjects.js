@@ -1,11 +1,15 @@
 import globalVars from './GlobalVars'
 import heart_1 from '../../assets/hud/heart_1.png'
-import blood_container_1 from '../../assets/hud/blood_container_1.png'
+import blood_container from '../../assets/hud/blood_container.png'
+import blood from '../../assets/hud/blood.png'
+import blood_container_large from '../../assets/hud/blood_container_large.png'
+import blood_large from '../../assets/hud/blood_large.png'
 
 class HudSprite {
-  constructor({ image, position, crop, blockSize, animFramesBase, totalAnimFrames, animFramesMin}) {
-    this.position = position
+  constructor({ image, contentsImage, position, crop, blockSize, animFramesBase, totalAnimFrames, animFramesMin, data}) {
     this.image = image
+    this.contentsImage = contentsImage
+    this.position = position
     this.crop = crop
     this.blockSize = blockSize
     this.animFramesBase = animFramesBase
@@ -13,6 +17,7 @@ class HudSprite {
     this.animCounter = 0
     this.totalAnimFrames = totalAnimFrames
     this.animFramesMin = animFramesMin
+    this.data = data
   }
 
   cropChange(cropX, cropY) {
@@ -43,10 +48,14 @@ export const hudHeart = new HudSprite({
 })
 
 const blood_container_img = new Image()
-blood_container_img.src = blood_container_1
+blood_container_img.src = blood_container
+
+const blood_img = new Image()
+blood_img.src = blood
 
 export const bloodContainer_1 = new HudSprite({
   image: blood_container_img,
+  contentsImage: blood_img,
   position: {
     x: 36,
     y: globalVars.perfectHeight - 200
@@ -58,11 +67,23 @@ export const bloodContainer_1 = new HudSprite({
   blockSize: 64,
   animFramesBase: 18,
   animFramesMin: 8,
-  totalAnimFrames: 8
+  totalAnimFrames: 8,
+  data: {
+    currentVolume: 100,
+    maxVolume: 100,
+    type: 'vitality'
+  }
 })
 
+const blood_container_large_img = new Image()
+blood_container_large_img.src = blood_container_large
+
+const blood_large_img = new Image()
+blood_large_img.src = blood_large
+
 export const bloodContainer_2 = new HudSprite({
-  image: blood_container_img,
+  image: blood_container_large_img,
+  contentsImage: blood_large_img,
   position: {
     x: 36,
     y: globalVars.perfectHeight - 264
@@ -74,5 +95,10 @@ export const bloodContainer_2 = new HudSprite({
   blockSize: 64,
   animFramesBase: 18,
   animFramesMin: 8,
-  totalAnimFrames: 8
+  totalAnimFrames: 8,
+  data: {
+    currentVolume: 200,
+    maxVolume: 200,
+    type: 'vitality'
+  }
 })

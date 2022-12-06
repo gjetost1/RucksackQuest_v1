@@ -40,7 +40,7 @@ const baseHero = {
   totalXChange:0,
   totalYChange:0,
   baseXVel: 4,
-  baseYVel: 2,
+  baseYVel: 4,
   currentXVel: 4,
   currentYVel: 4,
   baseMoveSpeed: 20,
@@ -87,7 +87,8 @@ const baseHero = {
   maxStam: 300,
   currentStam: 300,
   stamDrain: 1,
-  stamRecovery: .8,
+  stamAttack: 30,
+  stamRecovery: 1,
   eventX: -400,
   eventY: -400,
   keys: {
