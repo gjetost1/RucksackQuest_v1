@@ -84,8 +84,10 @@ const baseHero = {
   coolDownLevelMax: 100,
   attackCooldownOff: true,
   attackActive: false,
-  maxStam: 10000,
-  currentStam: 10000,
+  maxStam: 200,
+  currentStam: 200,
+  stamDrain: 1,
+  stamRecovery: .8,
   eventX: -400,
   eventY: -400,
   keys: {

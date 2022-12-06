@@ -514,7 +514,7 @@ const BasicRender = ({}) => {
 
 
     // renders stamina bar and other HUD elements
-    hudRender(spriteCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, baseHero.equipment.spriteSheets.swordIcon )
+    hudRender(spriteCtx, cursorCtx, baseHero.currentStam, baseHero.maxStam, baseHero.attackCooldownOff, baseHero.coolDownLevel, baseHero.coolDownLevelMax, playerSprite, baseHero.blockSize, baseHero.equipment.spriteSheets.swordIcon )
 
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack

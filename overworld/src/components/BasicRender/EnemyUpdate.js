@@ -1,11 +1,17 @@
 import enemyMoveEngine from "./EnemyMoveEngine"
+import GlobalVars from "./GlobalVars"
 
 const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
   if (!enemyArr) return
 
 
   for (let el of enemyArr) {
-
+    if (el.data.x <= 0
+      || el.data.x >= GlobalVars.width
+      || el.data.y <= 0
+      || el.data.y >= GlobalVars.height) {
+        continue
+      }
     // if the frameCountLimiter has been reached run the moveEngine to move
     // the enemy
     if (el.data.frameCountLimiter >= el.data.maxFrameCountLimiter) {

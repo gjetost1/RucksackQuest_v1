@@ -110,13 +110,13 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
     baseHero.moveSpeed = baseHero.dashSpeed
     // drains stamina if dash is active and there is directional input
     if (baseHero.currentStam > 0 && keysPressed) {
-      baseHero.currentStam = baseHero.currentStam - 1
+      baseHero.currentStam = baseHero.currentStam - baseHero.stamDrain
     }
   } else {
     baseHero.moveSpeed = baseHero.baseMoveSpeed
     // regenerates stamina
     if (baseHero.currentStam < baseHero.maxStam) {
-      baseHero.currentStam = baseHero.currentStam + 1
+      baseHero.currentStam = baseHero.currentStam + baseHero.stamRecovery
     } else {
       baseHero.currentStam = baseHero.maxStam
     }
