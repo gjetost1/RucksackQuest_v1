@@ -121,6 +121,9 @@ const baseHero = {
     e: {
       pressed:false
     },
+    x: {
+      pressed:false
+    },
     mouse1: {
       pressed:false
     }

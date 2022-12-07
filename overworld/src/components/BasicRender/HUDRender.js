@@ -132,7 +132,7 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
 
   // activates bloodTank on key press
-  if (baseHero.keys.e.pressed && !tankActivateCooldown) {
+  if (baseHero.keys.x.pressed && !tankActivateCooldown) {
     if (baseHero.equipment.currentTank) {
       baseHero.equipment.currentTank.crop.x = 0
     }
