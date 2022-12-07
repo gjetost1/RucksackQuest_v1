@@ -397,8 +397,7 @@ const BasicRender = ({}) => {
     // we will use their specific attributes to set the cooldown and effect duration
     // activates if there is enough stamina for attack
     if (baseHero.currentStam >= baseHero.stamDrain * baseHero.stamAttack
-      && ((baseHero.keys.e.pressed && baseHero.attackCooldownOff)
-    || (baseHero.keys.mouse1.pressed && baseHero.attackCooldownOff))) {
+      && baseHero.keys.mouse1.pressed && baseHero.attackCooldownOff) {
       baseHero.attackCooldownOff = false
       baseHero.attackActive = true
       baseHero.attackAnimation = true

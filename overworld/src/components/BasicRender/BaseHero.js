@@ -78,7 +78,8 @@ const baseHero = {
     bloodTanks: [
       bloodTank_1,
       bloodTank_2,
-    ]
+    ],
+    allTanksEmpty: false
   },
   currentEquipmentSprite: sword_down,
   heroDirection: 'down',

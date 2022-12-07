@@ -1,4 +1,5 @@
 import enemyMoveEngine from "./EnemyMoveEngine"
+import globalVars from "./GlobalVars"
 
 // animates damage effects
 const animate = (element) => {
@@ -24,9 +25,11 @@ const enemyRender = (enemyArr, baseHero, spriteCtx, renderType) => {
 
     // use 2 render instances so the enemy is in front of the hero when it's y value is less
     // and behind when the y value is more
+    // console.log(el.data)
     if (
-      (el.data.y <= baseHero.heroY && renderType !== 'front')
-      || (el.data.y > baseHero.heroY && renderType !== 'back')
+      (el.data.y + el.data.blockSize / (globalVars.upscale * 2) <= baseHero.heroY && renderType !== 'front' && !el.data.dead)
+      || (el.data.y + el.data.blockSize / (globalVars.upscale * 2) > baseHero.heroY && renderType !== 'back' && !el.data.dead)
+      || (el.data.dead && renderType === 'back')
       ) {
           spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
 

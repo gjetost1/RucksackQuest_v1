@@ -25,6 +25,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
 
 
   for (let el of enemyArr) {
+    // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
+    if (el.data.solid) {
+      collisionCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.data.x, el.data.y, el.data.blockSize, el.data.blockSize)
+    }
     // doesn't update if the enemy is outside of the rendered canvas
     if (el.data.x <= 0
       || el.data.x >= globalVars.width
@@ -112,11 +116,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
               }
             }
 
-            // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
-            if (el.data.solid && !el.data.dying && !el.data.dead) {
-              collisionCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.data.x, el.data.y, el.data.blockSize, el.data.blockSize)
 
-            }
 
           }
           if (!baseHero.attackActive) {

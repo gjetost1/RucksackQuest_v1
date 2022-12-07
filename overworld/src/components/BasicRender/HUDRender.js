@@ -17,6 +17,7 @@ ui_background_img.src = ui_background
 // also sets the first tank with blood in it as the active tank
 const bloodTankSort = (baseHero) => {
   console.log('sorting')
+  let allEmpty = false
   for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
     let tank = baseHero.equipment.bloodTanks[i]
     tank.data.active = false
@@ -24,16 +25,21 @@ const bloodTankSort = (baseHero) => {
       const emptyTank = baseHero.equipment.bloodTanks.splice(i, 1)
       emptyTank[0].data.depleted = true
       baseHero.equipment.bloodTanks.unshift(...emptyTank)
+    } else {
+      allEmpty = true
     }
   }
+  baseHero.equipment.allTanksEmpty = allEmpty
   for (let tank of baseHero.equipment.bloodTanks) {
     if (tank.data.currentVolume > 0) {
       tank.data.active = true
-      break
+      return baseHero
     }
   }
   return baseHero
 }
+
+
 
 const bloodAnimate = (element) => {
   element.animCounter++
@@ -63,7 +69,7 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
         el.crop.x = 0
         el.animCounter = 0
       }
-      if (el.data.currentVolume <= 0) {
+      if (el.data.currentVolume <= 0 && baseHero.equipment.allTanksEmpty) {
         baseHero = bloodTankSort(baseHero)
       }
       if (bloodAnimation) {
