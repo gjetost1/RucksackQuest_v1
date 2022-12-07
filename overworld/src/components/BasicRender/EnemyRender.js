@@ -1,20 +1,43 @@
 import enemyMoveEngine from "./EnemyMoveEngine"
 
-const enemyRender = (enemyArr, spriteCtx) => {
+// animates damage effects
+const animate = (element) => {
+  // console.log(element)
+  element.data.animCounter++
+  if (element.data.animCounter >= element.data.spriteAnimSpeed) {
+    element.crop.x += element.data.blockSize
+    element.data.animCounter = 0
+    if (element.crop.x >= element.data.blockSize * element.data.animFrames) {
+      element.crop.x = 0
+      // element.data.active = false
+      return [false, element]
+    }
+  }
+  return [true, element]
+}
+
+const enemyRender = (enemyArr, baseHero, spriteCtx, renderType) => {
   if (!enemyArr) return
 
   for (let el of enemyArr) {
-    // console.log(el.position.x, el.position.y, el.data.x, el.data.y)
-    spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
 
 
-    if (el.data.takeDamage) {
-      el.data.damageAnim.data.active = true
+    // use 2 render instances so the enemy is in front of the hero when it's y value is less
+    // and behind when the y value is more
+    if (
+      (el.data.y <= baseHero.heroY && renderType !== 'front')
+      || (el.data.y > baseHero.heroY && renderType !== 'back')
+      ) {
+          spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
+
+          if (el.data.damageActive) {
+            spriteCtx.drawImage(el.data.damageAnim.image, el.data.damageAnim.crop.x, el.data.damageAnim.crop.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize, el.position.x, el.position.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize)
+            const animated = animate(el.data.damageAnim)
+            el.data.damageActive = animated[0]
+            el.data.damageAnim = animated[1]
+          }
+
     }
-    console.log(el.data.takeDamage)
-    // spriteCtx.drawImage(el.data.damageAnim.image, el.data.damageAnim.crop.x, el.data.damageAnim.crop.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize, el.position.x, el.position.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize)
-    // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-    // spriteCtx.fillRect(el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
   }
   return enemyArr
 }

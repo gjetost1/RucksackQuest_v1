@@ -53,7 +53,7 @@ blood_container_img.src = blood_container
 const blood_img = new Image()
 blood_img.src = blood
 
-export const bloodContainer_1 = new HudSprite({
+export const bloodTank_1 = new HudSprite({
   image: blood_container_img,
   contentsImage: blood_img,
   position: {
@@ -71,7 +71,9 @@ export const bloodContainer_1 = new HudSprite({
   data: {
     currentVolume: 100,
     maxVolume: 100,
-    type: 'vitality'
+    type: 'vitality',
+    active: false,
+    depleted: false
   }
 })
 
@@ -81,12 +83,12 @@ blood_container_large_img.src = blood_container_large
 const blood_large_img = new Image()
 blood_large_img.src = blood_large
 
-export const bloodContainer_2 = new HudSprite({
+export const bloodTank_2 = new HudSprite({
   image: blood_container_large_img,
   contentsImage: blood_large_img,
   position: {
     x: 36,
-    y: globalVars.perfectHeight - 264
+    y: globalVars.perfectHeight - 200
   },
   crop: {
     x: 0,
@@ -97,8 +99,10 @@ export const bloodContainer_2 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 800,
+    currentVolume: 600,
     maxVolume: 800,
-    type: 'vitality'
+    type: 'vitality',
+    active: false,
+    depleted: false
   }
 })

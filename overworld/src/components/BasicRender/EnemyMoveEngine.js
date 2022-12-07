@@ -17,10 +17,10 @@ let moveDirections = [
   'downright'
 ]
 
-const changeDirectionFunc = (target, probability, directions) => {
+const changeDirectionFunc = (target, probability) => {
   const changeDirection = Math.floor(Math.random() * probability)
   if (changeDirection === 25) {
-    target.direction = moveDirections[Math.floor(Math.random() * directions.length)]
+    target.direction = target.moveDirections[Math.floor(Math.random() * target.moveDirections.length)]
   }
   return target
 }
@@ -327,7 +327,7 @@ let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || co
     if (enemyObject.spriteAnimCounter >= enemyObject.spriteAnimSpeed) {
       enemyObject.cropX += enemyObject.blockSize
       // spriteIndex++
-      if (enemyObject.cropX > enemyObject.blockSize * enemyObject.movementFrames) {
+      if (enemyObject.cropX >= enemyObject.blockSize * enemyObject.movementFrames) {
         enemyObject.cropX = enemyObject.blockSize
         // spriteIndex = 1
       }

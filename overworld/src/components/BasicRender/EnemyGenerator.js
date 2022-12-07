@@ -31,6 +31,7 @@ const enemyGenerator = (enemyArr) => {
     const enemyImg = new Image()
     enemyImg.src = enemyData.currentSprite
 
+
     enemyData.x = enemy.x
     enemyData.y = enemy.y
 
@@ -47,6 +48,9 @@ const enemyGenerator = (enemyArr) => {
       }
     })
 
+    // randomizes where the enemy is facing
+    enemySprite.data.direction = enemySprite.data.moveDirections[Math.floor(Math.random() * enemySprite.data.moveDirections.length)]
+    enemySprite.data.currentSprite = enemySprite.data.spriteSheets[enemySprite.data.direction]
 
     enemyGroupArr.push(enemySprite)
 

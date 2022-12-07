@@ -105,23 +105,23 @@ const BasicRender = ({}) => {
     },
     {
       base: wolfen,
-      x: 500,
+      x: 564,
       y: 500
     },
     {
       base: wolfen,
       x: 500,
+      y: 564
+    },
+    {
+      base: wolfen,
+      x: 436,
       y: 500
     },
     {
       base: wolfen,
-      x: 500,
-      y: 500
-    },
-    {
-      base: wolfen,
-      x: 500,
-      y: 500
+      x: 436,
+      y: 564
     },
 
   ]
@@ -279,27 +279,17 @@ const BasicRender = ({}) => {
     const cursor = new Image()
     cursor.src = cursor_1
 
-    // const swordIcon = new Image()
-    // swordIcon.src = sword_spritesheets.icon
-
     const background = new Image()
     background.src = background_1
     const backgroundWidthCenter = background.naturalWidth / 2
     const backgroundHeightCenter = background.naturalHeight / 2
 
-    // const backgroundWidthCenter = 100
-    // const backgroundHeightCenter = 100
-
     const foreground = new Image()
     foreground.src = foreground_1
-    // const foregroundWidth = foreground.naturalWidth / 2
-    // const foregroundHeight = foreground.naturalHeight / 2
 
     const collisions = new Image()
     collisions.src = collision_1
 
-    // baseHero.cameraX = backgroundWidthCenter
-    // baseHero.cameraY = backgroundHeightCenter
 
     const backgroundSprite = new Background({
       image: background,
@@ -343,7 +333,7 @@ const BasicRender = ({}) => {
     const animate = () => {
 
       // clears all canvases for a new animation frame
-      // comboCtx.clearRect(0, 0, globalVars.width, globalVars.height)
+
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height)
       foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height)
@@ -351,8 +341,6 @@ const BasicRender = ({}) => {
 
 
 
-      // baseHero.frameXChange = 0
-      // baseHero.frameYChange = 0
       // moveEngine runs less than every frame to keep the hero sprite slower
       if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
         baseHero.frameCountLimiter = 0
@@ -367,36 +355,15 @@ const BasicRender = ({}) => {
 
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height)
 
-      // wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
 
-
-
-      // sets position of heroSprite and equipment, as well as which spritesheet should be used for this frame
-      // backgroundSprite.position.x = -baseHero.cameraX
-      // backgroundSprite.position.y = -baseHero.cameraY
-      // console.log(baseHero.cameraX, baseHero.cameraY, baseHero.heroX, baseHero.heroY)
       backgroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
       foregroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
       collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY)
-      // console.log(baseHero.cameraX, baseHero.cameraY)
-      // grassPatch.move(baseHero.cameraX, baseHero.cameraY)
-      // barrelPatch.move(baseHero.cameraX, baseHero.cameraY)
 
-
-
-
-      // console.log('hero: ', baseHero.cameraX, baseHero.cameraY, 'camera: ', baseHero.cameraX - globalVars.middleX, baseHero.cameraY - globalVars.middleY)
-      // grassPatch.move(baseHero.cameraX, baseHero.cameraY)
-      // barrelPatch.move(baseHero.cameraX, baseHero.cameraY)
 
       playerSprite.position = {x: baseHero.heroX, y: baseHero.heroY}
       swordSprite.position = {x: baseHero.heroX, y: baseHero.heroY}
-      // console.log('x:', baseHero.heroX, 'y:', baseHero.heroY)
-      // console.log(globalVars.heroCenterX, globalVars.heroCenterY)
-      // console.log('camx:', baseHero.cameraX, 'camy:', baseHero.cameraY)
 
-      // foregroundSprite.position.x = -baseHero.cameraX
-      // foregroundSprite.position.y = -baseHero.cameraY
 
       playerImage.src = baseHero.currentHeroSprite
 
@@ -456,8 +423,7 @@ const BasicRender = ({}) => {
       }, eventObj.eventDuration * 1000)
 
     }
-    // foregroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-    // foregroundCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
+
 
     // this increments coolDownLevel which controls the visual cooldown HUD
     if (!baseHero.attackCooldownOff) {
@@ -469,26 +435,6 @@ const BasicRender = ({}) => {
     } else {
       baseHero.coolDownLevel = 0
     }
-
-
-
-    // wolfenSprite1.position = {
-    //   x: wolfen_1.x,
-    //   y: wolfen_1.y
-    // }
-
-    // wolfenSprite2.position = {
-    //   x: wolfen_2.x,
-    //   y: wolfen_2.y
-    // }
-
-    // wolfenSprite1.cropChange(wolfen_1.cropX, wolfen_1.cropY)
-    // wolfenSprite2.cropChange(wolfen_2.cropX, wolfen_2.cropY)
-
-    // console.log(wolfen_1.direction, wolfen_1.currentSprite)
-    // wolfenSprite.image = wolfen_1.currentSprite
-    // wolfenImage1.src = wolfen_1.currentSprite
-    // wolfenImage2.src = wolfen_2.currentSprite
 
 
     // makes the canvases render a frame
@@ -507,17 +453,15 @@ const BasicRender = ({}) => {
     animatedObjectsRender(grassPatch2.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
     animatedObjectsRender(grassPatch3.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
     animatedObjectsRender(barrelPatch.definition(), baseHero, backgroundCtx, foregroundCtx, collisionCtx)
-    // animatedObjectsRender(grassPatch2, baseHero, backgroundCtx, foregroundCtx)
-    // animatedObjectsRender(grassPatch3, baseHero, backgroundCtx, foregroundCtx)
-    // animatedObjectsRender(grassPatch4, baseHero, backgroundCtx, foregroundCtx)
-    // animatedObjectsRender(grassPatch5, baseHero, backgroundCtx, foregroundCtx)
     foregroundCtx.globalAlpha = .85
 
 
 
 
-    // renders stamina bar and other HUD elements
 
+      wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
+
+      enemyRender(wolfenGroup, baseHero, spriteCtx, 'back')
 
     // draws hero sprite and equipment in attack animation if there is an ongoing attack
     if (baseHero.attackAnimation) {
@@ -536,66 +480,13 @@ const BasicRender = ({}) => {
       heroRender([playerSprite, swordSprite])
     }
 
+    enemyRender(wolfenGroup, baseHero, spriteCtx, 'front')
 
 
-    // wolfenSprite.position = {
-    //   x: wolfen_1.x + baseHero.xChange,
-    //   y: wolfen_1.y + baseHero.yChange
-    // }
-
-    // if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
-    //   wolfen_1 = enemyMoveEngine(wolfen_1, collisionCtx, foregroundCtx)
-    //   wolfen_2 = enemyMoveEngine(wolfen_2, collisionCtx, foregroundCtx)
-    //   wolfen_3 = enemyMoveEngine(wolfen_3, collisionCtx, foregroundCtx)
-    //   wolfen_4 = enemyMoveEngine(wolfen_4, collisionCtx, foregroundCtx)
-    //   wolfen_5 = enemyMoveEngine(wolfen_5, collisionCtx, foregroundCtx)
-    // }
-
-    // const enemiesGroup = [
-    //   {
-    //   enemyObject: wolfen_1,
-    //   enemySprite: wolfenSprite1
-    // }
-    // ]
-
-
-    // let enemiesGroup = [
-    //   {
-    //     enemyObject: wolfen_1,
-    //     enemySprite: wolfenSprite1,
-    //     enemyImg: wolfenImage1
-    //   },
-    //   {
-    //     enemyObject: wolfen_2,
-    //     enemySprite: wolfenSprite2,
-    //     enemyImg: wolfenImage2
-    //   },
-    //   {
-    //     enemyObject: wolfen_3,
-    //     enemySprite: wolfenSprite3,
-    //     enemyImg: wolfenImage3
-    //   },
-    //   {
-    //     enemyObject: wolfen_4,
-    //     enemySprite: wolfenSprite4,
-    //     enemyImg: wolfenImage4
-    //   },
-    //   {
-    //     enemyObject: wolfen_5,
-    //     enemySprite: wolfenSprite5,
-    //     enemyImg: wolfenImage5
-    //   },
-    // ]
-    // enemiesGroup = enemyRender(enemiesGroup)
-
-      // enemyRender(wolfenGroup, spriteCtx)
-      wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
-
-      // console.log(wolfenGroup)
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       foregroundSprite.draw()
-      hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHero )
+      baseHero = hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHero )
       cursorRender(cursorCtx, cursor, cursorX, cursorY)
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that

@@ -19,6 +19,8 @@ import sword_upleft from '../../assets/sprites/hero_sword/hero_sword_upleft.png'
 import sword_upright from '../../assets/sprites/hero_sword/hero_sword_upright.png'
 import sword_icon from '../../assets/sprites/hero_sword/sword_icon.png'
 
+import { bloodTank_1, bloodTank_2 } from "./HudObjects"
+
 // used to create the collision box colBox for hero
 const colBuffer = 12 // number of pixels away from hero that detectors sit
 const cornerBuffer = 4
@@ -72,7 +74,11 @@ const baseHero = {
       upleft: sword_upleft,
       upright: sword_upright,
       icon: sword_icon
-    }
+    },
+    bloodTanks: [
+      bloodTank_1,
+      bloodTank_2,
+    ]
   },
   currentEquipmentSprite: sword_down,
   heroDirection: 'down',

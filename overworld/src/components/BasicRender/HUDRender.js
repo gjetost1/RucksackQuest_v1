@@ -1,5 +1,5 @@
 import globalVars from "./GlobalVars"
-import { hudHeart, bloodContainer_1, bloodContainer_2 } from "./HudObjects"
+import { hudHeart, bloodTank_1, bloodTank_2 } from "./HudObjects"
 import veins from '../../assets/hud/veins_2.png'
 import ui_background from '../../assets/hud/UI_background.png'
 import baseHero from "./BaseHero"
@@ -12,6 +12,71 @@ veins_img.src = veins
 
 const ui_background_img = new Image()
 ui_background_img.src = ui_background
+
+// checks current bloodTanks and moves empties to the back of the queue
+// also sets the first tank with blood in it as the active tank
+const bloodTankSort = (baseHero) => {
+  console.log('sorting')
+  for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
+    let tank = baseHero.equipment.bloodTanks[i]
+    tank.data.active = false
+      if (tank.data.currentVolume <= 0) {
+      const emptyTank = baseHero.equipment.bloodTanks.splice(i, 1)
+      emptyTank[0].data.depleted = true
+      baseHero.equipment.bloodTanks.unshift(...emptyTank)
+    }
+  }
+  for (let tank of baseHero.equipment.bloodTanks) {
+    if (tank.data.currentVolume > 0) {
+      tank.data.active = true
+      break
+    }
+  }
+  return baseHero
+}
+
+const bloodAnimate = (element) => {
+  element.animCounter++
+  if (element.animCounter >= element.animFrames) {
+    element.crop.x += element.blockSize
+    element.animCounter = 0
+    if (element.crop.x >= element.blockSize * element.totalAnimFrames) {
+      element.crop.x = 0
+    }
+  }
+}
+
+const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
+  let tankCount = baseHero.equipment.bloodTanks.length - 1
+  // console.log(baseHero.equipment.bloodTanks)
+  for (let el of baseHero.equipment.bloodTanks) {
+    if (!el.data.depleted) {
+    foregroundCtx.drawImage(el.contentsImage, el.crop.x, el.crop.y, el.blockSize, el.blockSize, el.position.x, perfectYPos(el) - el.blockSize * tankCount, el.blockSize, el.blockSize)
+    }
+    if (el.data.active) {
+      foregroundCtx.clearRect(el.position.x, el.position.y + el.blockSize - el.blockSize * tankCount, el.blockSize, el.blockSize)
+      if (stamDrain > 0) {
+        el.data.currentVolume -= stamDrain
+        bloodAnimation = true
+      } else if (baseHero.currentStam >= baseHero.maxStam && el.crop.x === 0) {
+        bloodAnimation = false
+        el.crop.x = 0
+        el.animCounter = 0
+      }
+      if (el.data.currentVolume <= 0) {
+        baseHero = bloodTankSort(baseHero)
+      }
+      if (bloodAnimation) {
+        bloodAnimate(el)
+      }
+    }
+    cursorCtx.drawImage(el.image, 0, 0, el.blockSize, el.blockSize, el.position.x, el.position.y - el.blockSize * tankCount, el.blockSize, el.blockSize)
+    tankCount--
+      // reduces volume of blood container when vitality regenerates
+    // foregroundCtx.drawImage(bloodTank_1.contentsImage, bloodTank_1.crop.x, bloodTank_1.crop.y, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, perfectYPos(bloodTank_1), bloodTank_1.blockSize, bloodTank_1.blockSize)
+    // cursorCtx.drawImage(bloodTank_1.image, 0, 0, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, bloodTank_1.position.y, bloodTank_1.blockSize, bloodTank_1.blockSize)
+  }
+}
 
 
 const perfectYPos = (element) => {
@@ -28,33 +93,23 @@ const perfectYPos = (element) => {
   return element.position.y + (element.blockSize / 2) - Math.round((element.blockSize * (element.data.currentVolume / element.data.maxVolume) / globalVars.upscale) / 2) * globalVars.upscale + (globalVars.upscale * 2)
 }
 
-const bloodAnimate = (element) => {
-  element.animCounter++
-  if (element.animCounter >= element.animFrames) {
-    element.crop.x += element.blockSize
-    element.animCounter = 0
-    if (element.crop.x >= element.blockSize * element.totalAnimFrames) {
-      element.crop.x = 0
-    }
-  }
-}
 
+
+let firstTankSort = true
 
 const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
-  const stamDrain = baseHero.currentStam - lastStam
 
+  // runs every time game is booted up to make sure tanks are sorted
+  if (firstTankSort) {
+    baseHero = bloodTankSort(baseHero)
+    firstTankSort = false
+  }
+
+  const stamDrain = baseHero.currentStam - lastStam
 
   lastStam = baseHero.currentStam
 
-  // reduces volume of blood container when vitality regenerates
-  if (stamDrain > 0) {
-    bloodContainer_2.data.currentVolume -= stamDrain
-    bloodAnimation = true
-  } else if (baseHero.currentStam >= baseHero.maxStam && bloodContainer_2.crop.x === 0) {
-    bloodAnimation = false
-    bloodContainer_2.crop.x = 0
-    bloodContainer_2.animCounter = 0
-  }
+
 
 
 
@@ -75,13 +130,15 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
   foregroundCtx.globalAlpha = 1
 
-  foregroundCtx.drawImage(bloodContainer_2.contentsImage, bloodContainer_2.crop.x, bloodContainer_2.crop.y, bloodContainer_2.blockSize, bloodContainer_2.blockSize, bloodContainer_2.position.x, perfectYPos(bloodContainer_2), bloodContainer_2.blockSize, bloodContainer_2.blockSize)
-  foregroundCtx.clearRect(bloodContainer_2.position.x, bloodContainer_2.position.y + bloodContainer_2.blockSize, bloodContainer_2.blockSize, bloodContainer_2.blockSize)
+  // foregroundCtx.drawImage(bloodTank_2.contentsImage, bloodTank_2.crop.x, bloodTank_2.crop.y, bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.position.x, perfectYPos(bloodTank_2), bloodTank_2.blockSize, bloodTank_2.blockSize)
+  // foregroundCtx.clearRect(bloodTank_2.position.x, bloodTank_2.position.y + bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.blockSize)
 
-  // foregroundCtx.drawImage(bloodContainer_2.contentsImage, bloodContainer_2.crop.x, bloodContainer_2.crop.y, bloodContainer_2.blockSize, bloodContainer_2.blockSize, bloodContainer_2.position.x, perfectYPos(bloodContainer_2), bloodContainer_2.blockSize, bloodContainer_2.blockSize)
-  cursorCtx.drawImage(bloodContainer_2.image, 0, 0, bloodContainer_2.blockSize, bloodContainer_2.blockSize, bloodContainer_2.position.x, bloodContainer_2.position.y, bloodContainer_2.blockSize, bloodContainer_2.blockSize)
-  foregroundCtx.drawImage(bloodContainer_1.contentsImage, bloodContainer_1.crop.x, bloodContainer_1.crop.y, bloodContainer_1.blockSize, bloodContainer_1.blockSize, bloodContainer_1.position.x, perfectYPos(bloodContainer_1), bloodContainer_1.blockSize, bloodContainer_1.blockSize)
-  cursorCtx.drawImage(bloodContainer_1.image, 0, 0, bloodContainer_1.blockSize, bloodContainer_1.blockSize, bloodContainer_1.position.x, bloodContainer_1.position.y, bloodContainer_1.blockSize, bloodContainer_1.blockSize)
+  // // foregroundCtx.drawImage(bloodTank_2.contentsImage, bloodTank_2.crop.x, bloodTank_2.crop.y, bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.position.x, perfectYPos(bloodTank_2), bloodTank_2.blockSize, bloodTank_2.blockSize)
+  // cursorCtx.drawImage(bloodTank_2.image, 0, 0, bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.position.x, bloodTank_2.position.y, bloodTank_2.blockSize, bloodTank_2.blockSize)
+  // foregroundCtx.drawImage(bloodTank_1.contentsImage, bloodTank_1.crop.x, bloodTank_1.crop.y, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, perfectYPos(bloodTank_1), bloodTank_1.blockSize, bloodTank_1.blockSize)
+  // cursorCtx.drawImage(bloodTank_1.image, 0, 0, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, bloodTank_1.position.y, bloodTank_1.blockSize, bloodTank_1.blockSize)
+
+  bloodTankRender(baseHero, cursorCtx, foregroundCtx, stamDrain)
 
   cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, globalVars.perfectHeight - 100, 256, 64)
   foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, globalVars.perfectHeight - 136, 384, 192)
@@ -95,17 +152,14 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
   foregroundCtx.globalAlpha = .85
   //animate blood container
 
-  if (bloodAnimation) {
-    bloodAnimate(bloodContainer_2)
-  }
-  // if (bloodContainer_1.animCounter >= bloodContainer_1.animFrames) {
-  //   bloodContainer_1.crop.x += bloodContainer_1.blockSize
-  //   bloodContainer_1.animCounter = 0
-  //   if (bloodContainer_1.crop.x >= bloodContainer_1.blockSize * bloodContainer_1.totalAnimFrames) {
-  //     bloodContainer_1.crop.x = 0
+  // if (bloodTank_1.animCounter >= bloodTank_1.animFrames) {
+  //   bloodTank_1.crop.x += bloodTank_1.blockSize
+  //   bloodTank_1.animCounter = 0
+  //   if (bloodTank_1.crop.x >= bloodTank_1.blockSize * bloodTank_1.totalAnimFrames) {
+  //     bloodTank_1.crop.x = 0
   //   }
   // }
-  // bloodContainer_1.animCounter++
+  // bloodTank_1.animCounter++
 
 
   // maps speed of heart beat to remaining stamina
@@ -130,6 +184,7 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
   hudHeart.animCounter++
 
+  return baseHero
 
 
   // if (baseHero.currentStam > baseHero.maxStam - baseHero.maxStam / 3) {

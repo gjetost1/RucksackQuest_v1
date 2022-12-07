@@ -12,9 +12,7 @@ const animate = (element) => {
     element.crop.x += element.data.blockSize
     element.data.animCounter = 0
     if (element.crop.x >= element.data.blockSize * element.data.animFrames) {
-      element.crop.x = 0
-      // element.data.active = false
-      console.log('done')
+      element.crop.x = element.data.blockSize * element.data.animFrames
       return [false, element]
     }
   }
@@ -32,7 +30,17 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       || el.data.x >= globalVars.width
       || el.data.y <= 0
       || el.data.y >= globalVars.height
-      || el.data.dead) {
+      || el.data.dead
+      ) {
+        continue
+      }
+      // runs dying animation on death
+      if (el.data.dying) {
+        // console.log(el.data.animCounter)
+        const dyingAnimation = animate(el)
+        el.data.dead = !dyingAnimation[0]
+
+        el = dyingAnimation[1]
         continue
       }
     // if the frameCountLimiter has been reached run the moveEngine to move
@@ -103,12 +111,23 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
                 el.data.y += damageMoveScale
               }
             }
+
+            // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
+            if (el.data.solid && !el.data.dying && !el.data.dead) {
+              collisionCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.data.x, el.data.y, el.data.blockSize, el.data.blockSize)
+
+            }
+
           }
           if (!baseHero.attackActive) {
             el.data.takeDamage = false
           }
           if (el.data.currentVitality <= 0) {
-            el.data.dead = true
+            el.data.dying = true
+            el.data.animCounter = 0
+            el.crop.x = el.data.blockSize * el.data.movementFrames
+            el.data.animFrames = el.data.movementFrames + el.data.dyingFrames
+            el.data.spriteAnimSpeed = 22
           }
           // if (el.data.takeDamage) {
           //   el.data.damageAnim.data.active = true
@@ -118,15 +137,15 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
     // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
     // spriteCtx.fillRect(el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
 
-      spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
+    //   spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
 
 
-    if (el.data.damageActive) {
-      spriteCtx.drawImage(el.data.damageAnim.image, el.data.damageAnim.crop.x, el.data.damageAnim.crop.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize, el.position.x, el.position.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize)
-      const animated = animate(el.data.damageAnim)
-      el.data.damageActive = animated[0]
-      el.data.damageAnim = animated[1]
-    }
+    // if (el.data.damageActive) {
+    //   spriteCtx.drawImage(el.data.damageAnim.image, el.data.damageAnim.crop.x, el.data.damageAnim.crop.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize, el.position.x, el.position.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize)
+    //   const animated = animate(el.data.damageAnim)
+    //   el.data.damageActive = animated[0]
+    //   el.data.damageAnim = animated[1]
+    // }
   }
   return enemyArr
 }

@@ -17,6 +17,7 @@ import wolf_yelp_src from '../../assets/sounds/enemy/wolf_yelp.wav'
 const wolf_yelp = new Audio(wolf_yelp_src)
 wolf_yelp.volume = 0.2
 
+// creates the sprite for enemy damage effects
 class damageSprite {
   constructor({ data, image, position, crop}) {
     this.data = data
@@ -35,17 +36,6 @@ class damageSprite {
 
 const blood_splatter = new Image()
 blood_splatter.src = blood_splatter_64
-
-// const blood_splatter_obj = {
-//   image: blood_splatter_64,
-//   data: {
-//     spriteAnimSpeed: 2,
-//     spriteAnimCounter: 0,
-//     maxFrames: 5,
-//     active: false,
-//     blockSize: 64
-//   }
-// }
 
 const bloodSplatter = new damageSprite({
   data: {
@@ -82,7 +72,7 @@ export const wolfen = {
   xVel: 4,
   yVel: 4,
   direction: 'down',
-  moving: true,
+  moving: false,
   dashing: false,
   currentSprite: wolfen_down,
   spriteSheets: {
@@ -95,7 +85,8 @@ export const wolfen = {
     upleft: wolfen_upleft,
     upright: wolfen_upright
   },
-  movementFrames: 5,
+  movementFrames: 6,
+  dyingFrames: 3,
   baseAnimSpeed: 2,
   spriteAnimSpeed: 2,
   spriteAnimCounter: 0,
@@ -125,11 +116,23 @@ export const wolfen = {
     [baseHero.attackBlockSize, baseHero.attackBlockSize],
     [0, baseHero.attackBlockSize],
   ],
+  moveDirections: [
+    'down',
+    'up',
+    'left',
+    'right',
+    'upleft',
+    'upright',
+    'downleft',
+    'downright'
+  ],
   maxVitality: 100,
   currentVitality: 100,
   takeDamage: false,
   dead: false,
+  dying: false,
   damageSound: wolf_yelp,
   damageAnim: bloodSplatter,
-  damageActive: false
+  damageActive: false,
+  solid: true
 }
