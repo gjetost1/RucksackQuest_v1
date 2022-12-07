@@ -15,9 +15,9 @@ ui_background_img.src = ui_background
 
 // checks current bloodTanks and moves empties to the back of the queue
 // also sets the first tank with blood in it as the active tank
-const bloodTankSort = (baseHero) => {
+const bloodTankSort = (baseHero, userActivated) => {
   console.log('sorting')
-  let allEmpty = false
+  let allEmpty = true
   for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
     let tank = baseHero.equipment.bloodTanks[i]
     tank.data.active = false
@@ -26,15 +26,20 @@ const bloodTankSort = (baseHero) => {
       emptyTank[0].data.depleted = true
       baseHero.equipment.bloodTanks.unshift(...emptyTank)
     } else {
-      allEmpty = true
+      allEmpty = false
     }
   }
   baseHero.equipment.allTanksEmpty = allEmpty
-  for (let tank of baseHero.equipment.bloodTanks) {
-    if (tank.data.currentVolume > 0) {
-      tank.data.active = true
-      return baseHero
+  if (userActivated) {
+    for (let tank of baseHero.equipment.bloodTanks) {
+      if (tank.data.currentVolume > 0) {
+        tank.data.active = true
+        baseHero.equipment.currentTank = tank
+        return baseHero
+      }
     }
+  } else {
+    baseHero.equipment.currentTank = false
   }
   return baseHero
 }
@@ -69,14 +74,22 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
         el.crop.x = 0
         el.animCounter = 0
       }
-      if (el.data.currentVolume <= 0 && baseHero.equipment.allTanksEmpty) {
-        baseHero = bloodTankSort(baseHero)
+      if (el.data.currentVolume <= 0) {
+        baseHero = bloodTankSort(baseHero, true)
+      } else if (el.data.currentVolume <= 0 && baseHero.equipment.allTanksEmpty) {
+        baseHero = bloodTankSort(baseHero, false)
       }
       if (bloodAnimation) {
         bloodAnimate(el)
       }
     }
-    cursorCtx.drawImage(el.image, 0, 0, el.blockSize, el.blockSize, el.position.x, el.position.y - el.blockSize * tankCount, el.blockSize, el.blockSize)
+
+    if (el.data.active) {
+      cursorCtx.drawImage(el.onImage, 0, 0, el.blockSize, el.blockSize, el.position.x, el.position.y - el.blockSize * tankCount, el.blockSize, el.blockSize)
+    } else {
+      cursorCtx.drawImage(el.offImage, 0, 0, el.blockSize, el.blockSize, el.position.x, el.position.y - el.blockSize * tankCount, el.blockSize, el.blockSize)
+    }
+
     tankCount--
       // reduces volume of blood container when vitality regenerates
     // foregroundCtx.drawImage(bloodTank_1.contentsImage, bloodTank_1.crop.x, bloodTank_1.crop.y, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, perfectYPos(bloodTank_1), bloodTank_1.blockSize, bloodTank_1.blockSize)
@@ -102,12 +115,13 @@ const perfectYPos = (element) => {
 
 
 let firstTankSort = true
+let tankActivateCooldown = false
 
 const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
   // runs every time game is booted up to make sure tanks are sorted
   if (firstTankSort) {
-    baseHero = bloodTankSort(baseHero)
+    baseHero = bloodTankSort(baseHero, false)
     firstTankSort = false
   }
 
@@ -117,6 +131,17 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
 
 
+  // activates bloodTank on key press
+  if (baseHero.keys.e.pressed && !tankActivateCooldown) {
+    if (baseHero.equipment.currentTank) {
+      baseHero.equipment.currentTank.crop.x = 0
+    }
+    tankActivateCooldown = true
+    baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
+    setTimeout(() => {
+      tankActivateCooldown = false
+    }, 300)
+  }
 
 
     // sets color of stamina bar based on remaining stamina percentage

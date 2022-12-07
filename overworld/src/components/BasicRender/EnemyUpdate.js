@@ -91,7 +91,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
               el.data.damageAnim.data.active = true
               // console.log(el.data.currentVitality)
               collision = false
-              el.data.damageSound.play()
+              // plays enemy damage sound if hit doesn't kill
+              if (el.data.currentVitality > 0) {
+                el.data.damageSound.play()
+              }
               const damageMoveScale = el.data.blockSize / globalVars.upscale
               if (baseHero.heroDirection === 'down') {
                 el.data.y += damageMoveScale
@@ -122,8 +125,11 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           if (!baseHero.attackActive) {
             el.data.takeDamage = false
           }
+          // if vitality drops below zero this sets up and starts the dying animation
+          // also plays the dying sound
           if (el.data.currentVitality <= 0) {
             el.data.dying = true
+            el.data.dyingSound.play()
             el.data.animCounter = 0
             el.crop.x = el.data.blockSize * el.data.movementFrames
             el.data.animFrames = el.data.movementFrames + el.data.dyingFrames

@@ -79,7 +79,8 @@ const baseHero = {
       bloodTank_1,
       bloodTank_2,
     ],
-    allTanksEmpty: false
+    allTanksEmpty: false,
+    currentTank: false
   },
   currentEquipmentSprite: sword_down,
   heroDirection: 'down',
@@ -95,7 +96,7 @@ const baseHero = {
   currentStam: 300,
   stamDrain: 1,
   stamAttack: 30,
-  stamRecovery: 1,
+  stamRecovery: .2,
   eventX: -400,
   eventY: -400,
   keys: {

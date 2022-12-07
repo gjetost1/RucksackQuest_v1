@@ -13,9 +13,12 @@ import wolfen_upright from '../../assets/sprites/enemy_sprites/wolfen/wolfen_upr
 import blood_splatter_64 from '../../assets/sprites/enemy_sprites/blood_splatter_64.png'
 
 import wolf_yelp_src from '../../assets/sounds/enemy/wolf_yelp.wav'
+import wolf_howl_src from '../../assets/sounds/enemy/wolf_howl_sad.wav'
 
 const wolf_yelp = new Audio(wolf_yelp_src)
 wolf_yelp.volume = 0.2
+const wolf_howl = new Audio(wolf_howl_src)
+wolf_howl.volume = 0.2
 
 // creates the sprite for enemy damage effects
 class damageSprite {
@@ -132,6 +135,7 @@ export const wolfen = {
   dead: false,
   dying: false,
   damageSound: wolf_yelp,
+  dyingSound: wolf_howl,
   damageAnim: bloodSplatter,
   damageActive: false,
   solid: true
