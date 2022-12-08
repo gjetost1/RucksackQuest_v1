@@ -42,6 +42,35 @@ const dashFunc = (target, probability) => {
   return target
 }
 
+const moveTowardsHero = (target) => {
+  // declare the center coordinates of the hero
+  const x = globalVars.heroCenterX
+  const y = globalVars.heroCenterY
+  // console.log(target)
+  target.moving = true
+
+  // turns enemy towards the attackRadius area around the hero
+  // once inside the radius it will try to initiate an attack (not implemented yet)
+  if (target.x < x - target.attackRadius && target.y < y - target.attackRadius) {
+    target.direction = 'downright'
+  } else if (target.x > x + target.attackRadius && target.y < y - target.attackRadius) {
+    target.direction = 'downleft'
+  } else if (target.x < x - target.attackRadius && target.y > y + target.attackRadius) {
+    target.direction = 'upright'
+  } else if (target.x > x + target.attackRadius && target.y > y + target.attackRadius) {
+    target.direction = 'upleft'
+  } else if (target.x < x - target.attackRadius && (target.y > y - target.attackRadius && target.y < y + target.attackRadius)) {
+    target.direction = 'right'
+  } else if (target.x > x + target.attackRadius && (target.y > y - target.attackRadius && target.y < y + target.attackRadius)) {
+    target.direction = 'left'
+  } else if ((target.x > x - target.attackRadius && target.x < x + target.attackRadius) && target.y > y + target.attackRadius) {
+    target.direction = 'up'
+  } else if ((target.x > x - target.attackRadius && target.x < x + target.attackRadius) && target.y < y - target.attackRadius) {
+    target.direction = 'down'
+  }
+  return target
+}
+
 const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   // console.log(enemyObject.x, enemyObject.y)
 
@@ -69,12 +98,24 @@ if (
 //   return enemyObject
 // }
 
-enemyObject = changeDirectionFunc(enemyObject, 100, moveDirections)
-enemyObject = startStopMovementFunc(enemyObject, 100)
-enemyObject = dashFunc(enemyObject, 100)
+// if enemy isn't in attack mode it moves around randomly
+if (!enemyObject.attacking) {
+  enemyObject = changeDirectionFunc(enemyObject, 100, moveDirections)
+  enemyObject = startStopMovementFunc(enemyObject, 100)
+} else { // if it is in attack mode it moves towards the hero
+  enemyObject = moveTowardsHero(enemyObject)
+  enemyObject.moving = true
+  enemyObject = startStopMovementFunc(enemyObject, 100)
+  enemyObject = dashFunc(enemyObject, 100)
+}
+if (enemyObject.currentStam > enemyObject.maxStam / 4) {
+  enemyObject = dashFunc(enemyObject, 100)
+} else {
+  enemyObject.dashing = false
+}
 
 
-// console.log(enemyObject)
+
 
 // console.log(enemyObject.spriteSheets.downright)
 
@@ -100,23 +141,24 @@ let allCol = (col0 || col1 || col2 || col3 || col4 || col5 || col6 || col7 || co
   if (enemyObject.dashing) {
     enemyObject.moveSpeed = enemyObject.dashSpeed
     // drains stamina if dash is active and there is directional input
-    // if (baseHero.currentStam > 0 && keysPressed) {
-    //   baseHero.currentStam = baseHero.currentStam - 1
-    // }
+    if (enemyObject.currentStam > 0 && enemyObject.moving) {
+      enemyObject.currentStam -= enemyObject.stamDrain
+    }
     // console.log('dashing')
   } else {
     enemyObject.moveSpeed = enemyObject.baseMoveSpeed
     // console.log('not dashing')
 
     // regenerates stamina
-    // if (baseHero.currentStam < baseHero.maxStam) {
-    //   baseHero.currentStam = baseHero.currentStam + 1
-    // } else {
-    //   baseHero.currentStam = baseHero.maxStam
-    // }
+    if (enemyObject.currentStam < enemyObject.maxStam) {
+      enemyObject.currentStam += enemyObject.stamRecovery
+    } else {
+      enemyObject.currentStam = enemyObject.maxStam
+    }
   }
 
   if (enemyObject.moving) {
+    // console.log('moving')
     if (enemyObject.direction === 'down') {
       enemyObject.currentSprite = enemyObject.spriteSheets.down
       if ((col7 && col10) || (col8 && col9)) {

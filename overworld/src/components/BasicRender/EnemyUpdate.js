@@ -54,6 +54,21 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           el = dyingAnimation[1]
           continue
         }
+
+        // sets enemy to attacking status if the hero is within their aggroRadius
+        if (
+            el.data.x > globalVars.heroCenterX - el.data.aggroRadius
+            && el.data.y > globalVars.heroCenterY - el.data.aggroRadius
+            && el.data.x < globalVars.heroCenterX + el.data.aggroRadius
+            && el.data.y < globalVars.heroCenterY + el.data.aggroRadius
+            ) {
+              el.data.attacking = true
+
+            } else {
+              el.data.attacking = false
+            }
+
+
         // if the frameCountLimiter has been reached run the moveEngine to move
         // the enemy
         if (el.data.frameCountLimiter >= el.data.maxFrameCountLimiter) {
@@ -150,20 +165,23 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         }
       }
 
-
-
       // handles blood draining of enemies
       if (baseHero.bloodDrainActive && !collision && el.data.dead && el.data.currentBloodLevel > 0 && baseHero.equipment.currentFillTank) {
         // console.log(baseHero.currentStam)
+        console.log(baseHero.equipment.currentFillTank)
         if (baseHero.equipment.currentFillTank.data.currentVolume < baseHero.equipment.currentFillTank.data.maxVolume) {
           // console.log('draining')
           // animates blood effect on enemy corpse when draining
+          el.data.damageAnim.data.spriteAnimSpeed = 20
           const animated = animate(el.data.damageAnim)
           el.data.damageActive = animated[0]
           el.data.damageAnim = animated[1]
           el.data.currentBloodLevel -= baseHero.bloodDrainRate
           baseHero.equipment.currentFillTank.data.currentVolume += baseHero.bloodDrainRate
           baseHero.equipment.bloodSound.play()
+          if (el.data.currentBloodLevel <= 0) {
+            el.crop.x = el.data.bloodlessFrame * el.data.blockSize
+          }
           if (baseHero.equipment.currentFillTank.data.currentVolume > baseHero.equipment.currentFillTank.data.maxVolume) {
             baseHero.equipment.currentFillTank.data.currentVolume = baseHero.equipment.currentFillTank.data.maxVolume
           baseHero.equipment.bloodSound.pause()
@@ -176,7 +194,6 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       } else if (baseHero.bloodDrainActive && collision) {
         baseHero.bloodDrainActive = false
         baseHero.equipment.bloodSound.pause()
-
       } else {
         baseHero.equipment.bloodSound.pause()
       }

@@ -24,7 +24,7 @@ import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects"
 import blood_pour_src from '../../assets/sounds/hero/blood_pour.mp3'
 
 const blood_pour = new Audio(blood_pour_src)
-blood_pour.volume = 0.5
+blood_pour.volume = 1
 blood_pour.loop = true
 
 // used to create the collision box colBox for hero
@@ -83,7 +83,7 @@ const baseHero = {
     },
     bloodTanks: [
       bloodTank_1,
-      bloodTank_2,
+      // bloodTank_2,
       // bloodTank_3
     ],
     allTanksEmpty: false,

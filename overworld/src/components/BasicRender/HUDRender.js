@@ -16,7 +16,7 @@ ui_background_img.src = ui_background
 // checks current bloodTanks and moves empties to the back of the queue
 // also sets the first tank with blood in it as the active tank
 const bloodTankSort = (baseHero, userActivated) => {
-  console.log('sorting')
+  // console.log('sorting')
   let allEmpty = true
   let firstFill = true
   baseHero.equipment.bloodTanks.sort((a, b) => {
@@ -32,8 +32,8 @@ const bloodTankSort = (baseHero, userActivated) => {
   for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
     let tank = baseHero.equipment.bloodTanks[i]
     tank.data.active = false
-    tank.data.fillTank = false
     if (tank.data.currentVolume < tank.data.maxVolume && firstFill) {
+      // console.log('first fill')
       baseHero.equipment.currentFillTank = tank
       firstFill = false
     }
@@ -43,7 +43,12 @@ const bloodTankSort = (baseHero, userActivated) => {
       allEmpty = false
     }
   }
+  if (firstFill) {
+    baseHero.equipment.currentFillTank = baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1]
+    // console.log('all full', baseHero.equipment.currentFillTank)
+  }
   baseHero.equipment.allTanksEmpty = allEmpty
+  // console.log('all empty', allEmpty)
 
   for (let i = baseHero.equipment.bloodTanks.length - 1; i >= 0; i--) {
     const tank = baseHero.equipment.bloodTanks[i]
@@ -53,6 +58,8 @@ const bloodTankSort = (baseHero, userActivated) => {
           // tank.data.fill = true
           baseHero.equipment.currentTank = tank
           return baseHero
+        } else if (baseHero.equipment.allTanksEmpty) {
+          baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1].data.active = true
         }
       } else {
         baseHero.equipment.currentTank = false
@@ -86,7 +93,7 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
     foregroundCtx.clearRect(el.position.x, el.position.y + el.blockSize - el.blockSize * tankCount, el.blockSize, el.blockSize)
     }
     if (el.data.active) {
-      if (stamDrain > 0) {
+      if (stamDrain > 0 && baseHero.currentStam < baseHero.maxStam) {
         el.data.currentVolume -= stamDrain
         bloodAnimation = true
       } else if (baseHero.currentStam >= baseHero.maxStam && el.crop.x === 0) {
@@ -161,6 +168,7 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
       baseHero.equipment.currentTank.crop.x = 0
     }
     tankActivateCooldown = true
+    // baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
     baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
     setTimeout(() => {
       tankActivateCooldown = false
