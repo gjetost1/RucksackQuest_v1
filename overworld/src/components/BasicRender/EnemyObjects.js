@@ -1,0 +1,154 @@
+import globalVars from './GlobalVars'
+import baseHero from './BaseHero'
+
+import wolfen_down from '../../assets/sprites/enemy_sprites/wolfen/wolfen_down.png'
+import wolfen_up from '../../assets/sprites/enemy_sprites/wolfen/wolfen_up.png'
+import wolfen_left from '../../assets/sprites/enemy_sprites/wolfen/wolfen_left.png'
+import wolfen_right from '../../assets/sprites/enemy_sprites/wolfen/wolfen_right.png'
+import wolfen_downleft from '../../assets/sprites/enemy_sprites/wolfen/wolfen_downleft.png'
+import wolfen_downright from '../../assets/sprites/enemy_sprites/wolfen/wolfen_downright.png'
+import wolfen_upleft from '../../assets/sprites/enemy_sprites/wolfen/wolfen_upleft.png'
+import wolfen_upright from '../../assets/sprites/enemy_sprites/wolfen/wolfen_upright.png'
+
+import blood_splatter_64 from '../../assets/sprites/enemy_sprites/blood_splatter_64.png'
+
+import wolf_yelp_src from '../../assets/sounds/enemy/wolf_snarl.mp3'
+import wolf_howl_src from '../../assets/sounds/enemy/wolf_howl_sad.mp3'
+
+const wolf_yelp = new Audio(wolf_yelp_src)
+wolf_yelp.volume = 0.5
+const wolf_howl = new Audio(wolf_howl_src)
+wolf_howl.volume = 0.2
+
+// creates the sprite for enemy damage effects
+class damageSprite {
+  constructor({ data, image, position, crop}) {
+    this.data = data
+    this.image = image
+    this.position = position
+    this.crop = crop
+  }
+
+  cropChange(cropX, cropY) {
+    this.crop = {
+      x: cropX,
+      y: cropY
+    }
+  }
+}
+
+const blood_splatter = new Image()
+blood_splatter.src = blood_splatter_64
+
+const bloodSplatter = new damageSprite({
+  data: {
+  spriteAnimSpeed: 8,
+  baseAnimSpeed: 8,
+  animCounter: 0,
+  animFrames: 5,
+  active: false,
+  blockSize: 64,
+  },
+  image: blood_splatter,
+  position: {
+    x: 0,
+    y: 0
+  },
+  crop: {
+    x: 0,
+    y: 0
+  }
+})
+
+
+// used to create the collision box colBox
+const colBuffer = 12 // number of pixels away from hero that detectors sit
+const cornerBuffer = 4
+const horzBuffer = 6
+const vertBuffer = 4
+const blockSize = globalVars.blockSize
+
+export const wolfen = {
+  x: globalVars.heroCenterX,
+  y: globalVars.heroCenterY,
+  cropX: 0,
+  cropY: 0,
+  xVel: 4,
+  yVel: 4,
+  direction: 'down',
+  moving: false,
+  dashing: false,
+  fleeing: false,
+  attacking: false,
+  aggroRadius: 300,
+  attackRadius: 20,
+  currentSprite: wolfen_down,
+  spriteSheets: {
+    down: wolfen_down,
+    up: wolfen_up,
+    left: wolfen_left,
+    right: wolfen_right,
+    downleft: wolfen_downleft,
+    downright: wolfen_downright,
+    upleft: wolfen_upleft,
+    upright: wolfen_upright
+  },
+  movementFrames: 6,
+  dyingFrames: 3,
+  bloodlessFrame: 10,
+  baseAnimSpeed: 2,
+  spriteAnimSpeed: 2,
+  spriteAnimCounter: 0,
+  baseMoveSpeed: 20,
+  moveSpeed: 20,
+  dashSpeed: 34,
+  maxStam: 100,
+  currentStam: 100,
+  stamDrain: 1,
+  stamRecovery: .4,
+  frameCountLimiter: 0,
+  maxFrameCountLimiter: 100,
+  blockSize: 64,
+  colBox: {
+    0: [horzBuffer, colBuffer + vertBuffer ],
+    1: [horzBuffer + cornerBuffer, vertBuffer  + cornerBuffer],
+    2: [colBuffer + horzBuffer, vertBuffer ],
+    3: [blockSize - colBuffer - horzBuffer, vertBuffer ],
+    4: [blockSize - horzBuffer - cornerBuffer, vertBuffer  + cornerBuffer],
+    5: [blockSize - horzBuffer, colBuffer + vertBuffer ],
+    6: [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
+    7: [blockSize - horzBuffer - cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
+    8: [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+    9: [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
+    10: [horzBuffer + cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
+    11: [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
+  },
+  hitColBox: [
+    [0, 0],
+    [baseHero.attackBlockSize, 0],
+    [baseHero.attackBlockSize, baseHero.attackBlockSize],
+    [0, baseHero.attackBlockSize],
+  ],
+  moveDirections: [
+    'down',
+    'up',
+    'left',
+    'right',
+    'upleft',
+    'upright',
+    'downleft',
+    'downright'
+  ],
+  maxVitality: 100,
+  currentVitality: 100,
+  takeDamage: false,
+  dead: false,
+  dying: false,
+  damageSound: wolf_yelp,
+  dyingSound: wolf_howl,
+  damageAnim: bloodSplatter,
+  damageActive: false,
+  solid: true,
+  maxBloodLevel: 100,
+  currentBloodLevel: 100
+}

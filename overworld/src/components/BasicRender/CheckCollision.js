@@ -1,64 +1,36 @@
 import globalVars from "./GlobalVars"
 
-// checkCollision checks if baseHero.x,baseHero.y coordinates are inside one of the collision masks in cMask
-// returns false if there is a collision and true if there is not
-const checkCollision = (x, y, cMasks, blockSize, corner) => {
-  const colBuffer = 4 // number of pixels away from hero that detectors sit
-  const horzBuffer = 4
-  const vertBuffer = 12
-  const heroColBox = [
-    // array of coordinates for all detectors of hero object
-    [horzBuffer, colBuffer + vertBuffer * 2],
-    [colBuffer + horzBuffer, vertBuffer * 2],
-    [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
-    [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
-    [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
-    [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
-    [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
-    [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
-  ]
+// getPixel takes imgData and x/y coordinates of pixel we want to check and
+// returns an array with r,g,b,a values, which we can use to create collision boxes
+// we have to multiply the index by 4 because each chunk of 4 values in the array
+// represents r, g, b, a values
+const getPixel = (imgData, x, y) => {
+  const index = y * imgData.width + x
+  let i = index * 4
+  let d = imgData.data
+  return [d[i], d[i+1], d[i+2], d[i+3]]
+}
 
-  // const heroColBox = [
-  //   // array of coordinates for all detectors of hero object
-  //   [0, colBuffer],
-  //   [colBuffer, 0],
-  //   [blockSize - colBuffer, 0],
-  //   [blockSize, colBuffer],
-  //   [blockSize, blockSize - colBuffer],
-  //   [blockSize - colBuffer, blockSize],
-  //   [colBuffer, blockSize],
-  //   [0, blockSize - colBuffer]
-  // ]
 
-  // const heroColBox = [
-  //   // array of coordinates for all detectors of hero object
-  //   [-colBuffer, 0],
-  //   [0, -colBuffer],
-  //   [blockSize, -colBuffer],
-  //   [blockSize + colBuffer, 0],
-  //   [blockSize + colBuffer, blockSize],
-  //   [blockSize, blockSize + colBuffer],
-  //   [0, blockSize + colBuffer],
-  //   [-colBuffer, blockSize]
-  // ]
+// checkCollision checks if a coordinate in the colBox is over a pixel with a non zero alpha value
+// in the collision canvas. it takes a colBox object with coordinates for collision detector pixels
+// and returns an object with the same keys and values that are false if there is no collision
+// or true if there is a collision
 
-  for (let i = 0; i < cMasks.length; i++) {
-    //  loops every collision mask in cMasks array to check for collisions with hero
-    let { tl, tr, bl, br } = cMasks[i]; // coordinates of the 4 corners of the collision mask
-    if (
-        x + heroColBox[corner][0] > tl[0] &&
-        y + heroColBox[corner][1] > tl[1] &&
-        x + heroColBox[corner][0] < tr[0] &&
-        y + heroColBox[corner][1] > tr[1] &&
-        x + heroColBox[corner][0] > bl[0] &&
-        y + heroColBox[corner][1] < bl[1] &&
-        x + heroColBox[corner][0] < br[0] &&
-        y + heroColBox[corner][1] < br[1]
-      ) {
-        // console.log('!!!COLLISION ', corner)
-        return false;
-      }
+const checkCollision = (imgData, colBox, collisionCtx, foregroundCtx, enemyObject) => {
+  const collisions = {}
+  for (let el of Object.entries(colBox)) {
+    collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[3] !== 0
+
+    // uncomment this to render an approximate visualization of the collision checkers to the canvas
+    // foregroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+    // if (enemyObject) {
+    //   foregroundCtx.fillRect(enemyObject.x + el[1][0] - 2, enemyObject.y + el[1][1] - 2, 4, 4)
+    // } else {
+    //   foregroundCtx.fillRect(globalVars.heroCenterX + el[1][0] - 2, globalVars.heroCenterY + el[1][1] - 2, 4, 4)
+    // }
   }
-  return true;
+
+  return collisions
 }
  export default checkCollision

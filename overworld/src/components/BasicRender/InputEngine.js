@@ -90,6 +90,11 @@ const inputEngine = (keys) => {
         keys.e.pressed = true
         // console.log('action')
       break
+      case 'x':
+        case 'X':
+        keys.x.pressed = true
+        // console.log('action')
+      break
       default:
       break
     }
@@ -109,6 +114,11 @@ const inputEngine = (keys) => {
       case 'E':
         keys.e.pressed = false
         // console.log('end action')
+      break
+      case 'x':
+      case 'X':
+        keys.x.pressed = false
+        // console.log('action')
       break
       default:
       break
