@@ -104,26 +104,26 @@ const BasicRender = ({}) => {
       x: 500,
       y: 500
     },
-    {
-      base: wolfen,
-      x: 564,
-      y: 500
-    },
-    {
-      base: wolfen,
-      x: 500,
-      y: 564
-    },
-    {
-      base: wolfen,
-      x: 436,
-      y: 500
-    },
-    {
-      base: wolfen,
-      x: 436,
-      y: 564
-    },
+    // {
+    //   base: wolfen,
+    //   x: 564,
+    //   y: 500
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 500,
+    //   y: 564
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 436,
+    //   y: 500
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 436,
+    //   y: 564
+    // },
 
   ]
 
@@ -139,7 +139,7 @@ const BasicRender = ({}) => {
     setInterval(() => {
       console.log('buffering')
       spriteBuffer(baseHero, wolfenGroup)
-    }, 10000)
+    }, 5000)
   }
 
   // this is the main useEffect for rendering - it runs input checks,

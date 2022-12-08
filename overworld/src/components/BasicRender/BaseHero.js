@@ -83,8 +83,8 @@ const baseHero = {
     },
     bloodTanks: [
       bloodTank_1,
-      // bloodTank_2,
-      // bloodTank_3
+      bloodTank_3,
+      bloodTank_2,
     ],
     allTanksEmpty: false,
     currentTank: false,

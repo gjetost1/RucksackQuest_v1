@@ -115,7 +115,7 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
   } else {
     baseHero.moveSpeed = baseHero.baseMoveSpeed
     // regenerates stamina
-    if (baseHero.currentStam < baseHero.maxStam && !baseHero.equipment.allTanksEmpty && baseHero.equipment.currentTank?.data?.currentVolume > 0) {
+    if (baseHero.currentStam < baseHero.maxStam && !baseHero.equipment.allTanksEmpty && baseHero.equipment.currentTank.data.active && baseHero.equipment.currentTank.data.currentVolume > 0) {
         baseHero.currentStam = baseHero.currentStam + baseHero.stamRecovery  * baseHero.equipment.currentTank.data.growthFactor
     } else if (baseHero.currentStam < baseHero.maxStam) {
       baseHero.currentStam = baseHero.currentStam + baseHero.stamRecovery

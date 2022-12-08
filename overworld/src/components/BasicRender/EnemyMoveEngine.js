@@ -99,13 +99,16 @@ if (
 // }
 
 // if enemy isn't in attack mode it moves around randomly
-if (!enemyObject.attacking) {
+if (!enemyObject.attacking || enemyObject.fleeing) {
+  if (enemyObject.fleeing) {
+    enemyObject.moving = true
+  }
   enemyObject = changeDirectionFunc(enemyObject, 100, moveDirections)
   enemyObject = startStopMovementFunc(enemyObject, 100)
-} else { // if it is in attack mode it moves towards the hero
+} else if (enemyObject.attacking) { // if it is in attack mode it moves towards the hero
   enemyObject = moveTowardsHero(enemyObject)
   enemyObject.moving = true
-  enemyObject = startStopMovementFunc(enemyObject, 100)
+  // enemyObject = startStopMovementFunc(enemyObject, 100)
   enemyObject = dashFunc(enemyObject, 100)
 }
 if (enemyObject.currentStam > enemyObject.maxStam / 4) {
@@ -113,6 +116,7 @@ if (enemyObject.currentStam > enemyObject.maxStam / 4) {
 } else {
   enemyObject.dashing = false
 }
+
 
 
 

@@ -63,11 +63,18 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
             && el.data.y < globalVars.heroCenterY + el.data.aggroRadius
             ) {
               el.data.attacking = true
-
             } else {
               el.data.attacking = false
             }
 
+        if (
+           !( el.data.x > globalVars.heroCenterX - el.data.fleeingRadius
+            && el.data.y > globalVars.heroCenterY - el.data.fleeingRadius
+            && el.data.x < globalVars.heroCenterX + el.data.fleeingRadius
+            && el.data.y < globalVars.heroCenterY + el.data.fleeingRadius)
+            ) {
+              el.data.fleeing = false
+            }
 
         // if the frameCountLimiter has been reached run the moveEngine to move
         // the enemy
@@ -130,6 +137,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         el.data.moving = true
         el.data.dashing = true
         const damageMoveScale = el.data.blockSize / globalVars.upscale
+        el.data.fleeing = true
         if (baseHero.heroDirection === 'down') {
           el.data.y += damageMoveScale
           el.data.direction = 'down'
@@ -168,7 +176,8 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       // handles blood draining of enemies
       if (baseHero.bloodDrainActive && !collision && el.data.dead && el.data.currentBloodLevel > 0 && baseHero.equipment.currentFillTank) {
         // console.log(baseHero.currentStam)
-        console.log(baseHero.equipment.currentFillTank)
+        // console.log('current tank', baseHero.equipment.currentFillTank)
+        // console.log('all tanks', baseHero.equipment.bloodTanks[0])
         if (baseHero.equipment.currentFillTank.data.currentVolume < baseHero.equipment.currentFillTank.data.maxVolume) {
           // console.log('draining')
           // animates blood effect on enemy corpse when draining

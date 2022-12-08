@@ -77,7 +77,7 @@ export const bloodTank_1 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 300,
+    currentVolume: 0,
     maxVolume: 300,
     type: 'vitality',
     active: false,
@@ -112,7 +112,7 @@ export const bloodTank_2 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 600,
+    currentVolume: 100,
     maxVolume: 600,
     type: 'vitality',
     active: false,
@@ -138,7 +138,7 @@ export const bloodTank_3 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 300,
+    currentVolume: 200,
     maxVolume: 300,
     type: 'vitality',
     active: false,

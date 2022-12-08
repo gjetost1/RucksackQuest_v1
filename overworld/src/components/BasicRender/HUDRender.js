@@ -15,58 +15,93 @@ ui_background_img.src = ui_background
 
 // checks current bloodTanks and moves empties to the back of the queue
 // also sets the first tank with blood in it as the active tank
-const bloodTankSort = (baseHero, userActivated) => {
+const bloodTankSort = (baseHero) => {
   // console.log('sorting')
-  let allEmpty = true
-  let firstFill = true
   baseHero.equipment.bloodTanks.sort((a, b) => {
     const tankA = a.data.currentVolume
     const tankB = b.data.currentVolume
     if (tankA > tankB) {
-      return -1
-    } else if (tankB > tankA) {
       return 1
+    } else if (tankB > tankA) {
+      return -1
     }
     return 0
   })
+  // console.log( baseHero.equipment.bloodTanks)
+  return baseHero
+}
+
+const bloodTankSet = (baseHero, userActivated) => {
+  let allEmpty = true
+  let firstFill = true
+  let firstActive = true
   for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
-    let tank = baseHero.equipment.bloodTanks[i]
+    const tank = baseHero.equipment.bloodTanks[i]
     tank.data.active = false
-    if (tank.data.currentVolume < tank.data.maxVolume && firstFill) {
+    if (tank.data.currentVolume >= tank.data.maxVolume && firstFill) {
       // console.log('first fill')
-      baseHero.equipment.currentFillTank = tank
+      baseHero.equipment.currentFillTank = baseHero.equipment.bloodTanks[i - 1]
       firstFill = false
     }
     if (tank.data.currentVolume <= 0) {
+      tank.data.currentVolume = 0
       tank.data.depleted = true
     } else {
+      tank.data.depleted = false
       allEmpty = false
     }
-  }
-  if (firstFill) {
-    baseHero.equipment.currentFillTank = baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1]
-    // console.log('all full', baseHero.equipment.currentFillTank)
-  }
-  baseHero.equipment.allTanksEmpty = allEmpty
-  // console.log('all empty', allEmpty)
-
-  for (let i = baseHero.equipment.bloodTanks.length - 1; i >= 0; i--) {
-    const tank = baseHero.equipment.bloodTanks[i]
-      if (userActivated) {
-        if (tank.data.currentVolume > 0) {
-          tank.data.active = true
-          // tank.data.fill = true
-          baseHero.equipment.currentTank = tank
-          return baseHero
-        } else if (baseHero.equipment.allTanksEmpty) {
+    if (userActivated) {
+      if (tank.data.currentVolume > 0 && firstActive) {
+        tank.data.active = true
+        firstActive = false
+        // tank.data.fill = true
+        baseHero.equipment.currentTank = tank
+        // return baseHero
+      }
+      // else if (baseHero.equipment.allTanksEmpty) {
+        //   baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1].data.active = true
+        // }
+        if (firstActive) {
           baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1].data.active = true
+          baseHero.equipment.currentTank = baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1]
         }
-      } else {
-        baseHero.equipment.currentTank = false
+      }
+      else if (tank.data.currentVolume > 0) {
+        tank.data.active = false
+        // baseHero.equipment.currentTank = baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1]
       }
     }
-  // console.log( baseHero.equipment.bloodTanks)
-  return baseHero
+    if (firstFill) {
+      baseHero.equipment.currentFillTank = baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1]
+
+      // console.log('all full', baseHero.equipment.currentFillTank)
+    }
+  baseHero.equipment.allTanksEmpty = allEmpty
+
+
+  // console.log('all empty', allEmpty)
+
+  // for (let i = baseHero.equipment.bloodTanks.length - 1; i >= 0; i--) {
+  //   const tank = baseHero.equipment.bloodTanks[i]
+  //     if (userActivated) {
+  //       if (tank.data.currentVolume > 0 && firstActive) {
+  //         tank.data.active = true
+  //         firstActive = false
+  //         // tank.data.fill = true
+  //         baseHero.equipment.currentTank = tank
+  //         // return baseHero
+  //       }
+  //       if (firstActive) {
+  //         baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1].data.active = true
+  //       }
+  //       // else if (baseHero.equipment.allTanksEmpty) {
+  //       //   baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1].data.active = true
+  //       // }
+  //     } else {
+  //       baseHero.equipment.currentTank = false
+  //     }
+  //   }
+    return baseHero
 }
 
 
@@ -86,12 +121,13 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
   let tankCount = baseHero.equipment.bloodTanks.length - 1
   // console.log(baseHero.equipment.bloodTanks)
   // for (let el of baseHero.equipment.bloodTanks) {
-  for (let i = baseHero.equipment.bloodTanks.length - 1; i >= 0; i--) {
+  for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
     const el = baseHero.equipment.bloodTanks[i]
-    if (!el.data.depleted) {
+    // console.log(el)
+    // if (!el.data.depleted) {
     foregroundCtx.drawImage(el.contentsImage, el.crop.x, el.crop.y, el.blockSize, el.blockSize, el.position.x, perfectYPos(el) - el.blockSize * tankCount, el.blockSize, el.blockSize)
     foregroundCtx.clearRect(el.position.x, el.position.y + el.blockSize - el.blockSize * tankCount, el.blockSize, el.blockSize)
-    }
+    // }
     if (el.data.active) {
       if (stamDrain > 0 && baseHero.currentStam < baseHero.maxStam) {
         el.data.currentVolume -= stamDrain
@@ -102,9 +138,11 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
         el.animCounter = 0
       }
       if (el.data.currentVolume <= 0) {
-        baseHero = bloodTankSort(baseHero, true)
+        baseHero = bloodTankSet(baseHero, true)
       } else if (el.data.currentVolume <= 0 && baseHero.equipment.allTanksEmpty) {
-        baseHero = bloodTankSort(baseHero, false)
+        baseHero = bloodTankSet(baseHero, false)
+      } else {
+        el.data.depleted = false
       }
       if (bloodAnimation) {
         bloodAnimate(el)
@@ -112,7 +150,8 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
     }
     if (baseHero.equipment.changeCurrentFillTank) {
       baseHero.equipment.changeCurrentFillTank = false
-      baseHero = bloodTankSort(baseHero, false)
+      baseHero = bloodTankSet(baseHero, baseHero.equipment.currentTank.data.active)
+      // console.log('change tank')
     }
 
     if (el.data.active) {
@@ -152,7 +191,8 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
   // runs every time game is booted up to make sure tanks are sorted
   if (firstTankSort) {
-    baseHero = bloodTankSort(baseHero, false)
+    baseHero = bloodTankSort(baseHero)
+    baseHero = bloodTankSet(baseHero, false)
     firstTankSort = false
   }
 
@@ -169,11 +209,16 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
     }
     tankActivateCooldown = true
     // baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
-    baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
+    baseHero = bloodTankSet(baseHero, !baseHero.equipment.currentTank.data?.active)
     setTimeout(() => {
       tankActivateCooldown = false
     }, 300)
+  } else if (!baseHero.equipment.currentTank || (baseHero.equipment.currentTank && baseHero.equipment.currentTank.data.currentVolume <= 0)) {
+    // baseHero = bloodTankSet(baseHero, false)
+    // baseHero = bloodTankSet(baseHero, false)
   }
+
+
 
 
     // sets color of stamina bar based on remaining stamina percentage
@@ -201,6 +246,7 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
   // foregroundCtx.drawImage(bloodTank_1.contentsImage, bloodTank_1.crop.x, bloodTank_1.crop.y, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, perfectYPos(bloodTank_1), bloodTank_1.blockSize, bloodTank_1.blockSize)
   // cursorCtx.drawImage(bloodTank_1.image, 0, 0, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, bloodTank_1.position.y, bloodTank_1.blockSize, bloodTank_1.blockSize)
 
+  // console.log(baseHero.equipment.bloodTanks)
   bloodTankRender(baseHero, cursorCtx, foregroundCtx, stamDrain)
 
   cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, globalVars.perfectHeight - 100, 256, 64)
