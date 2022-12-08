@@ -21,6 +21,12 @@ import sword_icon from '../../assets/sprites/hero_sword/sword_icon.png'
 
 import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects"
 
+import blood_pour_src from '../../assets/sounds/hero/blood_pour.mp3'
+
+const blood_pour = new Audio(blood_pour_src)
+blood_pour.volume = 0.5
+blood_pour.loop = true
+
 // used to create the collision box colBox for hero
 const colBuffer = 12 // number of pixels away from hero that detectors sit
 const cornerBuffer = 4
@@ -84,6 +90,7 @@ const baseHero = {
     currentTank: false,
     currentFillTank: false,
     changeCurrentFillTank: false,
+    bloodSound: blood_pour
   },
   currentEquipmentSprite: sword_down,
   heroDirection: 'down',

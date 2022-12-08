@@ -112,27 +112,41 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         if (el.data.currentVitality > 0) {
           el.data.damageSound.play()
         }
+        el.data.moving = true
+        el.data.dashing = true
         const damageMoveScale = el.data.blockSize / globalVars.upscale
         if (baseHero.heroDirection === 'down') {
           el.data.y += damageMoveScale
+          el.data.direction = 'down'
         } else if (baseHero.heroDirection === 'up') {
           el.data.y -= damageMoveScale
+          el.data.direction = 'up'
+
         } else if (baseHero.heroDirection === 'left') {
           el.data.x -= damageMoveScale
+          el.data.direction = 'left'
+
         } else if (baseHero.heroDirection === 'right') {
           el.data.y += damageMoveScale
+          el.data.direction = 'right'
+
         } else if (baseHero.heroDirection === 'upleft') {
           el.data.x -= damageMoveScale
           el.data.y -= damageMoveScale
+          el.data.direction = 'upleft'
+
         } else if (baseHero.heroDirection === 'upright') {
           el.data.x += damageMoveScale
           el.data.y -= damageMoveScale
+          el.data.direction = 'upright'
         } else if (baseHero.heroDirection === 'downleft') {
           el.data.x -= damageMoveScale
           el.data.y += damageMoveScale
+          el.data.direction = 'downleft'
         } else if (baseHero.heroDirection === 'downright') {
           el.data.x += damageMoveScale
           el.data.y += damageMoveScale
+          el.data.direction = 'downright'
         }
       }
 
@@ -149,16 +163,22 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           el.data.damageAnim = animated[1]
           el.data.currentBloodLevel -= baseHero.bloodDrainRate
           baseHero.equipment.currentFillTank.data.currentVolume += baseHero.bloodDrainRate
+          baseHero.equipment.bloodSound.play()
           if (baseHero.equipment.currentFillTank.data.currentVolume > baseHero.equipment.currentFillTank.data.maxVolume) {
             baseHero.equipment.currentFillTank.data.currentVolume = baseHero.equipment.currentFillTank.data.maxVolume
+          baseHero.equipment.bloodSound.pause()
           }
         } else if (!baseHero.equipment.changeCurrentFillTank) {
           baseHero.equipment.changeCurrentFillTank = true
           // console.log('tank change')
+          baseHero.equipment.bloodSound.pause()
         }
-
       } else if (baseHero.bloodDrainActive && collision) {
         baseHero.bloodDrainActive = false
+        baseHero.equipment.bloodSound.pause()
+
+      } else {
+        baseHero.equipment.bloodSound.pause()
       }
 
     }
