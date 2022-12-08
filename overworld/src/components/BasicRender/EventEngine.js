@@ -1,4 +1,4 @@
-const eventEngine = (baseHero) => {
+const eventEngine = (baseHero, type) => {
   // let {
   //   x,
   //   y,
@@ -20,7 +20,9 @@ const eventEngine = (baseHero) => {
   // this chain determines where the event hitbox will appear based on the direction
   // the hero is facing
   if (baseHero.currentStam >= baseHero.stamDrain * baseHero.stamAttack) {
-    baseHero.currentStam -= baseHero.stamDrain * baseHero.stamAttack
+    if (baseHero.attackActive) {
+      baseHero.currentStam -= baseHero.stamDrain * baseHero.stamAttack
+    }
     const middleVal = (baseHero.blockSize - baseHero.attackBlockSize) / 2
     if (baseHero.heroDirection === 'up') {
       baseHero.eventX = baseHero.heroX + middleVal

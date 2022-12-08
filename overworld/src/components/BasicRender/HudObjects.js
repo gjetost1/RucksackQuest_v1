@@ -112,11 +112,37 @@ export const bloodTank_2 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 600,
+    currentVolume: 100,
     maxVolume: 600,
     type: 'vitality',
     active: false,
     depleted: false,
     growthFactor: 4
+  }
+})
+
+export const bloodTank_3 = new HudSprite({
+  offImage: blood_container_small_off_img,
+  onImage: blood_container_small_on_img,
+  contentsImage: blood_img,
+  position: {
+    x: 36,
+    y: globalVars.perfectHeight - 200
+  },
+  crop: {
+    x: 0,
+    y: 0
+  },
+  blockSize: 64,
+  animFramesBase: 18,
+  animFramesMin: 8,
+  totalAnimFrames: 8,
+  data: {
+    currentVolume: 101,
+    maxVolume: 300,
+    type: 'vitality',
+    active: false,
+    depleted: false,
+    growthFactor: 4.5
   }
 })

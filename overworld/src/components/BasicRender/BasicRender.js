@@ -371,27 +371,6 @@ const BasicRender = ({}) => {
 
       // wolfenImage.src = wolfen_1.currentSprite
 
-    // calculates and draws attack effects on keypress with cooldown
-    let eventObj = { // object passed to EventEngine to trigger appropriate event
-      x: playerSprite.position.x,
-      y: playerSprite.position.y,
-      heroDirection: baseHero.heroDirection,
-      eventX: 0,
-      eventY: 0,
-      blockSize: blockSize,
-      eventType: 'attack',
-      eventDirection: 'heroFront',
-      eventAreaShape: 'rectangle',
-      eventXDim: 1,
-      eventYDim: 3,
-      eventEffect: {
-        damage: 10
-      },
-      eventDuration: .1,
-      eventTimeout: .8,
-      eventAnim: null,
-    }
-
     // this handles an attack/ability usage by user - sets vars that will trigger attack/ability animation and
     // puts ability on cooldown. Current cooldown is set manually, but once there are other abilities
     // we will use their specific attributes to set the cooldown and effect duration
@@ -403,7 +382,34 @@ const BasicRender = ({}) => {
       baseHero.attackAnimation = true
       baseHero.coolDownLevel = 0 // sets the var for animating HUD cooldown level
 
-      baseHero = eventEngine(baseHero)
+    // calculates and draws attack effects on keypress with cooldown
+
+
+      let eventObj = { // object passed to EventEngine to trigger appropriate event
+        x: playerSprite.position.x,
+        y: playerSprite.position.y,
+        heroDirection: baseHero.heroDirection,
+        eventX: 0,
+        eventY: 0,
+        blockSize: blockSize,
+        eventType: 'attack',
+        eventDirection: 'heroFront',
+        eventAreaShape: 'rectangle',
+        eventXDim: 1,
+        eventYDim: 3,
+        eventEffect: {
+          damage: 10
+        },
+        eventDuration: .1,
+        eventTimeout: .8,
+        eventAnim: null,
+      }
+
+
+    // spriteCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
+
+      baseHero = eventEngine(baseHero, 'attack')
+
       // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
       const cooldown = setTimeout(() => { // enables this attack again after eventTimeout # of seconds, essentially a cooldown
         baseHero.attackCooldownOff = true
@@ -435,6 +441,39 @@ const BasicRender = ({}) => {
       baseHero.coolDownLevel = 0
     }
 
+    if (baseHero.keys.e.pressed) {
+      baseHero.bloodDrainActive = true
+      let eventObj = { // object passed to EventEngine to trigger appropriate event
+        x: playerSprite.position.x,
+        y: playerSprite.position.y,
+        heroDirection: baseHero.heroDirection,
+        eventX: 0,
+        eventY: 0,
+        blockSize: blockSize,
+        eventType: 'drain',
+        eventDirection: 'heroFront',
+        eventAreaShape: 'rectangle',
+        eventXDim: 1,
+        eventYDim: 1,
+        eventEffect: {
+          drain: 1
+        },
+        eventDuration: .1,
+        eventTimeout: .8,
+        eventAnim: null,
+      }
+
+    // spriteCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
+      baseHero = eventEngine(baseHero, 'drain')
+    } else {
+      if (baseHero.bloodDrainActive) {
+        baseHero.eventX = -400
+        baseHero.eventY = -400
+      }
+      baseHero.bloodDrainActive = false
+      // baseHero.attackActive = false
+    }
+
 
     // makes the canvases render a frame
     window.requestAnimationFrame(animate)
@@ -457,8 +496,9 @@ const BasicRender = ({}) => {
 
 
 
-
-      wolfenGroup = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
+    const enemyUpdateArr = enemyUpdate(wolfenGroup, baseHero, collisionCtx, spriteCtx)
+      wolfenGroup = enemyUpdateArr[0]
+      baseHero = enemyUpdateArr[1]
 
       enemyRender(wolfenGroup, baseHero, spriteCtx, 'back')
 

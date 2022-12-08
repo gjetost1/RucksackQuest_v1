@@ -12,11 +12,11 @@ import wolfen_upright from '../../assets/sprites/enemy_sprites/wolfen/wolfen_upr
 
 import blood_splatter_64 from '../../assets/sprites/enemy_sprites/blood_splatter_64.png'
 
-import wolf_yelp_src from '../../assets/sounds/enemy/wolf_yelp.wav'
-import wolf_howl_src from '../../assets/sounds/enemy/wolf_howl_sad.wav'
+import wolf_yelp_src from '../../assets/sounds/enemy/wolf_snarl.mp3'
+import wolf_howl_src from '../../assets/sounds/enemy/wolf_howl_sad.mp3'
 
 const wolf_yelp = new Audio(wolf_yelp_src)
-wolf_yelp.volume = 0.2
+wolf_yelp.volume = 0.5
 const wolf_howl = new Audio(wolf_howl_src)
 wolf_howl.volume = 0.2
 
@@ -43,6 +43,7 @@ blood_splatter.src = blood_splatter_64
 const bloodSplatter = new damageSprite({
   data: {
   spriteAnimSpeed: 8,
+  baseAnimSpeed: 8,
   animCounter: 0,
   animFrames: 5,
   active: false,
@@ -138,5 +139,7 @@ export const wolfen = {
   dyingSound: wolf_howl,
   damageAnim: bloodSplatter,
   damageActive: false,
-  solid: true
+  solid: true,
+  maxBloodLevel: 100,
+  currentBloodLevel: 100
 }

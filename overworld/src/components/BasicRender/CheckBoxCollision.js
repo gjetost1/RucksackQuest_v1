@@ -32,7 +32,8 @@ const checkBoxCollision = (x, y, colBox, cMasks, corner) => {
   //   [-colBuffer, blockSize]
   // ]
 
-  // console.log(cMasks)
+
+
   for (let i = 0; i < cMasks.length; i++) {
     //  loops every collision mask in cMasks array to check for collisions with hero
     let { tl, tr, bl, br } = cMasks[i]; // coordinates of the 4 corners of the collision mask
