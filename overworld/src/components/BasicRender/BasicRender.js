@@ -7,6 +7,7 @@ import enemyRender from './EnemyRender'
 import enemyGenerator from './EnemyGenerator'
 import coordinateChange from './CoordinateChange'
 import eventEngine from './EventEngine'
+import spriteBuffer from './SpriteBuffer'
 import pixelator from './Pixelator'
 import background_1 from '../../assets/backgrounds/test/big_map_background_2.png'
 import collision_1 from '../../assets/backgrounds/test/big_map_collision_2.png'
@@ -70,7 +71,7 @@ const grassPatch2 = new Patch(-500, -500, 20, 20, [grass_1, grass_2, grass_3], .
 const grassPatch3 = new Patch(1100, 1000, 20, 20, [grass_1, grass_2, grass_3], .05)
 const barrelPatch = new Patch(100, 500, 4, 4, [barrel_1, barrel_2], .2)
 
-
+let bufferIntervalSet = true // makes sure that the sprite buffer interval is set only once
 
 
 
@@ -126,12 +127,26 @@ const BasicRender = ({}) => {
 
   ]
 
+  // creates an enemy group
   let wolfenGroup = enemyGenerator(wolfenGroupCreator)
+
+
+  // sets an interval to re-load sprites since they flicker if they have been
+  // de-loaded by the browser after not being used for a while
+  if (bufferIntervalSet) {
+    bufferIntervalSet = false
+    spriteBuffer(baseHero, wolfenGroup)
+    setInterval(() => {
+      console.log('buffering')
+      spriteBuffer(baseHero, wolfenGroup)
+    }, 10000)
+  }
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
   // the animate() function
   useEffect(() => {
+
 
   // creates context for each canvas. Invoke all drawing/rendering to canvas
   // using the context for the layer you want to render to
@@ -349,6 +364,7 @@ const BasicRender = ({}) => {
         wolfenGroup = coordinateChange(baseHero, wolfenGroup)
         // coordinateChange moves elements in relation to the hero to keep them at the right coordinates
       }
+
 
 
       baseHero.frameCountLimiter += baseHero.moveSpeed

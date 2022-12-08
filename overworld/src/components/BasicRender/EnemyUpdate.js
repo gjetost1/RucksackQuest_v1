@@ -139,7 +139,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
 
 
       // handles blood draining of enemies
-      if (baseHero.bloodDrainActive && !collision && el.data.dead && el.data.currentBloodLevel > 0) {
+      if (baseHero.bloodDrainActive && !collision && el.data.dead && el.data.currentBloodLevel > 0 && baseHero.equipment.currentFillTank) {
         // console.log(baseHero.currentStam)
         if (baseHero.equipment.currentFillTank.data.currentVolume < baseHero.equipment.currentFillTank.data.maxVolume) {
           // console.log('draining')
@@ -152,7 +152,6 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           if (baseHero.equipment.currentFillTank.data.currentVolume > baseHero.equipment.currentFillTank.data.maxVolume) {
             baseHero.equipment.currentFillTank.data.currentVolume = baseHero.equipment.currentFillTank.data.maxVolume
           }
-          console.log(el.data.currentBloodLevel)
         } else if (!baseHero.equipment.changeCurrentFillTank) {
           baseHero.equipment.changeCurrentFillTank = true
           // console.log('tank change')

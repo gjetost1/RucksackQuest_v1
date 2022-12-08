@@ -211,7 +211,7 @@ if (!windBlow) {
           }
 
 
-          if (!collision && !el.img.breaking && !el.img.destroyed) {
+          if (baseHero.attackActive && !collision && !el.img.breaking && !el.img.destroyed) {
             //plays sound effect on destroy, if any
             if(el.img.sfx) {
               el.img.sfx.volume = 0.2;
