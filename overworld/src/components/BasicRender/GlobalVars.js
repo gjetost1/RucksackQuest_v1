@@ -18,6 +18,6 @@ const windowSpacerWidth = ((window.innerWidth || document.documentElement.client
   document.body.clientWidth) - width) / 2
 // const heroCenterX = middleX - (blockSize / 2)
 // const heroCenterY = middleY - (blockSize / 2)
-const heroCenterX = pixelPerfect(Math.round((window.innerWidth / 2) - (blockSize / 2)), 'down', 'x', upscale)
-const heroCenterY = pixelPerfect(Math.round((window.innerHeight / 2) - (blockSize / 2)), 'down', 'x', upscale)
+const heroCenterX = pixelPerfect(Math.round(middleX - (blockSize / 2)), 'down', 'x', upscale)
+const heroCenterY = pixelPerfect(Math.round(middleY - (blockSize / 2)), 'down', 'y', upscale)
 export default {heroStartXCoord, heroStartYCoord, upscale, height, width, perfectHeight, perfectWidth, middleX, middleY, blockSize, windowSpacerHeight, windowSpacerWidth, heroCenterX, heroCenterY}

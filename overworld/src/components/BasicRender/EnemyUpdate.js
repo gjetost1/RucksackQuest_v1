@@ -31,6 +31,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
 
 
   for (let el of enemyArr) {
+    // console.log(el.data.direction, el.data.moving)
     // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
     if (el.data.solid) {
       collisionCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.data.x, el.data.y, el.data.blockSize, el.data.blockSize)
@@ -56,18 +57,28 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         }
 
         // sets enemy to attacking status if the hero is within their aggroRadius
+
         if (
+            el.data.x > globalVars.heroCenterX - el.data.attackRadius
+            && el.data.y > globalVars.heroCenterY - el.data.attackRadius
+            && el.data.x < globalVars.heroCenterX + el.data.attackRadius
+            && el.data.y < globalVars.heroCenterY + el.data.attackRadius
+            ) {
+              el.data.attacking = true
+            } else if (
             el.data.x > globalVars.heroCenterX - el.data.aggroRadius
             && el.data.y > globalVars.heroCenterY - el.data.aggroRadius
             && el.data.x < globalVars.heroCenterX + el.data.aggroRadius
             && el.data.y < globalVars.heroCenterY + el.data.aggroRadius
             ) {
-              el.data.attacking = true
+              el.data.chasing = true
+              el.data.attacking = false
             } else {
+              el.data.chasing = false
               el.data.attacking = false
             }
 
-        if (
+        if (el.data.fleeing &&
            !( el.data.x > globalVars.heroCenterX - el.data.fleeingRadius
             && el.data.y > globalVars.heroCenterY - el.data.fleeingRadius
             && el.data.x < globalVars.heroCenterX + el.data.fleeingRadius

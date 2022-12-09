@@ -104,16 +104,16 @@ const BasicRender = ({}) => {
       x: 500,
       y: 500
     },
-    // {
-    //   base: wolfen,
-    //   x: 564,
-    //   y: 500
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 500,
-    //   y: 564
-    // },
+    {
+      base: wolfen,
+      x: 564,
+      y: 500
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 564
+    },
     // {
     //   base: wolfen,
     //   x: 436,

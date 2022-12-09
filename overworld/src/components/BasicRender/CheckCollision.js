@@ -17,10 +17,16 @@ const getPixel = (imgData, x, y) => {
 // and returns an object with the same keys and values that are false if there is no collision
 // or true if there is a collision
 
-const checkCollision = (imgData, colBox, collisionCtx, foregroundCtx, enemyObject) => {
+const checkCollision = (imgData, colBox, collisionCtx, foregroundCtx, enemyObject, onlyGreenCol) => {
   const collisions = {}
   for (let el of Object.entries(colBox)) {
-    collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[3] !== 0
+    // console.log(getPixel(imgData, el[1][0], el[1][1]))
+    if (onlyGreenCol) {
+      collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[1] === 255
+      // console.log(getPixel(imgData, el[1][0], el[1][1]))
+    } else {
+      collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[3] !== 0
+    }
 
     // uncomment this to render an approximate visualization of the collision checkers to the canvas
     // foregroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'

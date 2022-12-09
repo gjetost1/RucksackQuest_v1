@@ -87,7 +87,8 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
   //    6------5
   //
 
-  let heroCollisions = checkCollision(imgData, baseHero.colBox, collisionCtx, foregroundCtx)
+  const onlyGreenCol = false // if true it only checks environment collision, otherwise it also checks enemy collisions
+  let heroCollisions = checkCollision(imgData, baseHero.colBox, collisionCtx, foregroundCtx, onlyGreenCol)
   const col0 = heroCollisions[0]
   const col1 = heroCollisions[1]
   const col2 = heroCollisions[2]
@@ -115,7 +116,7 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
   } else {
     baseHero.moveSpeed = baseHero.baseMoveSpeed
     // regenerates stamina
-    if (baseHero.currentStam < baseHero.maxStam && !baseHero.equipment.allTanksEmpty && baseHero.equipment.currentTank.data.active && baseHero.equipment.currentTank.data.currentVolume > 0) {
+    if (baseHero.currentStam < baseHero.maxStam && !baseHero.equipment.allTanksEmpty && baseHero.equipment.currentTank.data?.active && baseHero.equipment.currentTank.data.currentVolume > 0) {
         baseHero.currentStam = baseHero.currentStam + baseHero.stamRecovery  * baseHero.equipment.currentTank.data.growthFactor
     } else if (baseHero.currentStam < baseHero.maxStam) {
       baseHero.currentStam = baseHero.currentStam + baseHero.stamRecovery

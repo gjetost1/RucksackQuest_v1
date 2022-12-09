@@ -42,24 +42,23 @@ const dashFunc = (target, probability) => {
   return target
 }
 
-const moveTowardsHero = (target) => {
+const moveTowardsHero = (target, foregroundCtx) => {
   // declare the center coordinates of the hero
-  const x = globalVars.heroCenterX
-  const y = globalVars.heroCenterY
+  const x = globalVars.heroCenterX + globalVars.blockSize / 2
+  const y = globalVars.heroCenterY + globalVars.blockSize / 2
   // console.log(target)
   target.moving = true
 
+  // displays current enemy's attackRadius
+  // foregroundCtx.fillRect(x - target.attackRadius, y - target.attackRadius, 4, 4)
+  // foregroundCtx.fillRect(x - target.attackRadius, y + target.attackRadius, 4, 4)
+  // foregroundCtx.fillRect(x + target.attackRadius, y - target.attackRadius, 4, 4)
+  // foregroundCtx.fillRect(x + target.attackRadius, y + target.attackRadius, 4, 4)
+
   // turns enemy towards the attackRadius area around the hero
   // once inside the radius it will try to initiate an attack (not implemented yet)
-  if (target.x < x - target.attackRadius && target.y < y - target.attackRadius) {
-    target.direction = 'downright'
-  } else if (target.x > x + target.attackRadius && target.y < y - target.attackRadius) {
-    target.direction = 'downleft'
-  } else if (target.x < x - target.attackRadius && target.y > y + target.attackRadius) {
-    target.direction = 'upright'
-  } else if (target.x > x + target.attackRadius && target.y > y + target.attackRadius) {
-    target.direction = 'upleft'
-  } else if (target.x < x - target.attackRadius && (target.y > y - target.attackRadius && target.y < y + target.attackRadius)) {
+
+  if (target.x < x - target.attackRadius && (target.y > y - target.attackRadius && target.y < y + target.attackRadius)) {
     target.direction = 'right'
   } else if (target.x > x + target.attackRadius && (target.y > y - target.attackRadius && target.y < y + target.attackRadius)) {
     target.direction = 'left'
@@ -67,8 +66,18 @@ const moveTowardsHero = (target) => {
     target.direction = 'up'
   } else if ((target.x > x - target.attackRadius && target.x < x + target.attackRadius) && target.y < y - target.attackRadius) {
     target.direction = 'down'
+  } else if (target.x < x - target.attackRadius && target.y < y - target.attackRadius) {
+    target.direction = 'downright'
+  } else if (target.x > x + target.attackRadius && target.y < y - target.attackRadius) {
+    target.direction = 'downleft'
+  } else if (target.x < x - target.attackRadius && target.y > y + target.attackRadius) {
+    target.direction = 'upright'
+  } else if (target.x > x + target.attackRadius && target.y > y + target.attackRadius) {
+    target.direction = 'upleft'
   }
+
   return target
+
 }
 
 const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
@@ -99,22 +108,25 @@ if (
 // }
 
 // if enemy isn't in attack mode it moves around randomly
-if (!enemyObject.attacking || enemyObject.fleeing) {
+if (!enemyObject.chasing || enemyObject.fleeing) {
   if (enemyObject.fleeing) {
     enemyObject.moving = true
   }
   enemyObject = changeDirectionFunc(enemyObject, 100, moveDirections)
   enemyObject = startStopMovementFunc(enemyObject, 100)
-} else if (enemyObject.attacking) { // if it is in attack mode it moves towards the hero
-  enemyObject = moveTowardsHero(enemyObject)
+} else if (enemyObject.chasing) { // if it is in attack mode it moves towards the hero
+  enemyObject = moveTowardsHero(enemyObject, foregroundCtx)
   enemyObject.moving = true
   // enemyObject = startStopMovementFunc(enemyObject, 100)
   enemyObject = dashFunc(enemyObject, 100)
 }
+
+// toggles dashing on and off randomly if they have at least
+// a quarter of their full stamina
 if (enemyObject.currentStam > enemyObject.maxStam / 4) {
   enemyObject = dashFunc(enemyObject, 100)
 } else {
-  enemyObject.dashing = false
+  // enemyObject.dashing = false
 }
 
 
@@ -125,7 +137,8 @@ if (enemyObject.currentStam > enemyObject.maxStam / 4) {
 
 const imgData = collisionCtx.getImageData(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
 // console.log(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
-let collisions = checkCollision(imgData, enemyObject.colBox, collisionCtx, foregroundCtx, enemyObject)
+const onlyGreenCol = true // if true it only checks environment collision, otherwise it also checks enemy collisions
+let collisions = checkCollision(imgData, enemyObject.colBox, collisionCtx, foregroundCtx, enemyObject, onlyGreenCol)
 const col0 = collisions[0]
 const col1 = collisions[1]
 const col2 = collisions[2]
