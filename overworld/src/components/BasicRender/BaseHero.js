@@ -1,52 +1,94 @@
-import globalVars from "./GlobalVars"
+import globalVars from "./GlobalVars";
 
-import down from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_down.png'
-import up from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_up.png'
-import left from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_left.png'
-import right from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_right.png'
-import downleft from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downleft.png'
-import downright from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downright.png'
-import upleft from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upleft.png'
-import upright from '../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upright.png'
+import down from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_down.png";
+import up from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_up.png";
+import left from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_left.png";
+import right from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_right.png";
+import downleft from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downleft.png";
+import downright from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downright.png";
+import upleft from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upleft.png";
+import upright from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upright.png";
 
-import sword_down from '../../assets/sprites/hero_sword/hero_sword_down.png'
-import sword_up from '../../assets/sprites/hero_sword/hero_sword_up.png'
-import sword_left from '../../assets/sprites/hero_sword/hero_sword_left.png'
-import sword_right from '../../assets/sprites/hero_sword/hero_sword_right.png'
-import sword_downleft from '../../assets/sprites/hero_sword/hero_sword_downleft.png'
-import sword_downright from '../../assets/sprites/hero_sword/hero_sword_downright.png'
-import sword_upleft from '../../assets/sprites/hero_sword/hero_sword_upleft.png'
-import sword_upright from '../../assets/sprites/hero_sword/hero_sword_upright.png'
-import sword_icon from '../../assets/sprites/hero_sword/sword_icon.png'
+import sword_down from "../../assets/sprites/hero_sword/hero_sword_down.png";
+import sword_up from "../../assets/sprites/hero_sword/hero_sword_up.png";
+import sword_left from "../../assets/sprites/hero_sword/hero_sword_left.png";
+import sword_right from "../../assets/sprites/hero_sword/hero_sword_right.png";
+import sword_downleft from "../../assets/sprites/hero_sword/hero_sword_downleft.png";
+import sword_downright from "../../assets/sprites/hero_sword/hero_sword_downright.png";
+import sword_upleft from "../../assets/sprites/hero_sword/hero_sword_upleft.png";
+import sword_upright from "../../assets/sprites/hero_sword/hero_sword_upright.png";
+import sword_icon from "../../assets/sprites/hero_sword/sword_icon.png";
 
-import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects"
+import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter_64.png";
 
-import blood_pour_src from '../../assets/sounds/hero/blood_pour.mp3'
+import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
 
-const blood_pour = new Audio(blood_pour_src)
-blood_pour.volume = 1
-blood_pour.loop = true
+import blood_pour_src from "../../assets/sounds/hero/blood_pour.mp3";
+
+// creates the sprite for enemy damage effects
+class damageSprite {
+  constructor({ data, image, position, crop }) {
+    this.data = data;
+    this.image = image;
+    this.position = position;
+    this.crop = crop;
+  }
+
+  cropChange(cropX, cropY) {
+    this.crop = {
+      x: cropX,
+      y: cropY,
+    };
+  }
+}
+
+const blood_splatter = new Image();
+blood_splatter.src = blood_splatter_64;
+
+const bloodSplatter = new damageSprite({
+  data: {
+    spriteAnimSpeed: 8,
+    baseAnimSpeed: 8,
+    animCounter: 0,
+    animFrames: 5,
+    active: false,
+    blockSize: 64,
+  },
+  image: blood_splatter,
+  position: {
+    x: 0,
+    y: 0,
+  },
+  crop: {
+    x: 0,
+    y: 0,
+  },
+});
+
+const blood_pour = new Audio(blood_pour_src);
+blood_pour.volume = 1;
+blood_pour.loop = true;
 
 // used to create the collision box colBox for hero
-const colBuffer = 12 // number of pixels away from hero that detectors sit
-const cornerBuffer = 4
-const horzBuffer = 14
-const vertBuffer = 12
-const blockSize = globalVars.blockSize
+const colBuffer = 12; // number of pixels away from hero that detectors sit
+const cornerBuffer = 4;
+const horzBuffer = 14;
+const vertBuffer = 12;
+const blockSize = globalVars.blockSize;
 
 const baseHero = {
   cameraX: globalVars.heroStartXCoord,
   cameraY: globalVars.heroStartYCoord,
   targetCameraX: globalVars.heroStartXCoord,
   targetCameraY: globalVars.heroStartYCoord,
-  heroX: globalVars.heroCenterX,
-  heroY: globalVars.heroCenterY,
+  x: globalVars.heroCenterX,
+  y: globalVars.heroCenterY,
   targetHeroX: globalVars.heroCenterX,
   targetHeroY: globalVars.heroCenterY,
-  frameXChange:0,
-  frameYChange:0,
-  totalXChange:0,
-  totalYChange:0,
+  frameXChange: 0,
+  frameYChange: 0,
+  totalXChange: 0,
+  totalYChange: 0,
   baseXVel: 4,
   baseYVel: 4,
   currentXVel: 4,
@@ -58,7 +100,7 @@ const baseHero = {
   maxFrameCountLimiter: 100,
   heroCropX: 0,
   heroCropY: 0,
-  spriteSheets:{
+  spriteSheets: {
     up,
     down,
     left,
@@ -66,7 +108,7 @@ const baseHero = {
     downleft,
     downright,
     upleft,
-    upright
+    upright,
   },
   currentHeroSprite: down,
   equipment: {
@@ -79,66 +121,67 @@ const baseHero = {
       downright: sword_downright,
       upleft: sword_upleft,
       upright: sword_upright,
-      icon: sword_icon
+      icon: sword_icon,
     },
-    bloodTanks: [
-      bloodTank_1,
-      bloodTank_3,
-      bloodTank_2,
-    ],
+    bloodTanks: [bloodTank_1, bloodTank_3, bloodTank_2],
     allTanksEmpty: false,
     currentTank: false,
     currentFillTank: false,
     changeCurrentFillTank: false,
-    bloodSound: blood_pour
+    bloodSound: blood_pour,
   },
   currentEquipmentSprite: sword_down,
-  heroDirection: 'down',
+  direction: "down",
   attackAnimation: false,
   blockSize: globalVars.blockSize,
-  attackBlockSize: 4,
+  attackBlockSize: globalVars.blockSize,
   heroSpriteSize: 64,
-  coolDownLevel: 0,
-  coolDownLevelMax: 100,
+  // coolDownLevel: 0,
+  // coolDownLevelMax: 100,
   attackCooldownOff: true,
   attackActive: false,
   bloodDrainActive: false,
-  bloodDrainRate: .5,
+  bloodDrainRate: 0.5,
+  maxVitality: 300,
+  currentVitality: 300,
   maxStam: 300,
   currentStam: 300,
   stamDrain: 1,
   stamAttack: 30,
-  stamRecovery: .2,
+  stamRecovery: 0.2,
   eventX: -400,
   eventY: -400,
+  damageAnim: bloodSplatter,
+  damageActive: false,
+  takeDamage: false,
   keys: {
     ArrowUp: {
-      pressed:false
+      pressed: false,
     },
     ArrowDown: {
-      pressed:false
+      pressed: false,
     },
     ArrowLeft: {
-      pressed:false
+      pressed: false,
     },
     ArrowRight: {
-      pressed:false
+      pressed: false,
     },
     Space: {
-      pressed:false
+      pressed: false,
     },
     Shift: {
-      pressed:false
+      pressed: false,
     },
     e: {
-      pressed:false
+      pressed: false,
     },
     x: {
-      pressed:false
+      pressed: false,
     },
     mouse1: {
-      pressed:false
-    }
+      pressed: false,
+    },
   },
   colBox: {
     0: [horzBuffer, colBuffer + vertBuffer * 2],
@@ -147,13 +190,37 @@ const baseHero = {
     3: [blockSize - colBuffer - horzBuffer, vertBuffer * 2],
     4: [blockSize - horzBuffer - cornerBuffer, vertBuffer * 2 + cornerBuffer],
     5: [blockSize - horzBuffer, colBuffer + vertBuffer * 2],
-    6: [blockSize - horzBuffer, blockSize - colBuffer - vertBuffer + (globalVars.upscale * 2)],
-    7: [blockSize - horzBuffer - cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
-    8: [blockSize - colBuffer - horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
-    9: [colBuffer + horzBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2)],
-    10: [horzBuffer + cornerBuffer, blockSize - vertBuffer  + (globalVars.upscale * 2) - cornerBuffer],
-    11: [horzBuffer, blockSize - colBuffer - vertBuffer  + (globalVars.upscale * 2)]
-  }
-}
+    6: [
+      blockSize - horzBuffer,
+      blockSize - colBuffer - vertBuffer + globalVars.upscale * 2,
+    ],
+    7: [
+      blockSize - horzBuffer - cornerBuffer,
+      blockSize - vertBuffer + globalVars.upscale * 2 - cornerBuffer,
+    ],
+    8: [
+      blockSize - colBuffer - horzBuffer,
+      blockSize - vertBuffer + globalVars.upscale * 2,
+    ],
+    9: [
+      colBuffer + horzBuffer,
+      blockSize - vertBuffer + globalVars.upscale * 2,
+    ],
+    10: [
+      horzBuffer + cornerBuffer,
+      blockSize - vertBuffer + globalVars.upscale * 2 - cornerBuffer,
+    ],
+    11: [
+      horzBuffer,
+      blockSize - colBuffer - vertBuffer + globalVars.upscale * 2,
+    ],
+  },
+  hitColBox: [
+    [0, 0],
+    [globalVars.upscale, 0],
+    [globalVars.blockSize, globalVars.blockSize],
+    [0, globalVars.blockSize],
+  ],
+};
 
-export default baseHero
+export default baseHero;

@@ -2,7 +2,7 @@ const eventEngine = (baseHero, type) => {
   // let {
   //   x,
   //   y,
-  //   heroDirection,
+  //   direction,
   //   eventX,
   //   eventY,
   //   blockSize,
@@ -17,44 +17,48 @@ const eventEngine = (baseHero, type) => {
   //   eventAnim,
   // } = eventObj
 
+
   // this chain determines where the event hitbox will appear based on the direction
   // the hero is facing
   if (baseHero.currentStam >= baseHero.stamDrain * baseHero.stamAttack) {
     if (baseHero.attackActive) {
-      baseHero.currentStam -= baseHero.stamDrain * baseHero.stamAttack
+      baseHero.currentStam -= baseHero.stamDrain * baseHero.stamAttack;
     }
-    const middleVal = (baseHero.blockSize - baseHero.attackBlockSize) / 2
-    if (baseHero.heroDirection === 'up') {
-      baseHero.eventX = baseHero.heroX + middleVal
-      baseHero.eventY = baseHero.heroY
-    } else if (baseHero.heroDirection === 'down') {
-      baseHero.eventX = baseHero.heroX + middleVal
-      baseHero.eventY = baseHero.heroY + baseHero.blockSize - baseHero.attackBlockSize
-    } else if (baseHero.heroDirection === 'left') {
-      baseHero.eventX = baseHero.heroX
-      baseHero.eventY = baseHero.heroY + middleVal
-    } else if (baseHero.heroDirection === 'right') {
-      baseHero.eventX = baseHero.heroX + baseHero.blockSize - baseHero.attackBlockSize
-      baseHero.eventY = baseHero.heroY + middleVal
-    } else if (baseHero.heroDirection === 'upleft') {
-      baseHero.eventX = baseHero.heroX + baseHero.attackBlockSize / 2
-      baseHero.eventY = baseHero.heroY + baseHero.attackBlockSize / 2
-    } else if (baseHero.heroDirection === 'upright') {
-      baseHero.eventX = baseHero.heroX + baseHero.blockSize - baseHero.attackBlockSize
-      baseHero.eventY = baseHero.heroY + baseHero.attackBlockSize / 2
-    } else if (baseHero.heroDirection === 'downleft') {
-      baseHero.eventX = baseHero.heroX + baseHero.attackBlockSize / 2
-      baseHero.eventY = baseHero.heroY + baseHero.blockSize - baseHero.attackBlockSize
-    } else if (baseHero.heroDirection === 'downright') {
-      baseHero.eventX = baseHero.heroX + baseHero.blockSize - baseHero.attackBlockSize * 2
-      baseHero.eventY = baseHero.heroY + baseHero.blockSize - baseHero.attackBlockSize
+    const middleVal = (baseHero.blockSize - baseHero.attackBlockSize) / 2;
+    if (baseHero.direction === "up") {
+      baseHero.eventX = baseHero.x + middleVal;
+      baseHero.eventY = baseHero.y;
+    } else if (baseHero.direction === "down") {
+      baseHero.eventX = baseHero.x + middleVal;
+      baseHero.eventY =
+        baseHero.y + baseHero.blockSize - baseHero.attackBlockSize;
+    } else if (baseHero.direction === "left") {
+      baseHero.eventX = baseHero.x;
+      baseHero.eventY = baseHero.y + middleVal;
+    } else if (baseHero.direction === "right") {
+      baseHero.eventX =
+        baseHero.x + baseHero.blockSize - baseHero.attackBlockSize;
+      baseHero.eventY = baseHero.y + middleVal;
+    } else if (baseHero.direction === "upleft") {
+      baseHero.eventX = baseHero.x + baseHero.attackBlockSize / 2;
+      baseHero.eventY = baseHero.y + baseHero.attackBlockSize / 2;
+    } else if (baseHero.direction === "upright") {
+      baseHero.eventX =
+        baseHero.x + baseHero.blockSize - baseHero.attackBlockSize;
+      baseHero.eventY = baseHero.y + baseHero.attackBlockSize / 2;
+    } else if (baseHero.direction === "downleft") {
+      baseHero.eventX = baseHero.x + baseHero.attackBlockSize / 2;
+      baseHero.eventY =
+        baseHero.y + baseHero.blockSize - baseHero.attackBlockSize;
+    } else if (baseHero.direction === "downright") {
+      baseHero.eventX =
+        baseHero.x + baseHero.blockSize - baseHero.attackBlockSize * 2;
+      baseHero.eventY =
+        baseHero.y + baseHero.blockSize - baseHero.attackBlockSize;
     }
   }
 
-
-
   return baseHero
-
-}
+};
 
 export default eventEngine

@@ -1,14 +1,14 @@
-import { hero_spritesheets, sword_spritesheets } from "./spriteRef"
+import { hero_spritesheets, sword_spritesheets } from "./spriteRef";
 
-import globalVars from "./GlobalVars"
+import globalVars from "./GlobalVars";
 
 const baseHero = {
   cameraX: 1000,
   cameraY: 1000,
   targetCameraX: 1000,
   targetCameraY: 1000,
-  heroX: globalVars.heroCenterX,
-  heroY: globalVars.heroCenterY,
+  x: globalVars.heroCenterX,
+  y: globalVars.heroCenterY,
   targetHeroX: globalVars.heroCenterX,
   targetHeroY: globalVars.heroCenterY,
   topDashBoost: 1,
@@ -28,7 +28,7 @@ const baseHero = {
   heroCropY: 0,
   heroSprite: hero_spritesheets.down,
   swordSpriteSheet: sword_spritesheets.down,
-  heroDirection: 'down',
+  direction: "down",
   attackAnimation: false,
   blockSize: globalVars.blockSize,
   attackBlockSize: 4,
@@ -37,36 +37,36 @@ const baseHero = {
   coolDownLevelMax: 100,
   attackCooldownOff: true,
   attackActive: false,
-  maxStam: 100,
-  currentStam: 100,
+  maxVitality: 100,
+  currentVitality: 100,
   eventX: -400,
   eventY: -400,
   keys: {
     ArrowUp: {
-      pressed:false
+      pressed: false,
     },
     ArrowDown: {
-      pressed:false
+      pressed: false,
     },
     ArrowLeft: {
-      pressed:false
+      pressed: false,
     },
     ArrowRight: {
-      pressed:false
+      pressed: false,
     },
     Space: {
-      pressed:false
+      pressed: false,
     },
     Shift: {
-      pressed:false
+      pressed: false,
     },
     e: {
-      pressed:false
+      pressed: false,
     },
     mouse1: {
-      pressed:false
-    }
+      pressed: false,
+    },
   },
-}
+};
 
-export default baseHero
+export default baseHero;
