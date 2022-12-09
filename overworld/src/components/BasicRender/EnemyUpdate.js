@@ -77,7 +77,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
 
         el.data = eventEngine(el.data, "attack");
         // console.log(el.data)
-        
+
         const attackEngineReturn = attackEngine(el.data, baseHero);
 
         baseHero = attackEngineReturn[0];
