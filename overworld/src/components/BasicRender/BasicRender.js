@@ -74,7 +74,7 @@ onmousemove = (event) => {
 // const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
 // const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
 
-const grassPatch1 = new Patch(500, 500, 14, 14, [grass_1, grass_2, grass_3], 0.05);
+const grassPatch1 = new Patch(500, 500, 20, 20, [grass_1, grass_2, grass_3], 0.05);
 const grassPatch2 = new Patch(
   -500,
   -500,
@@ -127,31 +127,31 @@ const BasicRender = ({}) => {
   const comboCanvas = useRef(null);
 
   const wolfenGroupCreator = [
-    // {
-    //   base: wolfen,
-    //   x: -100,
-    //   y: -100,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1564,
-    //   y: 1500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
-    // },
+    {
+      base: wolfen,
+      x: -100,
+      y: -100,
+    },
+    {
+      base: wolfen,
+      x: 1564,
+      y: 1500,
+    },
+    {
+      base: wolfen,
+      x: 1500,
+      y: 1564,
+    },
     {
       base: wolfen,
       x: 436,
       y: 500,
     },
-    // {
-    //   base: wolfen,
-    //   x: 1436,
-    //   y: 564,
-    // },
+    {
+      base: wolfen,
+      x: 1436,
+      y: 564,
+    },
   ];
 
   // creates an enemy group
@@ -559,28 +559,32 @@ const BasicRender = ({}) => {
         baseHero,
         backgroundCtx,
         foregroundCtx,
-        collisionCtx
+        collisionCtx,
+        dataVisCtx
       );
       animatedObjectsRender(
         grassPatch2.definition(),
         baseHero,
         backgroundCtx,
         foregroundCtx,
-        collisionCtx
+        collisionCtx,
+        dataVisCtx
       );
       animatedObjectsRender(
         grassPatch3.definition(),
         baseHero,
         backgroundCtx,
         foregroundCtx,
-        collisionCtx
+        collisionCtx,
+        dataVisCtx
       );
       animatedObjectsRender(
         barrelPatch.definition(),
         baseHero,
         backgroundCtx,
         foregroundCtx,
-        collisionCtx
+        collisionCtx,
+        dataVisCtx
       );
       foregroundCtx.globalAlpha = 0.85;
 
@@ -627,8 +631,8 @@ const BasicRender = ({}) => {
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
       // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
       // backgroundCtx.fillRect( globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
-      // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-      // backgroundCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
+      // dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+      // dataVisCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
       // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
       // dataVisCtx.fillRect(globalVars.middleX, globalVars.middleY, 4, 4) // shows true middle pixel of screen, at least as far as the pixel upscale allows
 

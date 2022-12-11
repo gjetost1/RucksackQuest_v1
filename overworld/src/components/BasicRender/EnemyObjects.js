@@ -90,7 +90,7 @@ export const wolfen = {
   fleeing: false,
   aggroRadius: 340,
   fleeingRadius: 200,
-  attackRadius: 100,
+  attackRadius: 180,
   currentSprite: wolfen_down,
   spriteSheets: {
     down: wolfen_down,

@@ -92,6 +92,8 @@ const baseHero = {
   targetHeroY: globalVars.heroCenterY,
   frameXChange: 0,
   frameYChange: 0,
+  bonusFrameXChange: 0,
+  bonusFrameYChange: 0,
   totalXChange: 0,
   totalYChange: 0,
   baseXVel: 4,

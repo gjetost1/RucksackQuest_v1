@@ -76,63 +76,51 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
       if (
         checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.attackRadius)
         && el.data.attackCooldownOff
+        && !el.data.fleeing
       ) {
-        console.log('trigger attacking')
+        // console.log('trigger attacking')
         el.data.attacking = true;
         el.data.chasing = false;
-        el.data.attackActive = true;
+
+        // const attackAnimTimeout = setTimeout(() => {
+          // }, 1000)
+
+          if (
+            checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize - baseHero.blockSize / 8)
+            ) {
+              el.data.spriteAnimCounter = 0;
+              el.cropX = el.data.blockSize * el.data.movementFrames;
+              el.data.animFrames = el.data.movementFrames + el.data.attackFrames - 1;
+              el.data.spriteAnimSpeed = 2;
+              el.data.attackAnimCooldown = true
+              el.data.attackActive = true;
+              el.data.attackCooldownOff = false;
+              el.data = eventEngine(el.data, "attack");
+              const attackEngineReturn = attackEngine(el.data, baseHero, dataVisCtx);
+              baseHero = attackEngineReturn[0];
+              // const heroCollision = attackEngineReturn[1];
+              el.data.attacking = false;
+              el.data.fleeing = true
+              const cooldown = setTimeout(() => {
+                // enables this attack again after eventTimeout # of seconds, essentially a cooldown
+                el.data.attackCooldownOff = true;
+                // el.data.attacking = true;
+                // console.log('cooldown over')
+                clearTimeout(cooldown)
+              }, 3000);
+
+              // sets duration of event, set by eventObj.eventDuration in seconds
+              const eventDuration = setTimeout(() => {
+                clearTimeout(eventDuration);
+                el.data.attackActive = false;
+                el.data.eventX = -400;
+                el.data.eventY = -400;
+                // console.log('attack over')
+                clearTimeout(eventDuration)
+              }, 100);
+          }
 
 
-        el.data.spriteAnimCounter = 0;
-        el.cropX = el.data.blockSize * el.data.movementFrames;
-        el.data.animFrames = el.data.movementFrames + el.data.attackFrames - 1;
-        el.data.attackAnimCooldown = true
-        el.data.spriteAnimSpeed = 2;
-
-        if (
-          checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize)
-          ) {
-          el.data.attackCooldownOff = false;
-          el.data = eventEngine(el.data, "attack");
-          const attackEngineReturn = attackEngine(el.data, baseHero, dataVisCtx);
-          baseHero = attackEngineReturn[0];
-          const heroCollision = attackEngineReturn[1];
-          el.data.attacking = false;
-          el.data.fleeing = true
-        }
-
-        // console.log(el.data.animFrames)
-
-        // console.log(el.data.spriteAnimSpeed)
-
-
-
-
-
-
-        // if (el.data.attackActive && !heroCollision) {
-        // const animated = animate(baseHero.damageAnim);
-        // baseHero.damageActive = animated[0];
-        // baseHero.damageAnim = animated[1];
-        // }
-
-        const cooldown = setTimeout(() => {
-          // enables this attack again after eventTimeout # of seconds, essentially a cooldown
-          el.data.attackCooldownOff = true;
-          el.data.attacking = true;
-          // console.log('cooldown over')
-          clearTimeout(cooldown)
-        }, 3000);
-
-        // sets duration of event, set by eventObj.eventDuration in seconds
-        const eventDuration = setTimeout(() => {
-          clearTimeout(eventDuration);
-          el.data.attackActive = false;
-          el.data.eventX = -400;
-          el.data.eventY = -400;
-          // console.log('attack over')
-          clearTimeout(eventDuration)
-        }, 100);
       } else if (
         checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.aggroRadius)
       ) {
@@ -185,12 +173,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
     if (
       checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize * 1.5)
     ) {
-      // const tempCMasks = [{
-      //   tl: [el.cMasks[0].tl[0] + baseHero.totalXChange, el.cMasks[0].tl[1] + baseHero.totalYChange],
-      //   tr: [el.cMasks[0].tr[0] + baseHero.totalXChange, el.cMasks[0].tr[1] + baseHero.totalYChange],
-      //   bl: [el.cMasks[0].bl[0] + baseHero.totalXChange, el.cMasks[0].bl[1] + baseHero.totalYChange],
-      //   br: [el.cMasks[0].br[0] + baseHero.totalXChange, el.cMasks[0].br[1] + baseHero.totalYChange],
-      // }]
+
 
       if (baseHero.attackActive || baseHero.bloodDrainActive) {
         const attackEngineReturn = attackEngine(baseHero, el.data, dataVisCtx);
@@ -260,27 +243,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
       el.data.animFrames = el.data.movementFrames + el.data.attackFrames + el.data.dyingFrames;
       el.data.spriteAnimSpeed = 22;
     }
-    // if (el.data.takeDamage) {
-    //   el.data.damageAnim.data.active = true
-    // }
 
-    // spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
-    // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-    // spriteCtx.fillRect(el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
-
-    //   spriteCtx.drawImage(el.image, el.crop.x, el.crop.y, el.data.blockSize, el.data.blockSize, el.position.x, el.position.y, el.data.blockSize, el.data.blockSize)
-
-    // if (el.data.damageActive) {
-    //   spriteCtx.drawImage(el.data.damageAnim.image, el.data.damageAnim.crop.x, el.data.damageAnim.crop.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize, el.position.x, el.position.y, el.data.damageAnim.data.blockSize, el.data.damageAnim.data.blockSize)
-    //   const animated = animate(el.data.damageAnim)
-    //   el.data.damageActive = animated[0]
-    //   el.data.damageAnim = animated[1]
-    // }
-    // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
-    // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-    // spriteCtx.fillRect(globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
-    dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-    dataVisCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
+    // uncomment to show enemy attack hitbox
+    // dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+    // dataVisCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
   }
   return [enemyArr, baseHero];
 };

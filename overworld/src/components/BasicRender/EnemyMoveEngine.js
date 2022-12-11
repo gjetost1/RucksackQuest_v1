@@ -23,9 +23,10 @@ const attackAnimate = (element) => {
     element.cropX += element.blockSize;
     element.spriteAnimCounter = 0;
     if (element.cropX >= element.blockSize * element.animFrames) {
+      console.log('animation over')
       element.cropX = 0;
-      element.attackAnimCooldown = false
-      console.log('maximum reached')
+      // element.attackAnimCooldown = false
+      // console.log('maximum reached')
       return [false, element];
     }
   }
@@ -501,14 +502,14 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
 
   // console.log(enemyObject.direction, enemyObject.currentSprite)
     // runs attack animation
-    if (enemyObject.attackAnimCooldown && !enemyObject.attackCooldownOff) {
-      // console.log('running')
+    if (enemyObject.attackAnimCooldown) {
+      console.log('running')
       const attackAnimation = attackAnimate(enemyObject);
       // console.log(attackAnimation)
-      // el.data.attackAnimCooldown = attackAnimation[0];
+      enemyObject.attackAnimCooldown = attackAnimation[0];
       enemyObject = attackAnimation[1];
       if (!enemyObject.attackAnimCooldown) { // resets animation after attack
-        console.log('reset')
+        // console.log('reset')
         enemyObject.spriteAnimCounter = 0;
         enemyObject.cropX = 0;
         enemyObject.animFrames = enemyObject.movementFrames;
@@ -533,7 +534,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
     }
     enemyObject.spriteAnimCounter++;
   } else {
-    enemyObject.cropX = 0;
+    // enemyObject.cropX = 0;
   }
 
   return enemyObject;

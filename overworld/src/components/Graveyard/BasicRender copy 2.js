@@ -487,8 +487,8 @@ const BasicRender = ({}) => {
       cursorRender(cursorCtx, cursor, cursorX, cursorY);
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
-      backgroundCtx.fillStyle = "rgba(255, 0, 0, 1)";
-      backgroundCtx.fillRect(baseHero.x, baseHero.y, 10, 10);
+      // backgroundCtx.fillStyle = "rgba(255, 0, 0, 1)";
+      // backgroundCtx.fillRect(baseHero.x, baseHero.y, 10, 10);
       // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
       // backgroundCtx.fillRect(baseHero.cameraX, baseHero.cameraY, 10, 10)
     };

@@ -150,7 +150,8 @@ const animatedObjectsRender = (
   baseHero,
   backgroundCtx,
   foregroundCtx,
-  collisionCtx
+  collisionCtx,
+  dataVisCtx
 ) => {
   if (!windBlow) {
     if (Math.floor(Math.random() * 1000) === 13) {
@@ -179,6 +180,8 @@ const animatedObjectsRender = (
     // el.x + globalVars.heroStartXCoord - baseHero.cameraX, el.y + globalVars.heroStartYCoord - baseHero.cameraY
     const globalX = el.x + baseHero.totalXChange;
     const globalY = el.y + baseHero.totalYChange;
+
+    // console.log(baseHero.totalXChange, baseHero.totalYChange)
     // this first if statement only allows animated elements to render if they are within one blocksize of the visible
     // canvas. Will need to change this if there are any elements that are larger than one blocksize
     if (
@@ -239,34 +242,39 @@ const animatedObjectsRender = (
         // console.log("after", tempCMasks)
         // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
         // backgroundCtx.fillRect(el.cMasks[0].tl[0] - xChange,  el.cMasks[0].tl[1] - yChange, 64, 64)
+
         collision =
           checkBoxCollision(
             baseHero.eventX,
             baseHero.eventY,
             colBox,
             tempCMasks,
-            0
+            0,
+            dataVisCtx
           ) &&
           checkBoxCollision(
             baseHero.eventX,
             baseHero.eventY,
             colBox,
             tempCMasks,
-            1
+            1,
+            dataVisCtx
           ) &&
           checkBoxCollision(
             baseHero.eventX,
             baseHero.eventY,
             colBox,
             tempCMasks,
-            2
+            2,
+            dataVisCtx
           ) &&
           checkBoxCollision(
             baseHero.eventX,
             baseHero.eventY,
             colBox,
             tempCMasks,
-            3
+            3,
+            dataVisCtx
           );
 
         // renders to collisionCanvas if the object is solid and not destroyed or breaking
@@ -286,7 +294,7 @@ const animatedObjectsRender = (
         }
       }
 
-      
+
 
       if (
         baseHero.attackActive &&

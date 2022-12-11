@@ -2,40 +2,44 @@ import globalVars from "./GlobalVars";
 import checkBoxCollision from "./CheckBoxCollision";
 // handles hits on enemy or on hero
 
-const collisionCheck = (attacker, target, tempCMasks) => {
+const collisionCheck = (attacker, target, tempCMasks, dataVisCtx) => {
   return (
     checkBoxCollision(
       attacker.eventX,
       attacker.eventY,
       target.hitColBox,
       tempCMasks,
-      0
-      ) &&
-      checkBoxCollision(
-      attacker.eventX,
-      attacker.eventY,
-      target.hitColBox,
-      tempCMasks,
-      1
+      0,
+      dataVisCtx
       ) &&
       checkBoxCollision(
         attacker.eventX,
-      attacker.eventY,
-      target.hitColBox,
-      tempCMasks,
-      2
+        attacker.eventY,
+        target.hitColBox,
+        tempCMasks,
+        1,
+        dataVisCtx
+      ) &&
+      checkBoxCollision(
+        attacker.eventX,
+        attacker.eventY,
+        target.hitColBox,
+        tempCMasks,
+        2,
+        dataVisCtx
     ) &&
     checkBoxCollision(
       attacker.eventX,
       attacker.eventY,
       target.hitColBox,
       tempCMasks,
-      3
+      3,
+      dataVisCtx
     )
   );
 };
 
-const attackEngine = (attacker, target, spriteCtx) => {
+const attackEngine = (attacker, target, dataVisCtx) => {
   // let collision = true;
   const tempCMasks = [
     {
@@ -47,7 +51,7 @@ const attackEngine = (attacker, target, spriteCtx) => {
   ];
 
 
-  let collision = collisionCheck(attacker, target, tempCMasks);
+  let collision = collisionCheck(attacker, target, tempCMasks, dataVisCtx);
   // console.log(collision)
   // uncomment to show corners of collisionMask where a hit will register on enemy
   // spriteCtx.fillRect(tempCMasks[0].tl[0], tempCMasks[0].tl[1], 4, 4)
@@ -61,6 +65,8 @@ const attackEngine = (attacker, target, spriteCtx) => {
     let tempY
     let tempBaseDamage
     let tempDamageRange
+    let tempXRef = tempX // used to set x and y frame changes from knockback if enemy hits hero
+    let tempYRef = tempY
     if (target.type === 'enemy') {
       tempX = target.x
       tempY = target.y
@@ -74,6 +80,8 @@ const attackEngine = (attacker, target, spriteCtx) => {
       tempY = target.targetCameraY
       tempBaseDamage = attacker.baseDamage
       tempDamageRange = attacker.damageRange
+      tempXRef = tempX
+      tempYRef = tempY
     }
     const damageRange = Math.round(Math.random() * tempDamageRange)
     // console.log(tempBaseDamage + damageRange)
@@ -129,6 +137,8 @@ const attackEngine = (attacker, target, spriteCtx) => {
     } else if (target.type === 'hero') {
       target.targetCameraX = tempX
       target.targetCameraY = tempY
+      target.bonusFrameXChange = tempXRef - tempX
+      target.bonusFrameYChange = tempYRef - tempY
     }
   }
   // console.log('after', target)
