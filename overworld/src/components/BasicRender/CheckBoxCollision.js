@@ -3,7 +3,7 @@ import globalVars from "./GlobalVars"
 // checkCollision checks if baseHero.x,baseHero.y coordinates are inside one of the collision masks in cMask
 // returns false if there is a collision and true if there is not
 const checkBoxCollision = (x, y, colBox, cMasks, corner) => {
-
+  // console.log(x, y)
   // const colBuffer = 4 // number of pixels away from hero that detectors sit
   // const horzBuffer = 4
   // const vertBuffer = 12
@@ -33,7 +33,6 @@ const checkBoxCollision = (x, y, colBox, cMasks, corner) => {
   // ]
 
 
-
   for (let i = 0; i < cMasks.length; i++) {
     //  loops every collision mask in cMasks array to check for collisions with hero
     let { tl, tr, bl, br } = cMasks[i]; // coordinates of the 4 corners of the collision mask
@@ -47,7 +46,7 @@ const checkBoxCollision = (x, y, colBox, cMasks, corner) => {
         x + colBox[corner][0] < br[0] &&
         y + colBox[corner][1] < br[1]
       ) {
-        // console.log('!!!COLLISION ', corner)
+        console.log('!!!COLLISION ', corner)
         return false;
       }
   }

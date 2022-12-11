@@ -4,7 +4,7 @@ import checkBoxCollision from "./CheckBoxCollision";
 import eventEngine from "./EventEngine";
 import attackEngine from "./AttackEngine";
 
-let enemyCollision = false
+let enemyCollision = false;
 
 // animates dying and blood drain
 const animate = (element) => {
@@ -24,7 +24,6 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
   if (!enemyArr) return;
 
   for (let el of enemyArr) {
-    console.log(el.data.currentVitality)
     // console.log(el.data.direction, el.data.moving)
     // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
     if (el.data.solid) {
@@ -69,33 +68,32 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         el.data.y < globalVars.heroCenterY + el.data.attackRadius &&
         el.data.attackCooldownOff
       ) {
-        console.log('trigger attacking')
+        // console.log('trigger attacking')
         el.data.attacking = true;
         el.data.chasing = false;
         el.data.attackActive = true;
         el.data.attackCooldownOff = false;
 
         el.data = eventEngine(el.data, "attack");
-        // console.log(el.data)
 
-        const attackEngineReturn = attackEngine(el.data, baseHero);
+        const attackEngineReturn = attackEngine(el.data, baseHero, spriteCtx);
 
         baseHero = attackEngineReturn[0];
         const heroCollision = attackEngineReturn[1];
 
-        if (el.data.attackActive && !heroCollision) {
-          const animated = animate(baseHero.damageAnim);
-          baseHero.damageActive = animated[0];
-          baseHero.damageAnim = animated[1];
-        }
+        // if (el.data.attackActive && !heroCollision) {
+        // const animated = animate(baseHero.damageAnim);
+        // baseHero.damageActive = animated[0];
+        // baseHero.damageAnim = animated[1];
+        // }
 
         const cooldown = setTimeout(() => {
           // enables this attack again after eventTimeout # of seconds, essentially a cooldown
-          el.data.attackCooldownOff = true
-          el.data.attacking = true
-          console.log('cooldown over')
-          clearTimeout(cooldown)
-        }, 3000)
+          el.data.attackCooldownOff = true;
+          el.data.attacking = true;
+          // console.log('cooldown over')
+          // clearTimeout(cooldown)
+        }, 3000);
 
         // sets duration of event, set by eventObj.eventDuration in seconds
         const eventDuration = setTimeout(() => {
@@ -103,14 +101,9 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           el.data.attackActive = false;
           el.data.eventX = -400;
           el.data.eventY = -400;
-          console.log('attack over')
-          clearTimeout(eventDuration)
-        }, 100)
-
-        if (!el.data.attackActive) {
-          baseHero.takeDamage = false;
-        }
-
+          // console.log('attack over')
+          // clearTimeout(eventDuration)
+        }, 100);
       } else if (
         el.data.x > globalVars.heroCenterX - el.data.aggroRadius &&
         el.data.y > globalVars.heroCenterY - el.data.aggroRadius &&
@@ -122,6 +115,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       } else {
         el.data.chasing = false;
         el.data.attacking = false;
+      }
+
+      if (!el.data.attackActive) {
+        baseHero.takeDamage = false;
       }
 
       if (
@@ -157,6 +154,8 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       el.image.src = el.data.currentSprite;
     }
 
+    // if the enemy is close to the hero this checks for hero attacks
+    // and hits on the enemy
     if (
       el.data.x > globalVars.heroCenterX - baseHero.blockSize &&
       el.data.x < globalVars.heroCenterX + baseHero.blockSize &&
@@ -171,11 +170,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       // }]
 
       if (baseHero.attackActive || baseHero.bloodDrainActive) {
-        const attackEngineReturn = attackEngine(baseHero, el.data);
+        const attackEngineReturn = attackEngine(baseHero, el.data, spriteCtx);
         el.data = attackEngineReturn[0];
         enemyCollision = attackEngineReturn[1];
       }
-
 
       // handles blood draining of enemies
       if (
@@ -183,14 +181,14 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         !enemyCollision &&
         el.data.dead &&
         el.data.currentBloodLevel > 0 &&
-        baseHero.equipment.currentFillTank
+        baseHero.equipment.bloodTanks.currentFillTank
       ) {
         // console.log(baseHero.currentVitality)
-        // console.log('current tank', baseHero.equipment.currentFillTank)
+        // console.log('current tank', baseHero.equipment.bloodTanks.currentFillTank)
         // console.log('all tanks', baseHero.equipment.bloodTanks[0])
         if (
-          baseHero.equipment.currentFillTank.data.currentVolume <
-          baseHero.equipment.currentFillTank.data.maxVolume
+          baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume <
+          baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume
         ) {
           // console.log('draining')
           // animates blood effect on enemy corpse when draining
@@ -199,30 +197,31 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           el.data.damageActive = animated[0];
           el.data.damageAnim = animated[1];
           el.data.currentBloodLevel -= baseHero.bloodDrainRate;
-          baseHero.equipment.currentFillTank.data.currentVolume +=
+          baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume +=
             baseHero.bloodDrainRate;
-          baseHero.equipment.bloodSound.play();
+          baseHero.equipment.bloodTanks.bloodSound.play();
           if (el.data.currentBloodLevel <= 0) {
             el.crop.x = el.data.bloodlessFrame * el.data.blockSize;
           }
           if (
-            baseHero.equipment.currentFillTank.data.currentVolume >
-            baseHero.equipment.currentFillTank.data.maxVolume
+            baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume >
+            baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume
           ) {
-            baseHero.equipment.currentFillTank.data.currentVolume =
-              baseHero.equipment.currentFillTank.data.maxVolume;
-            baseHero.equipment.bloodSound.pause();
+            baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume =
+            baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume;
+            baseHero.equipment.bloodTanks.changeCurrentTank = false
+            baseHero.equipment.bloodTanks.bloodSound.pause();
           }
-        } else if (!baseHero.equipment.changeCurrentFillTank) {
-          baseHero.equipment.changeCurrentFillTank = true;
+        } else if (!baseHero.equipment.bloodTanks.changeCurrentFillTank) {
+          baseHero.equipment.bloodTanks.changeCurrentFillTank = true;
           // console.log('tank change')
-          baseHero.equipment.bloodSound.pause();
+          baseHero.equipment.bloodTanks.bloodSound.pause();
         }
       } else if (baseHero.bloodDrainActive && enemyCollision) {
         baseHero.bloodDrainActive = false;
-        baseHero.equipment.bloodSound.pause();
+        baseHero.equipment.bloodTanks.bloodSound.pause();
       } else {
-        baseHero.equipment.bloodSound.pause();
+        baseHero.equipment.bloodTanks.bloodSound.pause();
       }
     }
     if (!baseHero.attackActive) {

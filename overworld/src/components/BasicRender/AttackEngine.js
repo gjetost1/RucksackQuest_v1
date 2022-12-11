@@ -1,42 +1,42 @@
 import globalVars from "./GlobalVars";
 import checkBoxCollision from "./CheckBoxCollision";
 // handles hits on enemy or on hero
-let collision = true;
 
-const collisionCheck = (baseHero, el, tempCMasks) => {
+const collisionCheck = (attacker, target, tempCMasks) => {
   return (
     checkBoxCollision(
-      baseHero.eventX,
-      baseHero.eventY,
-      el.hitColBox,
+      attacker.eventX,
+      attacker.eventY,
+      target.hitColBox,
       tempCMasks,
       0
-    ) &&
-    checkBoxCollision(
-      baseHero.eventX,
-      baseHero.eventY,
-      el.hitColBox,
+      ) &&
+      checkBoxCollision(
+      attacker.eventX,
+      attacker.eventY,
+      target.hitColBox,
       tempCMasks,
       1
-    ) &&
-    checkBoxCollision(
-      baseHero.eventX,
-      baseHero.eventY,
-      el.hitColBox,
+      ) &&
+      checkBoxCollision(
+        attacker.eventX,
+      attacker.eventY,
+      target.hitColBox,
       tempCMasks,
       2
     ) &&
     checkBoxCollision(
-      baseHero.eventX,
-      baseHero.eventY,
-      el.hitColBox,
+      attacker.eventX,
+      attacker.eventY,
+      target.hitColBox,
       tempCMasks,
       3
     )
   );
 };
 
-const attackEngine = (attacker, target) => {
+const attackEngine = (attacker, target, spriteCtx) => {
+  // let collision = true;
   const tempCMasks = [
     {
       tl: [target.x, target.y],
@@ -46,8 +46,9 @@ const attackEngine = (attacker, target) => {
     },
   ];
 
-  collision = collisionCheck(attacker, target, tempCMasks);
 
+  let collision = collisionCheck(attacker, target, tempCMasks);
+  // console.log(collision)
   // uncomment to show corners of collisionMask where a hit will register on enemy
   // spriteCtx.fillRect(tempCMasks[0].tl[0], tempCMasks[0].tl[1], 4, 4)
   // spriteCtx.fillRect(tempCMasks[0].tr[0], tempCMasks[0].tr[1], 4, 4)
@@ -55,9 +56,28 @@ const attackEngine = (attacker, target) => {
   // spriteCtx.fillRect(tempCMasks[0].br[0], tempCMasks[0].br[1], 4, 4)
 
   if (attacker.attackActive && !collision && !target.takeDamage) {
-
-    target.currentVitality -= 100;
-    console.log('hit!!!', target.currentVitality, attacker.currentVitality)
+    // different effects if target is enemy or hero
+    let tempX
+    let tempY
+    let tempBaseDamage
+    let tempDamageRange
+    if (target.type === 'enemy') {
+      tempX = target.x
+      tempY = target.y
+      tempBaseDamage = attacker.equipment.weapon.baseDamage
+      tempDamageRange = attacker.equipment.weapon.damageRange
+      target.fleeing = true;
+      target.moving = true;
+      target.dashing = true;
+    } else if (target.type === 'hero') {
+      tempX = target.targetCameraX
+      tempY = target.targetCameraY
+      tempBaseDamage = attacker.baseDamage
+      tempDamageRange = attacker.damageRange
+    }
+    const damageRange = Math.round(Math.random() * tempDamageRange)
+    console.log(tempBaseDamage + damageRange)
+    target.currentVitality -= tempBaseDamage + damageRange;
     target.takeDamage = true;
     target.damageActive = true;
     target.damageAnim.active = true;
@@ -65,43 +85,53 @@ const attackEngine = (attacker, target) => {
     collision = false;
     // plays enemy damage sound if hit doesn't kill
     if (target.currentVitality > 0) {
-      // target.damageSound.play();
+      target.damageSound.play();
+    } else if (target.currentVitality <= 0) {
+      target.currentVitality = 0
     }
-    target.moving = true;
-    target.dashing = true;
+
     const damageMoveScale = target.blockSize / globalVars.upscale;
-    target.fleeing = true;
+
+
+
     if (attacker.direction === "down") {
-      target.y += damageMoveScale;
+      tempY += damageMoveScale;
       target.direction = "down";
     } else if (attacker.direction === "up") {
-      target.y -= damageMoveScale;
+      tempY -= damageMoveScale;
       target.direction = "up";
     } else if (attacker.direction === "left") {
-      target.x -= damageMoveScale;
+      tempX -= damageMoveScale;
       target.direction = "left";
     } else if (attacker.direction === "right") {
-      target.y += damageMoveScale;
+      tempY += damageMoveScale;
       target.direction = "right";
     } else if (attacker.direction === "upleft") {
-      target.x -= damageMoveScale;
-      target.y -= damageMoveScale;
+      tempX -= damageMoveScale;
+      tempY -= damageMoveScale;
       target.direction = "upleft";
     } else if (attacker.direction === "upright") {
-      target.x += damageMoveScale;
-      target.y -= damageMoveScale;
+      tempX += damageMoveScale;
+      tempY -= damageMoveScale;
       target.direction = "upright";
     } else if (attacker.direction === "downleft") {
-      target.x -= damageMoveScale;
-      target.y += damageMoveScale;
+      tempX -= damageMoveScale;
+      tempY += damageMoveScale;
       target.direction = "downleft";
     } else if (attacker.direction === "downright") {
-      target.x += damageMoveScale;
-      target.y += damageMoveScale;
+      tempX += damageMoveScale;
+      tempY += damageMoveScale;
       target.direction = "downright";
     }
+    if (target.type === 'enemy') {
+      target.x = tempX
+      target.y = tempY
+    } else if (target.type === 'hero') {
+      target.targetCameraX = tempX
+      target.targetCameraY = tempY
+    }
   }
-  console.log()
+  // console.log('after', target)
   return [target, collision];
 };
 

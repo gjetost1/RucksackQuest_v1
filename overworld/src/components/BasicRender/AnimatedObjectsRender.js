@@ -216,12 +216,14 @@ const animatedObjectsRender = (
       // checks for attack collisions if hero is within 2 blocksizes of the element
       // also renders to collisionCanvas if the object is solid and not destroyed
       let collision = true;
+
       if (
         globalX > globalVars.heroCenterX - baseHero.blockSize &&
         globalX < globalVars.heroCenterX + baseHero.blockSize &&
         globalY > globalVars.heroCenterY - baseHero.blockSize &&
         globalY < globalVars.heroCenterY + baseHero.blockSize
       ) {
+
         const xChange = el.x - globalX;
         const yChange = el.y - globalY;
         // console.log('checking')
@@ -283,6 +285,8 @@ const animatedObjectsRender = (
           );
         }
       }
+
+      
 
       if (
         baseHero.attackActive &&

@@ -68,6 +68,7 @@ const vertBuffer = 4;
 const blockSize = globalVars.blockSize;
 
 export const wolfen = {
+  type: 'enemy',
   x: globalVars.heroCenterX,
   y: globalVars.heroCenterY,
   cropX: 0,
@@ -78,6 +79,8 @@ export const wolfen = {
   eventY: -400,
   direction: "down",
   attackActive: false,
+  baseDamage: 30, // attack always does this amount of damage
+  damageRange: 16, // attack may also do between 0 and this much additional damage
   attackBlockSize: globalVars.upscale,
   attackCooldownOff: true,
   moving: false,
@@ -108,9 +111,6 @@ export const wolfen = {
   baseMoveSpeed: 20,
   moveSpeed: 20,
   dashSpeed: 34,
-  stamDrain: 1,
-  stamAttack: 10,
-  stamRecovery: 0.4,
   frameCountLimiter: 0,
   maxFrameCountLimiter: 100,
   blockSize: 64,
@@ -164,8 +164,12 @@ export const wolfen = {
   ],
   maxVitality: 100,
   currentVitality: 100,
-  maxStam: 100,
-  currentStam: 100,
+  attackDamage: 25,
+  maxFatigue: 300,
+  currentFatigue: 300,
+  fatigueDrain: 1,
+  fatigueAttack: 10,
+  fatigueRecovery: 1,
   takeDamage: false,
   dead: false,
   dying: false,

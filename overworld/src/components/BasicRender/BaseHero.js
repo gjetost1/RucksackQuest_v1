@@ -24,6 +24,7 @@ import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter
 import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
 
 import blood_pour_src from "../../assets/sounds/hero/blood_pour.mp3";
+import damage_grunt_src from "../../assets/sounds/hero/man_grunt.mp3";
 
 // creates the sprite for enemy damage effects
 class damageSprite {
@@ -69,6 +70,9 @@ const blood_pour = new Audio(blood_pour_src);
 blood_pour.volume = 1;
 blood_pour.loop = true;
 
+const damage_grunt = new Audio(damage_grunt_src);
+damage_grunt.volume = .4;
+
 // used to create the collision box colBox for hero
 const colBuffer = 12; // number of pixels away from hero that detectors sit
 const cornerBuffer = 4;
@@ -77,6 +81,7 @@ const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
 const baseHero = {
+  type: 'hero',
   cameraX: globalVars.heroStartXCoord,
   cameraY: globalVars.heroStartYCoord,
   targetCameraX: globalVars.heroStartXCoord,
@@ -112,34 +117,42 @@ const baseHero = {
   },
   currentHeroSprite: down,
   equipment: {
-    spriteSheets: {
-      up: sword_up,
-      down: sword_down,
-      left: sword_left,
-      right: sword_right,
-      downleft: sword_downleft,
-      downright: sword_downright,
-      upleft: sword_upleft,
-      upright: sword_upright,
-      icon: sword_icon,
+    weapon: {
+      type: 'sword',
+      baseDamage: 20, // attack always does this amount of damage
+      damageRange: 14, // attack may also do between 0 and this much additional damage
+      spriteSheets: {
+        up: sword_up,
+        down: sword_down,
+        left: sword_left,
+        right: sword_right,
+        downleft: sword_downleft,
+        downright: sword_downright,
+        upleft: sword_upleft,
+        upright: sword_upright,
+        icon: sword_icon,
+      },
     },
-    bloodTanks: [
-      bloodTank_1,
-      bloodTank_2,
-      bloodTank_3,
-    ],
-    allTanksEmpty: false,
-    currentTank: false,
-    currentFillTank: false,
-    changeCurrentFillTank: false,
-    tankDrainActive: false,
-    bloodSound: blood_pour,
+    bloodTanks: {
+      inventory: [
+        bloodTank_1,
+        bloodTank_2,
+        bloodTank_3,
+      ],
+      allTanksEmpty: false,
+      currentTank: false,
+      currentFillTank: false,
+      changeCurrentFillTank: false,
+      changeCurrentTank: false,
+      tankDrainActive: false,
+      bloodSound: blood_pour,
+    },
   },
   currentEquipmentSprite: sword_down,
   direction: "down",
   attackAnimation: false,
   blockSize: globalVars.blockSize,
-  attackBlockSize: globalVars.blockSize,
+  attackBlockSize: globalVars.upscale,
   heroSpriteSize: 64,
   // coolDownLevel: 0,
   // coolDownLevelMax: 100,
@@ -149,14 +162,16 @@ const baseHero = {
   bloodDrainRate: 0.5,
   maxVitality: 300,
   currentVitality: 300,
+  // attackDamage: 25,
   maxFatigue: 300,
-  currentFatigue: 0,
-  stamDrain: 1,
-  stamAttack: 30,
-  stamRecovery: 0.2,
+  currentFatigue: 300,
+  fatigueDrain: 1,
+  fatigueAttack: 30,
+  fatigueRecovery: 1,
   eventX: -400,
   eventY: -400,
   damageAnim: bloodSplatter,
+  damageSound: damage_grunt,
   damageActive: false,
   takeDamage: false,
   keys: {

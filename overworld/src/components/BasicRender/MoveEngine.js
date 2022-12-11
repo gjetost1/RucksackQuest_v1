@@ -130,32 +130,34 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
   let yVel = 0;
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
-  if (baseHero.keys.Shift.pressed && baseHero.currentVitality > 0) {
+  if (baseHero.keys.Shift.pressed && baseHero.currentFatigue > 0) {
     baseHero.moveSpeed = baseHero.dashSpeed;
     // drains stamina if dash is active and there is directional input
-    if (baseHero.currentVitality > 0 && keysPressed) {
-      baseHero.currentVitality = baseHero.currentVitality - baseHero.stamDrain;
+    if (baseHero.currentFatigue > 0 && keysPressed) {
+      baseHero.currentFatigue = baseHero.currentFatigue - baseHero.fatigueDrain;
     }
   } else {
     baseHero.moveSpeed = baseHero.baseMoveSpeed;
     // regenerates stamina
-    if (
-      baseHero.currentVitality < baseHero.maxVitality &&
-      baseHero.equipment.tankDrainActive &&
-      baseHero.equipment.currentTank.data.currentVolume > 0
-    ) {
-      baseHero.currentVitality =
-        baseHero.currentVitality +
-        baseHero.stamRecovery *
-        baseHero.equipment.currentTank.data.growthFactor;
-    } else if (baseHero.currentVitality < baseHero.maxVitality) {
-      baseHero.currentVitality =
-      baseHero.currentVitality + baseHero.stamRecovery;
-    } else if (baseHero.equipment.allTanksEmpty) {
-      baseHero.currentVitality = baseHero.maxVitality;
+    if (baseHero.currentFatigue < baseHero.maxFatigue) {
+      baseHero.currentFatigue =
+        baseHero.currentFatigue + baseHero.fatigueRecovery;
+    } else if (baseHero.currentFatigue >= baseHero.maxFatigue) {
+      baseHero.currentFatigue = baseHero.maxFatigue;
     }
   }
 
+  // recovers hero vitality if bloodTank is active
+  if (
+    baseHero.currentVitality < baseHero.maxVitality &&
+    baseHero.equipment.bloodTanks.tankDrainActive &&
+    baseHero.equipment.bloodTanks.currentTank.data.currentVolume > 0
+  ) {
+    baseHero.currentVitality +=
+      baseHero.equipment.bloodTanks.currentTank.data.recoveryRate;
+  } else if (baseHero.currentVitality >= baseHero.maxVitality) {
+    baseHero.currentVitality = baseHero.maxVitality;
+  }
   // moves hero based on input
   // if (col0) {
   //   if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowLeft.pressed) {
@@ -412,42 +414,49 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
   //sets appropriate sprite for direction of movement
   if (xVel < 0 && yVel < 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.upleft;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.upleft;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.upleft;
     baseHero.direction = "upleft";
   }
   if (xVel > 0 && yVel < 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.upright;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.upright;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.upright;
     baseHero.direction = "upright";
   }
   if (xVel < 0 && yVel > 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.downleft;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.downleft;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.downleft;
     baseHero.direction = "downleft";
   }
   if (xVel > 0 && yVel > 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.downright;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.downright;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.downright;
     baseHero.direction = "downright";
   }
   if (xVel === 0 && yVel < 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.up;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.up;
+    baseHero.currentEquipmentSprite = baseHero.equipment.weapon.spriteSheets.up;
     baseHero.direction = "up";
   }
   if (xVel === 0 && yVel > 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.down;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.down;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.down;
     baseHero.direction = "down";
   }
   if (xVel < 0 && yVel === 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.left;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.left;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.left;
     baseHero.direction = "left";
   }
   if (xVel > 0 && yVel === 0) {
     baseHero.currentHeroSprite = baseHero.spriteSheets.right;
-    baseHero.currentEquipmentSprite = baseHero.equipment.spriteSheets.right;
+    baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.right;
     baseHero.direction = "right";
   }
   if (!keysPressed) {

@@ -74,7 +74,7 @@ onmousemove = (event) => {
 // const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
 // const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
 
-const grassPatch1 = new Patch(0, 0, 20, 20, [grass_1, grass_2, grass_3], 0.05);
+const grassPatch1 = new Patch(500, 500, 14, 14, [grass_1, grass_2, grass_3], 0.05);
 const grassPatch2 = new Patch(
   -500,
   -500,
@@ -157,14 +157,14 @@ const BasicRender = ({}) => {
 
   // sets an interval to re-load sprites since they flicker if they have been
   // de-loaded by the browser after not being used for a while
-  if (bufferIntervalSet) {
-    bufferIntervalSet = false;
-    spriteBuffer(baseHero, wolfenGroup);
-    setInterval(() => {
-      console.log("buffering");
-      spriteBuffer(baseHero, wolfenGroup);
-    }, 5000);
-  }
+  // if (bufferIntervalSet) {
+  //   bufferIntervalSet = false;
+  //   spriteBuffer(baseHero, wolfenGroup);
+  //   setInterval(() => {
+  //     console.log("buffering");
+  //     spriteBuffer(baseHero, wolfenGroup);
+  //   }, 3000);
+  // }
 
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
@@ -441,13 +441,14 @@ const BasicRender = ({}) => {
       // we will use their specific attributes to set the cooldown and effect duration
       // activates if there is enough stamina for attack
       if (
-        baseHero.currentVitality >= baseHero.stamDrain * baseHero.stamAttack &&
+        baseHero.currentFatigue >= baseHero.fatigueDrain * baseHero.fatigueAttack &&
         baseHero.keys.mouse1.pressed &&
         baseHero.attackCooldownOff
       ) {
         baseHero.attackCooldownOff = false;
         baseHero.attackActive = true;
         baseHero.attackAnimation = true;
+        // baseHero.currentFatigue -= baseHero.fatigueDrain * baseHero.fatigueAttack;
         // baseHero.coolDownLevel = 0; // sets the var for animating HUD cooldown level
 
         // calculates and draws attack effects on keypress with cooldown
@@ -472,11 +473,10 @@ const BasicRender = ({}) => {
           eventTimeout: 0.8,
           eventAnim: null,
         };
-
+        // spriteCtx.fillStyle = 'rgb(255, 0, 0)'
         // spriteCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
 
         baseHero = eventEngine(baseHero, "attack");
-
         // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
         const cooldown = setTimeout(() => {
           // enables this attack again after eventTimeout # of seconds, essentially a cooldown
@@ -604,14 +604,14 @@ const BasicRender = ({}) => {
         baseHero.attackAnimation = attackRet.attackAnimation;
         playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
         swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        heroRender([playerSprite, swordSprite]);
+        baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
       } else {
         // draws hero sprite image to canvas without attack animation
         // feed in sprite class instances in the order you want them rendered
         // eg typically base player sprite first, then clothing, then equipment
         playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
         swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        heroRender([playerSprite, swordSprite]);
+        baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
       }
 
       enemyRender(wolfenGroup, baseHero, spriteCtx, "front");

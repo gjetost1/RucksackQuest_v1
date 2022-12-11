@@ -112,7 +112,8 @@ const moveTowardsHero = (target, foregroundCtx) => {
 };
 
 const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
-  // console.log(enemyObject.x, enemyObject.y)
+  // console.log(enemyObject.currentFatigue)
+
 
   if (
     enemyObject.x <= 0 ||
@@ -141,7 +142,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
 
   // if enemy isn't in attack mode it moves around randomly
   if (enemyObject.attacking) {
-    console.log("attacking");
+    // console.log("attacking");
     enemyObject = moveTowardsHero(enemyObject, foregroundCtx);
     enemyObject.moving = true;
     enemyObject.dashing = true;
@@ -161,7 +162,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
 
   // toggles dashing on and off randomly if they have at least
   // a quarter of their full stamina
-  if (enemyObject.currentStam > enemyObject.maxStam / 4) {
+  if (enemyObject.currentFatigue > enemyObject.maxFatigue / 4) {
     enemyObject = dashFunc(enemyObject, 100);
   } else {
     // enemyObject.dashing = false
@@ -215,8 +216,8 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   if (enemyObject.dashing) {
     enemyObject.moveSpeed = enemyObject.dashSpeed;
     // drains stamina if dash is active and there is directional input
-    if (enemyObject.currentStam > 0 && enemyObject.moving) {
-      enemyObject.currentStam -= enemyObject.stamDrain;
+    if (enemyObject.currentFatigue > 0 && enemyObject.moving) {
+      enemyObject.currentFatigue -= enemyObject.fatigueDrain;
     }
     // console.log('dashing')
   } else {
@@ -224,10 +225,10 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
     // console.log('not dashing')
 
     // regenerates stamina
-    if (enemyObject.currentStam < enemyObject.maxStam) {
-      enemyObject.currentStam += enemyObject.stamRecovery;
+    if (enemyObject.currentFatigue < enemyObject.maxFatigue) {
+      enemyObject.currentFatigue += enemyObject.fatigueRecovery;
     } else {
-      enemyObject.currentStam = enemyObject.maxStam;
+      enemyObject.currentFatigue = enemyObject.maxFatigue;
     }
   }
 
