@@ -3,6 +3,7 @@ import globalVars from "./GlobalVars";
 import checkBoxCollision from "./CheckBoxCollision";
 import eventEngine from "./EventEngine";
 import attackEngine from "./AttackEngine";
+import checkRadius from "./CheckRadius";
 
 let enemyCollision = false;
 
@@ -23,10 +24,13 @@ const animate = (element) => {
 
 
 
-const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
+const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
   if (!enemyArr) return;
 
   for (let el of enemyArr) {
+
+    const enemyCenterX = el.data.x + (el.data.blockSize / 2) // true center x of enemy sprite instead of data.x, which is the upper left corner
+    const enemyCenterY = el.data.y + (el.data.blockSize / 2) // true center y of enemy sprite instead of data.y, which is the upper left corner
 
     // console.log(el.data.direction, el.data.moving)
     // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
@@ -65,42 +69,44 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
 
 
 
-
+      // console.log(globalVars.heroCenterX, globalVars.heroCenterY, el.data.x, el.data.y, el.data.attackRadius, el.data.aggroRadius, el.data.fleeingRadius)
 
       // sets enemy to attacking status if the hero is within their aggroRadius
 
       if (
-        el.data.x > globalVars.heroCenterX - el.data.attackRadius &&
-        el.data.y > globalVars.heroCenterY - el.data.attackRadius &&
-        el.data.x < globalVars.heroCenterX + el.data.attackRadius &&
-        el.data.y < globalVars.heroCenterY + el.data.attackRadius &&
-        el.data.attackCooldownOff
+        checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.attackRadius)
+        && el.data.attackCooldownOff
       ) {
-        // console.log('trigger attacking')
+        console.log('trigger attacking')
         el.data.attacking = true;
         el.data.chasing = false;
         el.data.attackActive = true;
-        el.data.attackCooldownOff = false;
 
 
         el.data.spriteAnimCounter = 0;
         el.cropX = el.data.blockSize * el.data.movementFrames;
         el.data.animFrames = el.data.movementFrames + el.data.attackFrames - 1;
         el.data.attackAnimCooldown = true
-        el.data.spriteAnimSpeed = 3;
+        el.data.spriteAnimSpeed = 2;
+
+        if (
+          checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize)
+          ) {
+          el.data.attackCooldownOff = false;
+          el.data = eventEngine(el.data, "attack");
+          const attackEngineReturn = attackEngine(el.data, baseHero, dataVisCtx);
+          baseHero = attackEngineReturn[0];
+          const heroCollision = attackEngineReturn[1];
+          el.data.attacking = false;
+          el.data.fleeing = true
+        }
 
         // console.log(el.data.animFrames)
 
         // console.log(el.data.spriteAnimSpeed)
 
 
-          el.data = eventEngine(el.data, "attack");
 
-          const attackEngineReturn = attackEngine(el.data, baseHero, spriteCtx);
-
-          baseHero = attackEngineReturn[0];
-
-          const heroCollision = attackEngineReturn[1];
 
 
 
@@ -128,11 +134,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           clearTimeout(eventDuration)
         }, 100);
       } else if (
-        el.data.x > globalVars.heroCenterX - el.data.aggroRadius &&
-        el.data.y > globalVars.heroCenterY - el.data.aggroRadius &&
-        el.data.x < globalVars.heroCenterX + el.data.aggroRadius &&
-        el.data.y < globalVars.heroCenterY + el.data.aggroRadius
+        checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.aggroRadius)
       ) {
+        // console.log('chasing')
+
         el.data.chasing = true;
         el.data.attacking = false;
       } else {
@@ -148,20 +153,16 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
 
       if (
         el.data.fleeing &&
-        !(
-          el.data.x > globalVars.heroCenterX - el.data.fleeingRadius &&
-          el.data.y > globalVars.heroCenterY - el.data.fleeingRadius &&
-          el.data.x < globalVars.heroCenterX + el.data.fleeingRadius &&
-          el.data.y < globalVars.heroCenterY + el.data.fleeingRadius
-        )
+        !checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.fleeingRadius)
       ) {
         el.data.fleeing = false;
+        // console.log('fleeing end')
       }
 
       // if the frameCountLimiter has been reached run the moveEngine to move
       // the enemy
       if (el.data.frameCountLimiter >= el.data.maxFrameCountLimiter) {
-        el.data = enemyMoveEngine(el.data, collisionCtx, spriteCtx);
+        el.data = enemyMoveEngine(el.data, collisionCtx, dataVisCtx);
         // console.log(el.data)
         el.data.frameCountLimiter = 0;
       }
@@ -182,10 +183,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
     // if the enemy is close to the hero this checks for hero attacks
     // and hits on the enemy
     if (
-      el.data.x > globalVars.heroCenterX - baseHero.blockSize &&
-      el.data.x < globalVars.heroCenterX + baseHero.blockSize &&
-      el.data.y > globalVars.heroCenterY - baseHero.blockSize &&
-      el.data.y < globalVars.heroCenterY + baseHero.blockSize
+      checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize * 1.5)
     ) {
       // const tempCMasks = [{
       //   tl: [el.cMasks[0].tl[0] + baseHero.totalXChange, el.cMasks[0].tl[1] + baseHero.totalYChange],
@@ -195,7 +193,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       // }]
 
       if (baseHero.attackActive || baseHero.bloodDrainActive) {
-        const attackEngineReturn = attackEngine(baseHero, el.data, spriteCtx);
+        const attackEngineReturn = attackEngine(baseHero, el.data, dataVisCtx);
         el.data = attackEngineReturn[0];
         enemyCollision = attackEngineReturn[1];
       }
@@ -281,8 +279,8 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
     // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
     // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
     // spriteCtx.fillRect(globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
-    spriteCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-    spriteCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
+    dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+    dataVisCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
   }
   return [enemyArr, baseHero];
 };

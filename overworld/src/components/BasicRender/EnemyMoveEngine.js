@@ -1,12 +1,11 @@
 // import pixelPerfect from './PixelPerfect'
 import globalVars from "./GlobalVars";
 import checkCollision from "./CheckCollision";
-import attackEngine from "./AttackEngine";
+import baseHero from "./BaseHero";
+// import attackEngine from "./AttackEngine";
 
-// const baseAnimSpeed = 2
-// let spriteAnimSpeed = baseAnimSpeed // after how many frames the sprite frame will progress for walking animation
-// let spriteAnimCounter = 0 // increments to trigger render of next animation frame
 
+// used to randomly pick a direction on direction change
 let moveDirections = [
   "down",
   "up",
@@ -35,6 +34,7 @@ const attackAnimate = (element) => {
   return [true, element];
 };
 
+// toggles direction of movement when not in chasing, fleeing, or attack modes
 const changeDirectionFunc = (target, probability) => {
   const changeDirection = Math.floor(Math.random() * probability);
   if (changeDirection === 25) {
@@ -46,6 +46,7 @@ const changeDirectionFunc = (target, probability) => {
   return target;
 };
 
+// toggles moving when not in chasing, fleeing, or attack modes
 const startStopMovementFunc = (target, probability) => {
   const startStopMovement = Math.floor(Math.random() * probability);
   if (startStopMovement === 29) {
@@ -54,6 +55,7 @@ const startStopMovementFunc = (target, probability) => {
   return target;
 };
 
+// toggles dashing when not in attack mode
 const dashFunc = (target, probability) => {
   const dash = Math.floor(Math.random() * probability);
   if (dash === 11) {
@@ -63,67 +65,104 @@ const dashFunc = (target, probability) => {
   return target;
 };
 
-const moveTowardsHero = (target, foregroundCtx) => {
+// turns enemy towards hero based when in chase or attack modes
+const moveTowardsHero = (target, dataVisCtx) => {
   // declare the center coordinates of the hero
-  const x = globalVars.heroCenterX + globalVars.blockSize / 2;
-  const y = globalVars.heroCenterY + globalVars.blockSize / 2;
+  const heroCenterX = globalVars.middleX;
+  const heroCenterY = globalVars.middleY;
+  // declare the center coordinates of the enemy
+  const enemyCenterX = target.x + (target.blockSize / 2)
+  const enemyCenterY = target.y + (target.blockSize / 2)
   // console.log(target)
   target.moving = true;
 
   // displays current enemy's attackRadius
-  // foregroundCtx.fillRect(x - target.attackRadius, y - target.attackRadius, 4, 4)
-  // foregroundCtx.fillRect(x - target.attackRadius, y + target.attackRadius, 4, 4)
-  // foregroundCtx.fillRect(x + target.attackRadius, y - target.attackRadius, 4, 4)
-  // foregroundCtx.fillRect(x + target.attackRadius, y + target.attackRadius, 4, 4)
+  // dataVisCtx.fillRect(x - target.attackRadius, y - target.attackRadius, 4, 4)
+  // dataVisCtx.fillRect(x - target.attackRadius, y + target.attackRadius, 4, 4)
+  // dataVisCtx.fillRect(x + target.attackRadius, y - target.attackRadius, 4, 4)
+  // dataVisCtx.fillRect(x + target.attackRadius, y + target.attackRadius, 4, 4)
 
   // turns enemy towards the attackRadius area around the hero
-  // once inside the radius it will try to initiate an attack (not implemented yet)
+  // once inside the radius it will initiate an attack
 
-  if (
-    target.x < x - target.attackRadius &&
-    target.y > y - target.attackRadius &&
-    target.y < y + target.attackRadius
-  ) {
-    target.direction = "right";
-  } else if (
-    target.x > x + target.attackRadius &&
-    target.y > y - target.attackRadius &&
-    target.y < y + target.attackRadius
-  ) {
-    target.direction = "left";
-  } else if (
-    target.x > x - target.attackRadius &&
-    target.x < x + target.attackRadius &&
-    target.y > y + target.attackRadius
-  ) {
-    target.direction = "up";
-  } else if (
-    target.x > x - target.attackRadius &&
-    target.x < x + target.attackRadius &&
-    target.y < y - target.attackRadius
-  ) {
-    target.direction = "down";
-  } else if (
-    target.x < x - target.attackRadius &&
-    target.y < y - target.attackRadius
-  ) {
-    target.direction = "downright";
-  } else if (
-    target.x > x + target.attackRadius &&
-    target.y < y - target.attackRadius
-  ) {
-    target.direction = "downleft";
-  } else if (
-    target.x < x - target.attackRadius &&
-    target.y > y + target.attackRadius
-  ) {
-    target.direction = "upright";
-  } else if (
-    target.x > x + target.attackRadius &&
-    target.y > y + target.attackRadius
-  ) {
-    target.direction = "upleft";
-  }
+  // enemy movement zones - handled by big if/else chain below
+  // active when enemy is chasing or attacking, which means they are
+  // within their aggroRadius of the hero, which is a circle emanating
+  // from the center point of the hero or enemy with a radius of aggroRadius
+  //
+  //   a     |b|b|     c
+  //         | | |
+  //   ______|_|_|______
+  //  h______|_x_|______d
+  //  h______|_|_|______d
+  //         | | |
+  //         | | |
+  //   g     |f|f|     e
+  //
+  // hero is at center of zone x, which is baseHero.blockSize height and width
+  // if enemy is in zones b, d, f, or h they will turn diagonally towards hero
+  // if they hit one of the outside edges, and will switch to moving horizontally or
+  // vertically towards the hero if they cross the middle line of that zone.
+  // These four zones actually extend to the center of zone x which handles movement
+  // when attacking as well.
+  // if they are in zones a, c, e, or g, they will move diagonally towards
+  // the hero.
+
+
+  if (enemyCenterX <= baseHero.x + baseHero.blockSize
+    && enemyCenterY <= heroCenterY
+    && enemyCenterX >= baseHero.x
+    ) {
+      if (enemyCenterX === heroCenterX) {
+        target.direction = "down";
+      } else if (enemyCenterX === baseHero.x) {
+        target.direction = "downright";
+      } else if(enemyCenterX === baseHero.x + baseHero.blockSize) {
+        target.direction = "downleft";
+      }
+    } else if (enemyCenterX <= heroCenterX
+      && enemyCenterY <= baseHero.y + baseHero.blockSize
+      && enemyCenterY >= baseHero.y) {
+        if (enemyCenterY === heroCenterY) {
+        target.direction = "right";
+        } else if (enemyCenterY === baseHero.y) {
+        target.direction = "downright";
+        } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
+        target.direction = "upright";
+        }
+      } else if (enemyCenterX >= heroCenterX
+        && enemyCenterY <= baseHero.y + baseHero.blockSize
+        && enemyCenterY >= baseHero.y) {
+          if (enemyCenterY === heroCenterY) {
+            target.direction = "left";
+          } else if (enemyCenterY === baseHero.y) {
+            target.direction = "downleft";
+          } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
+            target.direction = "upleft";
+          }
+        } else if (enemyCenterX <= baseHero.x + baseHero.blockSize
+          && enemyCenterY >= heroCenterY
+          && enemyCenterX >= baseHero.x) {
+            if (enemyCenterX === heroCenterX) {
+              target.direction = "up";
+            } else if (enemyCenterX === baseHero.x) {
+              target.direction = "upright";
+            } else if (enemyCenterX === baseHero.x + baseHero.blockSize) {
+              target.direction = "upleft";
+            }
+          } else if (enemyCenterX < baseHero.x
+            && enemyCenterY < baseHero.y) {
+              target.direction = "downright";
+            } else if (enemyCenterX > baseHero.x
+              && enemyCenterY < baseHero.y + baseHero.blockSize) {
+                target.direction = "downleft";
+            } else if (enemyCenterX > baseHero.x + baseHero.blockSize
+              && enemyCenterY > baseHero.y + baseHero.blockSize) {
+                target.direction = "upleft"
+              } else if (enemyCenterX < baseHero.x
+                && enemyCenterY > baseHero.y + baseHero.blockSize) {
+                  target.direction = "upright"
+                }
 
   return target;
 };

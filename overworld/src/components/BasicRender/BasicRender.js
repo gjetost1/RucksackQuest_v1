@@ -121,6 +121,8 @@ const BasicRender = ({}) => {
     globalVars.width,
     globalVars.height
   );
+  const dataVisCanvas = new OffscreenCanvas(globalVars.width, globalVars.height); // used for development to visualize coordinates, hitboxes, radiuses, etc.
+
   // const pixelCanvas = useRef(null)
   const comboCanvas = useRef(null);
 
@@ -184,6 +186,7 @@ const BasicRender = ({}) => {
     const collisionCtx = collisionCanvas.getContext("2d", {
       willReadFrequently: true,
     });
+    const dataVisCtx = dataVisCanvas.getContext("2d");
     const comboCtx = comboCanvas.current.getContext("2d");
     // const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
 
@@ -585,7 +588,7 @@ const BasicRender = ({}) => {
         wolfenGroup,
         baseHero,
         collisionCtx,
-        spriteCtx
+        dataVisCtx
       );
       wolfenGroup = enemyUpdateArr[0];
       baseHero = enemyUpdateArr[1];
@@ -626,6 +629,10 @@ const BasicRender = ({}) => {
       // backgroundCtx.fillRect( globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
       // backgroundCtx.fillStyle = 'rgba(0, 255, 0, 1)'
       // backgroundCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
+      // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+      // dataVisCtx.fillRect(globalVars.middleX, globalVars.middleY, 4, 4) // shows true middle pixel of screen, at least as far as the pixel upscale allows
+
+
 
       const drawToComboCanvas = (canvases) => {
         for (let el of canvases) {
@@ -646,6 +653,7 @@ const BasicRender = ({}) => {
           spriteCanvas,
           foregroundCanvas,
           cursorCanvas,
+          dataVisCanvas
         ]);
         frameRateCounter = 0;
       }
