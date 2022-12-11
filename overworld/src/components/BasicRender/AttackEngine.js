@@ -76,7 +76,7 @@ const attackEngine = (attacker, target, spriteCtx) => {
       tempDamageRange = attacker.damageRange
     }
     const damageRange = Math.round(Math.random() * tempDamageRange)
-    console.log(tempBaseDamage + damageRange)
+    // console.log(tempBaseDamage + damageRange)
     target.currentVitality -= tempBaseDamage + damageRange;
     target.takeDamage = true;
     target.damageActive = true;

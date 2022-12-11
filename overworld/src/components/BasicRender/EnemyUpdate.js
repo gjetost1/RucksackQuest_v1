@@ -9,6 +9,7 @@ let enemyCollision = false;
 // animates dying and blood drain
 const animate = (element) => {
   element.data.animCounter++;
+
   if (element.data.animCounter >= element.data.spriteAnimSpeed) {
     element.crop.x += element.data.blockSize;
     element.data.animCounter = 0;
@@ -20,10 +21,13 @@ const animate = (element) => {
   return [true, element];
 };
 
+
+
 const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
   if (!enemyArr) return;
 
   for (let el of enemyArr) {
+
     // console.log(el.data.direction, el.data.moving)
     // renders to collisionCanvas if the enemy is solid and not destroyed or breaking
     if (el.data.solid) {
@@ -59,6 +63,10 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         continue;
       }
 
+
+
+
+
       // sets enemy to attacking status if the hero is within their aggroRadius
 
       if (
@@ -74,12 +82,27 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
         el.data.attackActive = true;
         el.data.attackCooldownOff = false;
 
-        el.data = eventEngine(el.data, "attack");
 
-        const attackEngineReturn = attackEngine(el.data, baseHero, spriteCtx);
+        el.data.spriteAnimCounter = 0;
+        el.cropX = el.data.blockSize * el.data.movementFrames;
+        el.data.animFrames = el.data.movementFrames + el.data.attackFrames - 1;
+        el.data.attackAnimCooldown = true
+        el.data.spriteAnimSpeed = 3;
 
-        baseHero = attackEngineReturn[0];
-        const heroCollision = attackEngineReturn[1];
+        // console.log(el.data.animFrames)
+
+        // console.log(el.data.spriteAnimSpeed)
+
+
+          el.data = eventEngine(el.data, "attack");
+
+          const attackEngineReturn = attackEngine(el.data, baseHero, spriteCtx);
+
+          baseHero = attackEngineReturn[0];
+
+          const heroCollision = attackEngineReturn[1];
+
+
 
         // if (el.data.attackActive && !heroCollision) {
         // const animated = animate(baseHero.damageAnim);
@@ -92,7 +115,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           el.data.attackCooldownOff = true;
           el.data.attacking = true;
           // console.log('cooldown over')
-          // clearTimeout(cooldown)
+          clearTimeout(cooldown)
         }, 3000);
 
         // sets duration of event, set by eventObj.eventDuration in seconds
@@ -102,7 +125,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
           el.data.eventX = -400;
           el.data.eventY = -400;
           // console.log('attack over')
-          // clearTimeout(eventDuration)
+          clearTimeout(eventDuration)
         }, 100);
       } else if (
         el.data.x > globalVars.heroCenterX - el.data.aggroRadius &&
@@ -120,6 +143,8 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       if (!el.data.attackActive) {
         baseHero.takeDamage = false;
       }
+
+
 
       if (
         el.data.fleeing &&
@@ -233,8 +258,8 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
       el.data.dying = true;
       el.data.dyingSound.play();
       el.data.animCounter = 0;
-      el.crop.x = el.data.blockSize * el.data.movementFrames;
-      el.data.animFrames = el.data.movementFrames + el.data.dyingFrames;
+      el.crop.x = el.data.blockSize * (el.data.attackFrames + el.data.movementFrames) - el.data.blockSize;
+      el.data.animFrames = el.data.movementFrames + el.data.attackFrames + el.data.dyingFrames;
       el.data.spriteAnimSpeed = 22;
     }
     // if (el.data.takeDamage) {
@@ -253,6 +278,11 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, spriteCtx) => {
     //   el.data.damageActive = animated[0]
     //   el.data.damageAnim = animated[1]
     // }
+    // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
+    // spriteCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+    // spriteCtx.fillRect(globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
+    spriteCtx.fillStyle = 'rgba(0, 255, 0, 1)'
+    spriteCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
   }
   return [enemyArr, baseHero];
 };

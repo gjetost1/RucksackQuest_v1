@@ -125,31 +125,31 @@ const BasicRender = ({}) => {
   const comboCanvas = useRef(null);
 
   const wolfenGroupCreator = [
-    {
-      base: wolfen,
-      x: -100,
-      y: -100,
-    },
-    {
-      base: wolfen,
-      x: 1564,
-      y: 1500,
-    },
-    {
-      base: wolfen,
-      x: 1500,
-      y: 1564,
-    },
+    // {
+    //   base: wolfen,
+    //   x: -100,
+    //   y: -100,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1564,
+    //   y: 1500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1500,
+    //   y: 1564,
+    // },
     {
       base: wolfen,
       x: 436,
       y: 500,
     },
-    {
-      base: wolfen,
-      x: 1436,
-      y: 564,
-    },
+    // {
+    //   base: wolfen,
+    //   x: 1436,
+    //   y: 564,
+    // },
   ];
 
   // creates an enemy group

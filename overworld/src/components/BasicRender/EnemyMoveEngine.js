@@ -18,6 +18,23 @@ let moveDirections = [
   "downright",
 ];
 
+// animates attack
+const attackAnimate = (element) => {
+  if (element.spriteAnimCounter >= element.spriteAnimSpeed) {
+    element.cropX += element.blockSize;
+    element.spriteAnimCounter = 0;
+    if (element.cropX >= element.blockSize * element.animFrames) {
+      element.cropX = 0;
+      element.attackAnimCooldown = false
+      console.log('maximum reached')
+      return [false, element];
+    }
+  }
+  // console.log(element.spriteAnimCounter)
+  element.spriteAnimCounter++;
+  return [true, element];
+};
+
 const changeDirectionFunc = (target, probability) => {
   const changeDirection = Math.floor(Math.random() * probability);
   if (changeDirection === 25) {
@@ -444,7 +461,22 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   // }
 
   // console.log(enemyObject.direction, enemyObject.currentSprite)
-  if (enemyObject.moving) {
+    // runs attack animation
+    if (enemyObject.attackAnimCooldown && !enemyObject.attackCooldownOff) {
+      // console.log('running')
+      const attackAnimation = attackAnimate(enemyObject);
+      // console.log(attackAnimation)
+      // el.data.attackAnimCooldown = attackAnimation[0];
+      enemyObject = attackAnimation[1];
+      if (!enemyObject.attackAnimCooldown) { // resets animation after attack
+        console.log('reset')
+        enemyObject.spriteAnimCounter = 0;
+        enemyObject.cropX = 0;
+        enemyObject.animFrames = enemyObject.movementFrames;
+        enemyObject.baseAnimSpeed = 2;
+      }
+      // continue;
+    } else if (enemyObject.moving) {
     if (enemyObject.spriteAnimCounter >= enemyObject.spriteAnimSpeed) {
       enemyObject.cropX += enemyObject.blockSize;
       // spriteIndex++

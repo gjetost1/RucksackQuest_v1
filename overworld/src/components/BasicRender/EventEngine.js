@@ -25,7 +25,7 @@ const eventEngine = (actor, type) => {
       actor.currentFatigue -= actor.fatigueDrain * actor.fatigueAttack;
     }
     const middleVal = (actor.blockSize - actor.attackBlockSize) / 2;
-    console.log(middleVal)
+    // console.log(middleVal)
     if (actor.direction === "up") {
       actor.eventX = actor.x + middleVal;
       actor.eventY = actor.y;
