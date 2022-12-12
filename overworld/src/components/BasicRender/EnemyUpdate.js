@@ -4,27 +4,30 @@ import checkBoxCollision from "./CheckBoxCollision";
 import eventEngine from "./EventEngine";
 import attackEngine from "./AttackEngine";
 import checkRadius from "./CheckRadius";
+import bloodDrain from "./BloodDrain";
+import { animateDyingAndBloodDrain } from "./Animate";
+import scavengeEngine from "./ScavengeEngine";
 
 let enemyCollision = false;
 
 // animates dying and blood drain
-const animate = (element) => {
-  element.data.animCounter++;
+// const animate = (element) => {
+//   element.data.animCounter++;
 
-  if (element.data.animCounter >= element.data.spriteAnimSpeed) {
-    element.crop.x += element.data.blockSize;
-    element.data.animCounter = 0;
-    if (element.crop.x >= element.data.blockSize * element.data.animFrames) {
-      element.crop.x = element.data.blockSize * element.data.animFrames;
-      return [false, element];
-    }
-  }
-  return [true, element];
-};
+//   if (element.data.animCounter >= element.data.spriteAnimSpeed) {
+//     element.crop.x += element.data.blockSize;
+//     element.data.animCounter = 0;
+//     if (element.crop.x >= element.data.blockSize * element.data.animFrames) {
+//       element.crop.x = element.data.blockSize * element.data.animFrames;
+//       return [false, element];
+//     }
+//   }
+//   return [true, element];
+// };
 
 
 
-const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
+const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) => {
   if (!enemyArr) return;
 
   for (let el of enemyArr) {
@@ -58,7 +61,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
       // runs dying animation on death
       if (el.data.dying && !el.data.dead) {
         // console.log(el.data.animCounter)
-        const dyingAnimation = animate(el);
+        const dyingAnimation = animateDyingAndBloodDrain(el);
         el.data.dead = !dyingAnimation[0];
         if (el.data.dead) {
           // el.data.dying = false
@@ -81,6 +84,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
         // console.log('trigger attacking')
         el.data.attacking = true;
         el.data.chasing = false;
+        el.data.dashSpeed = el.data.attackDashSpeed;
 
         // const attackAnimTimeout = setTimeout(() => {
           // }, 1000)
@@ -125,10 +129,11 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
         checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.aggroRadius)
       ) {
         // console.log('chasing')
-
+        el.data.dashSpeed = el.data.baseDashSpeed
         el.data.chasing = true;
         el.data.attacking = false;
       } else {
+        el.data.dashSpeed = el.data.baseDashSpeed
         el.data.chasing = false;
         el.data.attacking = false;
       }
@@ -181,54 +186,27 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
         enemyCollision = attackEngineReturn[1];
       }
 
-      // handles blood draining of enemies
-      if (
-        baseHero.bloodDrainActive &&
-        !enemyCollision &&
-        el.data.dead &&
-        el.data.currentBloodLevel > 0 &&
-        baseHero.equipment.bloodTanks.currentFillTank
-      ) {
-        // console.log(baseHero.currentVitality)
-        // console.log('current tank', baseHero.equipment.bloodTanks.currentFillTank)
-        // console.log('all tanks', baseHero.equipment.bloodTanks[0])
-        if (
-          baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume <
-          baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume
-        ) {
-          // console.log('draining')
-          // animates blood effect on enemy corpse when draining
-          el.data.damageAnim.data.spriteAnimSpeed = 20;
-          const animated = animate(el.data.damageAnim);
-          el.data.damageActive = animated[0];
-          el.data.damageAnim = animated[1];
-          el.data.currentBloodLevel -= baseHero.bloodDrainRate;
-          baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume +=
-            baseHero.bloodDrainRate;
-          baseHero.equipment.bloodTanks.bloodSound.play();
-          if (el.data.currentBloodLevel <= 0) {
-            el.crop.x = el.data.bloodlessFrame * el.data.blockSize;
-          }
-          if (
-            baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume >
-            baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume
-          ) {
-            baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume =
-            baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume;
-            baseHero.equipment.bloodTanks.changeCurrentTank = false
-            baseHero.equipment.bloodTanks.bloodSound.pause();
-          }
-        } else if (!baseHero.equipment.bloodTanks.changeCurrentFillTank) {
-          baseHero.equipment.bloodTanks.changeCurrentFillTank = true;
-          // console.log('tank change')
-          baseHero.equipment.bloodTanks.bloodSound.pause();
-        }
-      } else if (baseHero.bloodDrainActive && enemyCollision) {
-        baseHero.bloodDrainActive = false;
-        baseHero.equipment.bloodTanks.bloodSound.pause();
+      // handles blood draining of corpses
+      if (baseHero.bloodDrainActive && !el.data.scavenged) {
+        const bloodDrainRet = bloodDrain(el, baseHero, enemyCollision)
+        el = bloodDrainRet[0]
+        baseHero = bloodDrainRet[1]
       } else {
-        baseHero.equipment.bloodTanks.bloodSound.pause();
+        baseHero.bloodDrainActive = false
       }
+
+      // handles scavenging of corpses
+      if (baseHero.scavengeActive && el.data.scavengeable && !el.data.scavenged && el.data.currentBloodLevel === el.data.maxBloodLevel) {
+        const scavengeRet = scavengeEngine(el, baseHero, dropItemArr, enemyCollision)
+        el = scavengeRet[0]
+        baseHero = scavengeRet[1]
+        dropItemArr = scavengeRet[2]
+      } else {
+        if (el.data.scavenged) {
+          el.crop.x = el.data.scavengedFrame * el.data.blockSize;
+        }
+      }
+
     }
     if (!baseHero.attackActive) {
       el.data.takeDamage = false;
@@ -248,7 +226,7 @@ const enemyUpdate = (enemyArr, baseHero, collisionCtx, dataVisCtx) => {
     // dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
     // dataVisCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
   }
-  return [enemyArr, baseHero];
+  return [enemyArr, baseHero, dropItemArr];
 };
 
 export default enemyUpdate;

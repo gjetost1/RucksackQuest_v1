@@ -13,7 +13,7 @@ const horzBuffer = 14;
 const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
-const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
+const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   if (!baseHero) return;
 
   const lastTargetCameraX = baseHero.targetCameraX;
@@ -71,7 +71,7 @@ const moveEngine = (baseHero, collisionCtx, foregroundCtx) => {
     imgData,
     baseHero.colBox,
     collisionCtx,
-    foregroundCtx,
+    dataVisCtx,
     onlyGreenCol
   );
   const col0 = heroCollisions[0];

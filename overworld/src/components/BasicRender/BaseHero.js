@@ -123,6 +123,7 @@ const baseHero = {
       type: 'sword',
       baseDamage: 20, // attack always does this amount of damage
       damageRange: 14, // attack may also do between 0 and this much additional damage
+      knockBack: globalVars.upscale * 4, // amount enemy is knocked back if hit by attack
       spriteSheets: {
         up: sword_up,
         down: sword_down,
@@ -162,6 +163,8 @@ const baseHero = {
   attackActive: false,
   bloodDrainActive: false,
   bloodDrainRate: 0.5,
+  scavengeActive: false,
+  scavengeAnimActive: false,
   maxVitality: 300,
   currentVitality: 300,
   // attackDamage: 25,
@@ -199,6 +202,9 @@ const baseHero = {
       pressed: false,
     },
     x: {
+      pressed: false,
+    },
+    q: {
       pressed: false,
     },
     mouse1: {

@@ -91,8 +91,13 @@ const inputEngine = (keys) => {
         // console.log('action')
       break
       case 'x':
-        case 'X':
+      case 'X':
         keys.x.pressed = true
+        // console.log('action')
+      break
+      case 'q':
+      case 'Q':
+        keys.q.pressed = true
         // console.log('action')
       break
       default:
@@ -118,6 +123,11 @@ const inputEngine = (keys) => {
       case 'x':
       case 'X':
         keys.x.pressed = false
+        // console.log('action')
+      break
+      case 'q':
+      case 'Q':
+        keys.q.pressed = false
         // console.log('action')
       break
       default:

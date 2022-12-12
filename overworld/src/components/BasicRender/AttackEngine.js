@@ -65,6 +65,7 @@ const attackEngine = (attacker, target, dataVisCtx) => {
     let tempY
     let tempBaseDamage
     let tempDamageRange
+    let tempKnockBack
     let tempXRef = tempX // used to set x and y frame changes from knockback if enemy hits hero
     let tempYRef = tempY
     if (target.type === 'enemy') {
@@ -72,7 +73,9 @@ const attackEngine = (attacker, target, dataVisCtx) => {
       tempY = target.y
       tempBaseDamage = attacker.equipment.weapon.baseDamage
       tempDamageRange = attacker.equipment.weapon.damageRange
-      target.fleeing = true;
+      tempKnockBack = attacker.equipment.weapon.knockBack
+      target.fleeing = Math.round(Math.random() * 2) === 1;
+      // console.log(target.fleeing)
       target.moving = true;
       target.dashing = true;
     } else if (target.type === 'hero') {
@@ -80,12 +83,14 @@ const attackEngine = (attacker, target, dataVisCtx) => {
       tempY = target.targetCameraY
       tempBaseDamage = attacker.baseDamage
       tempDamageRange = attacker.damageRange
+      tempKnockBack = attacker.knockBack
       tempXRef = tempX
       tempYRef = tempY
     }
     const damageRange = Math.round(Math.random() * tempDamageRange)
     // console.log(tempBaseDamage + damageRange)
-    target.currentVitality -= tempBaseDamage + damageRange;
+    target.currentVitality -= tempBaseDamage + damageRange; // deals damage to target 
+    // target.currentVitality -= 200;
     target.takeDamage = true;
     target.damageActive = true;
     target.damageAnim.active = true;
@@ -98,37 +103,34 @@ const attackEngine = (attacker, target, dataVisCtx) => {
       target.currentVitality = 0
     }
 
-    const damageMoveScale = target.blockSize / globalVars.upscale;
-
-
 
     if (attacker.direction === "down") {
-      tempY += damageMoveScale;
+      tempY += tempKnockBack;
       target.direction = "down";
     } else if (attacker.direction === "up") {
-      tempY -= damageMoveScale;
+      tempY -= tempKnockBack;
       target.direction = "up";
     } else if (attacker.direction === "left") {
-      tempX -= damageMoveScale;
+      tempX -= tempKnockBack;
       target.direction = "left";
     } else if (attacker.direction === "right") {
-      tempY += damageMoveScale;
+      tempX += tempKnockBack;
       target.direction = "right";
     } else if (attacker.direction === "upleft") {
-      tempX -= damageMoveScale;
-      tempY -= damageMoveScale;
+      tempX -= tempKnockBack;
+      tempY -= tempKnockBack;
       target.direction = "upleft";
     } else if (attacker.direction === "upright") {
-      tempX += damageMoveScale;
-      tempY -= damageMoveScale;
+      tempX += tempKnockBack;
+      tempY -= tempKnockBack;
       target.direction = "upright";
     } else if (attacker.direction === "downleft") {
-      tempX -= damageMoveScale;
-      tempY += damageMoveScale;
+      tempX -= tempKnockBack;
+      tempY += tempKnockBack;
       target.direction = "downleft";
     } else if (attacker.direction === "downright") {
-      tempX += damageMoveScale;
-      tempY += damageMoveScale;
+      tempX += tempKnockBack;
+      tempY += tempKnockBack;
       target.direction = "downright";
     }
     if (target.type === 'enemy') {

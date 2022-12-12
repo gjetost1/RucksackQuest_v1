@@ -63,6 +63,7 @@ const enemyRender = (enemyArr, baseHero, spriteCtx, renderType) => {
       }
     }
   }
+
   return enemyArr;
 };
 

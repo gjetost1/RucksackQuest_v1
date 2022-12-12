@@ -12,8 +12,22 @@ import wolfen_upright from "../../assets/sprites/enemy_sprites/wolfen/wolfen_upr
 
 import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter_64.png";
 
+import beast_bone from '../../assets/sprites/pickups/beast_bone.png'
+import beast_gland from '../../assets/sprites/pickups/beast_gland.png'
+import beast_guts from '../../assets/sprites/pickups/beast_guts.png'
+import beast_heart from '../../assets/sprites/pickups/beast_heart.png'
+
 import wolf_yelp_src from "../../assets/sounds/enemy/wolf_snarl.mp3";
 import wolf_howl_src from "../../assets/sounds/enemy/wolf_howl_sad.mp3";
+
+// const beast_bone = new Image();
+// beast_bone.src = beast_bone_src;
+// const beast_gland = new Image();
+// beast_gland.src = beast_gland_src;
+// const beast_guts = new Image();
+// beast_guts.src = beast_guts_src;
+// const beast_heart = new Image();
+// beast_heart.src = beast_heart_src;
 
 const wolf_yelp = new Audio(wolf_yelp_src);
 wolf_yelp.volume = 0.5;
@@ -81,6 +95,7 @@ export const wolfen = {
   attackActive: false,
   baseDamage: 30, // attack always does this amount of damage
   damageRange: 16, // attack may also do between 0 and this much additional damage
+  knockBack: globalVars.upscale * 4, // amount enemy is knocked back if hit by attack
   attackBlockSize: globalVars.upscale,
   attackCooldownOff: true,
   moving: false,
@@ -106,6 +121,7 @@ export const wolfen = {
   attackFrames: 4,
   dyingFrames: 3,
   bloodlessFrame: 15,
+  scavengedFrame: 16,
   baseAnimSpeed: 2,
   spriteAnimSpeed: 2,
   spriteAnimCounter: 0,
@@ -114,9 +130,45 @@ export const wolfen = {
   baseMoveSpeed: 20,
   moveSpeed: 20,
   dashSpeed: 34,
+  attackDashSpeed: 64,
+  baseDashSpeed: 34,
   frameCountLimiter: 0,
   maxFrameCountLimiter: 100,
   blockSize: 64,
+  scavengeable: true,
+  scavenged: false,
+  scavengeTable: [
+    {
+      name: 'Nothing',
+      image: null,
+      dropPercent: 20,
+      blockSize: 32,
+    },
+    {
+      name: 'Beast Guts',
+      image: beast_guts,
+      dropPercent: 30,
+      blockSize: 32,
+    },
+    {
+      name: 'Beast Bone',
+      image: beast_bone,
+      dropPercent: 30,
+      blockSize: 32,
+    },
+    {
+      name: 'Beast Gland',
+      image: beast_gland,
+      dropPercent: 15,
+      blockSize: 32,
+    },
+    {
+      name: 'Wolf Heart',
+      image: beast_heart,
+      dropPercent: 5,
+      blockSize: 32,
+    },
+],
   colBox: {
     0: [horzBuffer, colBuffer + vertBuffer],
     1: [horzBuffer + cornerBuffer, vertBuffer + cornerBuffer],

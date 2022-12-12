@@ -41,6 +41,8 @@ import inputEngine from "./InputEngine";
 import baseHeroGet from "./BaseHero";
 
 import sword_fx from "../../assets/sounds/sword/damage_sound.wav";
+import heroUpdate from "./HeroUpdate";
+import dropItemRender from "./DropItemRender";
 
 const upscale = globalVars.upscale; // multiplier for resolution - 2 means each visible pixel is 2 x 2 real pixels etc
 const height = globalVars.height;
@@ -93,6 +95,8 @@ const grassPatch3 = new Patch(
 );
 const barrelPatch = new Patch(100, 500, 4, 4, [barrel_1, barrel_2], 0.2);
 
+let dropItemArr = [] // array that stores all items that are on the ground
+
 let bufferIntervalSet = true; // makes sure that the sprite buffer interval is set only once
 
 const BasicRender = ({}) => {
@@ -144,18 +148,45 @@ const BasicRender = ({}) => {
     },
     {
       base: wolfen,
-      x: 436,
-      y: 500,
+      x: 372,
+      y: 564,
     },
     {
       base: wolfen,
-      x: 1436,
+      x: 300,
+      y: 464,
+    },
+    {
+      base: wolfen,
+      x: -100,
+      y: -100,
+    },
+    {
+      base: wolfen,
+      x: 1564,
+      y: 1500,
+    },
+    {
+      base: wolfen,
+      x: 1500,
+      y: 1564,
+    },
+    {
+      base: wolfen,
+      x: 372,
       y: 564,
+    },
+    {
+      base: wolfen,
+      x: 300,
+      y: 464,
     },
   ];
 
   // creates an enemy group
   let wolfenGroup = enemyGenerator(wolfenGroupCreator);
+
+  let enemyArr = [wolfenGroup]
 
   // sets an interval to re-load sprites since they flicker if they have been
   // de-loaded by the browser after not being used for a while
@@ -407,22 +438,26 @@ const BasicRender = ({}) => {
 
     const animate = () => {
       // clears all canvases for a new animation frame
-
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
       spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height);
       foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
       cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
-      // moveEngine runs less than every frame to keep the hero sprite slower
-      if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
-        baseHero.frameCountLimiter = 0;
-        // moveEngine handles inputs and collisions for hero sprite
-        baseHero = moveEngine(baseHero, collisionCtx, foregroundCtx);
-        wolfenGroup = coordinateChange(baseHero, wolfenGroup);
-        // coordinateChange moves elements in relation to the hero to keep them at the right coordinates
-      }
 
-      baseHero.frameCountLimiter += baseHero.moveSpeed;
+      // handles hero inputs, actions, and movement
+      const heroUpdateRet = heroUpdate(baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx)
+      baseHero = heroUpdateRet[0]
+      enemyArr = heroUpdateRet[1]
+      dropItemArr = heroUpdateRet[2]
+
+      // SHOULD MOVE THIS INTO HEROUPDATE ONCE HERO IS A CONTAINED CLASS LIKE ENEMIES
+      // sets hero and equipment positions based on moveEngine output
+      // and sets spritesheet for direction they are facing as well
+      playerSprite.position = { x: baseHero.x, y: baseHero.y };
+      swordSprite.position = { x: baseHero.x, y: baseHero.y };
+      playerImage.src = baseHero.currentHeroSprite;
+      equipImage.src = baseHero.currentEquipmentSprite;
+
 
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
@@ -430,118 +465,7 @@ const BasicRender = ({}) => {
       foregroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
       collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
 
-      playerSprite.position = { x: baseHero.x, y: baseHero.y };
-      swordSprite.position = { x: baseHero.x, y: baseHero.y };
 
-      playerImage.src = baseHero.currentHeroSprite;
-
-      equipImage.src = baseHero.currentEquipmentSprite;
-
-      // wolfenImage.src = wolfen_1.currentSprite
-
-      // this handles an attack/ability usage by user - sets vars that will trigger attack/ability animation and
-      // puts ability on cooldown. Current cooldown is set manually, but once there are other abilities
-      // we will use their specific attributes to set the cooldown and effect duration
-      // activates if there is enough stamina for attack
-      if (
-        baseHero.currentFatigue >= baseHero.fatigueDrain * baseHero.fatigueAttack &&
-        baseHero.keys.mouse1.pressed &&
-        baseHero.attackCooldownOff
-      ) {
-        baseHero.attackCooldownOff = false;
-        baseHero.attackActive = true;
-        baseHero.attackAnimation = true;
-        // baseHero.currentFatigue -= baseHero.fatigueDrain * baseHero.fatigueAttack;
-        // baseHero.coolDownLevel = 0; // sets the var for animating HUD cooldown level
-
-        // calculates and draws attack effects on keypress with cooldown
-
-        let eventObj = {
-          // object passed to EventEngine to trigger appropriate event
-          x: playerSprite.position.x,
-          y: playerSprite.position.y,
-          direction: baseHero.direction,
-          eventX: 0,
-          eventY: 0,
-          blockSize: blockSize,
-          eventType: "attack",
-          eventDirection: "heroFront",
-          eventAreaShape: "rectangle",
-          eventXDim: 1,
-          eventYDim: 3,
-          eventEffect: {
-            damage: 10,
-          },
-          eventDuration: 0.1,
-          eventTimeout: 0.8,
-          eventAnim: null,
-        };
-        // spriteCtx.fillStyle = 'rgb(255, 0, 0)'
-        // spriteCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
-
-        baseHero = eventEngine(baseHero, "attack");
-        // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
-        const cooldown = setTimeout(() => {
-          // enables this attack again after eventTimeout # of seconds, essentially a cooldown
-          baseHero.attackCooldownOff = true;
-          clearTimeout(cooldown);
-          // console.log('cooldown over')
-        }, eventObj.eventTimeout * 1000);
-
-        // sets duration of event, set by eventObj.eventDuration in seconds
-        const eventDuration = setTimeout(() => {
-          clearTimeout(eventDuration);
-          baseHero.attackActive = false;
-          baseHero.eventX = -400;
-          baseHero.eventY = -400;
-          // console.log('attack over')
-        }, eventObj.eventDuration * 1000);
-      }
-
-      // // this increments coolDownLevel which controls the visual cooldown HUD
-      // if (!baseHero.attackCooldownOff) {
-      //   baseHero.coolDownLevel += baseHero.coolDownLevelMax / 120;
-      //   // coolDownLevel = Math.round(coolDownLevel)
-      //   if (baseHero.coolDownLevel >= baseHero.coolDownLevelMax) {
-      //     baseHero.coolDownLevel = baseHero.coolDownLevelMax;
-      //   }
-      // } else {
-      //   baseHero.coolDownLevel = 0;
-      // }
-
-      if (baseHero.keys.e.pressed) {
-        baseHero.bloodDrainActive = true;
-        let eventObj = {
-          // object passed to EventEngine to trigger appropriate event
-          x: playerSprite.position.x,
-          y: playerSprite.position.y,
-          direction: baseHero.direction,
-          eventX: 0,
-          eventY: 0,
-          blockSize: blockSize,
-          eventType: "drain",
-          eventDirection: "heroFront",
-          eventAreaShape: "rectangle",
-          eventXDim: 1,
-          eventYDim: 1,
-          eventEffect: {
-            drain: 1,
-          },
-          eventDuration: 0.1,
-          eventTimeout: 0.8,
-          eventAnim: null,
-        };
-
-        // spriteCtx.fillRect(baseHero.eventX, baseHero.eventY, baseHero.attackBlockSize, baseHero.attackBlockSize)
-        baseHero = eventEngine(baseHero, "drain");
-      } else {
-        if (baseHero.bloodDrainActive) {
-          baseHero.eventX = -400;
-          baseHero.eventY = -400;
-        }
-        baseHero.bloodDrainActive = false;
-        // baseHero.attackActive = false
-      }
 
       // makes the canvases render a frame
       window.requestAnimationFrame(animate);
@@ -591,13 +515,17 @@ const BasicRender = ({}) => {
       const enemyUpdateArr = enemyUpdate(
         wolfenGroup,
         baseHero,
+        dropItemArr,
         collisionCtx,
         dataVisCtx
       );
       wolfenGroup = enemyUpdateArr[0];
       baseHero = enemyUpdateArr[1];
+      dropItemArr = enemyUpdateArr[2];
 
       enemyRender(wolfenGroup, baseHero, spriteCtx, "back");
+      dropItemRender(dropItemArr, spriteCtx) // renders items that are on the ground
+
 
       // draws hero sprite and equipment in attack animation if there is an ongoing attack
       if (baseHero.attackAnimation) {

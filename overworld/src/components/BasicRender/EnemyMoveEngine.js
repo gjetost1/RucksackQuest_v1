@@ -1,6 +1,6 @@
 // import pixelPerfect from './PixelPerfect'
 import globalVars from "./GlobalVars";
-import checkCollision from "./CheckCollision";
+import { checkGreenCollision } from "./CheckCollision";
 import baseHero from "./BaseHero";
 // import attackEngine from "./AttackEngine";
 
@@ -23,7 +23,7 @@ const attackAnimate = (element) => {
     element.cropX += element.blockSize;
     element.spriteAnimCounter = 0;
     if (element.cropX >= element.blockSize * element.animFrames) {
-      console.log('animation over')
+      // console.log('animation over')
       element.cropX = 0;
       // element.attackAnimCooldown = false
       // console.log('maximum reached')
@@ -168,7 +168,7 @@ const moveTowardsHero = (target, dataVisCtx) => {
   return target;
 };
 
-const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
+const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
   // console.log(enemyObject.currentFatigue)
 
 
@@ -200,7 +200,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   // if enemy isn't in attack mode it moves around randomly
   if (enemyObject.attacking) {
     // console.log("attacking");
-    enemyObject = moveTowardsHero(enemyObject, foregroundCtx);
+    enemyObject = moveTowardsHero(enemyObject, dataVisCtx);
     enemyObject.moving = true;
     enemyObject.dashing = true;
   } else if (!enemyObject.chasing || enemyObject.fleeing) {
@@ -211,7 +211,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
     enemyObject = startStopMovementFunc(enemyObject, 100);
   } else if (enemyObject.chasing && !enemyObject.attacking) {
     // if it is in chase mode it moves towards the hero
-    enemyObject = moveTowardsHero(enemyObject, foregroundCtx);
+    enemyObject = moveTowardsHero(enemyObject, dataVisCtx);
     enemyObject.moving = true;
     // enemyObject = startStopMovementFunc(enemyObject, 100)
     enemyObject = dashFunc(enemyObject, 100);
@@ -235,13 +235,10 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   );
   // console.log(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
   const onlyGreenCol = true; // if true it only checks environment collision, otherwise it also checks enemy collisions
-  let collisions = checkCollision(
+  let collisions = checkGreenCollision(
     imgData,
     enemyObject.colBox,
-    collisionCtx,
-    foregroundCtx,
-    enemyObject,
-    onlyGreenCol
+    dataVisCtx
   );
   const col0 = collisions[0];
   const col1 = collisions[1];
@@ -503,7 +500,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, foregroundCtx) => {
   // console.log(enemyObject.direction, enemyObject.currentSprite)
     // runs attack animation
     if (enemyObject.attackAnimCooldown) {
-      console.log('running')
+      // console.log('running')
       const attackAnimation = attackAnimate(enemyObject);
       // console.log(attackAnimation)
       enemyObject.attackAnimCooldown = attackAnimation[0];
