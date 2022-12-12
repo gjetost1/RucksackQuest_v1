@@ -25,6 +25,7 @@ import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
 
 import blood_pour_src from "../../assets/sounds/hero/blood_pour.mp3";
 import damage_grunt_src from "../../assets/sounds/hero/man_grunt.mp3";
+import scavenge_splat_src from "../../assets/sounds/hero/scavenge_splat.mp3";
 
 // creates the sprite for enemy damage effects
 class damageSprite {
@@ -72,6 +73,9 @@ blood_pour.loop = true;
 
 const damage_grunt = new Audio(damage_grunt_src);
 damage_grunt.volume = .4;
+
+const scavenge_splat = new Audio(scavenge_splat_src);
+scavenge_splat.volume = .3;
 
 // used to create the collision box colBox for hero
 const colBuffer = 12; // number of pixels away from hero that detectors sit
@@ -165,6 +169,7 @@ const baseHero = {
   bloodDrainRate: 0.5,
   scavengeActive: false,
   scavengeAnimActive: false,
+  scavengeFx: scavenge_splat,
   maxVitality: 300,
   currentVitality: 300,
   // attackDamage: 25,

@@ -49,8 +49,10 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
       // console.log('scavenging', scavengeCounter)
       baseHero.scavengeAnimActive = true
       scavengeCounter++
+
       // once scavenging is complete we roll to find out what item is returned
       if (scavengeCounter >= scavengeFrames) {
+        baseHero.scavengeFx.play()
         baseHero.scavengeActive = false
         target.data.scavenged = true
         scavengeCounter = 0
@@ -60,8 +62,22 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
         for (let el of scavengeTable) {
           if (el.min <= randomRoll && el.max >= randomRoll) {
             // console.log(el.min, el.max, el.item.name)
-            let randomPositionX = target.data.x + target.data.blockSize / 2 + Math.ceil((Math.random() - 0.5) * target.data.blockSize * 2)
-            let randomPositionY = target.data.y + target.data.blockSize / 2 + Math.ceil((Math.random() - 0.5) * target.data.blockSize * 2)
+            // create random variability for how far the drop lands from the corpse
+            let randomX = Math.ceil((Math.random() - 0.5) * target.data.blockSize)
+            let randomY = Math.ceil((Math.random() - 0.5) * target.data.blockSize)
+            if (randomX > 0 && randomX < target.data.blockSize / 3) {
+              randomX = Math.round(randomX + target.data.blockSize / 3)
+            } else if (randomX <= 0 && randomX > -target.data.blockSize / 3) {
+              randomX = Math.round(randomX - target.data.blockSize / 3)
+            }
+            if (randomY > 0 && randomY < target.data.blockSize / 3) {
+              randomY = Math.round(randomY + target.data.blockSize / 3)
+            } else if (randomY <= 0 && randomY > -target.data.blockSize / 3) {
+              randomY = Math.round(randomX - target.data.blockSize / 3)
+            }
+            console.log(randomX, randomY)
+            let randomPositionX = target.data.x + target.data.blockSize / 2 + randomX
+            let randomPositionY = target.data.y + target.data.blockSize / 2 + randomY
             randomPositionX =  pixelPerfect(
               randomPositionX,
               "down",

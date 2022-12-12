@@ -14,7 +14,7 @@ const bloodDrain = (target, baseHero, enemyCollision) => {
       baseHero.equipment.bloodTanks.currentFillTank.data.maxVolume
     ) {
       // animates blood effect on enemy corpse when draining
-      target.data.damageAnim.data.spriteAnimSpeed = 20;
+      // target.data.damageAnim.data.spriteAnimSpeed = 20;
       const animated = animateDyingAndBloodDrain(target.data.damageAnim);
       target.data.damageActive = animated[0];
       target.data.damageAnim = animated[1];
@@ -24,6 +24,10 @@ const bloodDrain = (target, baseHero, enemyCollision) => {
       baseHero.equipment.bloodTanks.bloodSound.play();
       if (target.data.currentBloodLevel <= 0) {
         target.crop.x = target.data.bloodlessFrame * target.data.blockSize;
+        baseHero.equipment.bloodTanks.bloodSound.pause();
+      }
+      if (!baseHero.keys.e.pressed) {
+        baseHero.equipment.bloodTanks.bloodSound.pause();
       }
       if (
         baseHero.equipment.bloodTanks.currentFillTank.data.currentVolume >
@@ -45,6 +49,7 @@ const bloodDrain = (target, baseHero, enemyCollision) => {
   } else {
     baseHero.equipment.bloodTanks.bloodSound.pause();
   }
+
   return [target, baseHero]
 }
 

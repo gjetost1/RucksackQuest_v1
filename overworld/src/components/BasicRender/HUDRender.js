@@ -44,6 +44,7 @@ const bloodTankSort = (baseHero) => {
   return baseHero;
 };
 
+
 // bloodTankSet determines which blood tank should be filled next, and which one is active
 const bloodTankSet = (baseHero) => {
   let firstTank = true;
@@ -232,6 +233,7 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
   // activates bloodTank on key press
   if (baseHero.keys.x.pressed && !tankActivateCooldown) {
+    baseHero.equipment.bloodTanks.bloodSound.pause();
     baseHero = bloodTankSet(baseHero);
     if (baseHero.equipment.bloodTanks.currentTank) {
       baseHero.equipment.bloodTanks.currentTank.crop.x = 0;
