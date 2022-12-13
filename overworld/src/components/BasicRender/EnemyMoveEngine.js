@@ -173,12 +173,25 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
 
 
   if (
-    enemyObject.x <= 0 ||
-    enemyObject.x >= globalVars.width ||
-    enemyObject.y <= 0 ||
+    enemyObject.x <= -enemyObject.blockSize ||
+    enemyObject.x >= globalVars.width  ||
+    enemyObject.y <= -enemyObject.blockSize ||
     enemyObject.y >= globalVars.height
   ) {
     // console.log('offscreen')
+    if (enemyObject.x <= enemyObject.blockSize) {
+      enemyObject.direction = 'right'
+      // console.log("right")
+    } else if (enemyObject.x >= globalVars.width - enemyObject.blockSize) {
+      enemyObject.direction = 'left'
+      // console.log("left")
+    } else if (enemyObject.y <= enemyObject.blockSize) {
+      enemyObject.direction = 'down'
+      // console.log("down")
+    } else if (enemyObject.y >= globalVars.height - enemyObject.blockSize) {
+      enemyObject.direction = 'up'
+      // console.log("up")
+    }
     return enemyObject;
   }
 
@@ -213,12 +226,19 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
 
   // console.log(enemyObject.spriteSheets.downright)
 
-  const imgData = collisionCtx.getImageData(
-    enemyObject.x,
-    enemyObject.y,
-    enemyObject.x + enemyObject.blockSize,
-    enemyObject.y + enemyObject.blockSize
-  );
+  let imgData
+  if (enemyObject.x > 0 && enemyObject.y > 0) {
+    imgData = collisionCtx.getImageData(
+      enemyObject.x,
+      enemyObject.y,
+      enemyObject.x + enemyObject.blockSize,
+      enemyObject.y + enemyObject.blockSize
+    );
+  } else {
+    imgData = collisionCtx.getImageData(
+      1, 1, 64, 64
+    )
+  }
   // console.log(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
 
   let collisions = checkCollision(
@@ -468,39 +488,8 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     }
   }
 
-  // if (enemyObject.moving) {
-  //   if (enemyObject.direction === 'down') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.down
-  //     // console.log(enemyObject.spriteSheets.down)
-  //     enemyObject.y += enemyObject.yVel
-  //   } else if (enemyObject.direction === 'up') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.up
-  //     // console.log(enemyObject.spriteSheets.up)
-  //     enemyObject.y -= enemyObject.yVel
-  //   } else if (enemyObject.direction === 'left') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.left
-  //     enemyObject.x -= enemyObject.xVel
-  //   } else if (enemyObject.direction === 'right') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.right
-  //     enemyObject.x += enemyObject.xVel
-  //   } else if (enemyObject.direction === 'upleft') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.upleft
-  //     enemyObject.x -= enemyObject.xVel
-  //     enemyObject.y -= enemyObject.yVel
-  //   } else if (enemyObject.direction === 'upright') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.upright
-  //     enemyObject.x += enemyObject.xVel
-  //     enemyObject.y -= enemyObject.yVel
-  //   } else if (enemyObject.direction === 'downleft') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.downleft
-  //     enemyObject.x -= enemyObject.xVel
-  //     enemyObject.y += enemyObject.yVel
-  //   } else if (enemyObject.direction === 'downright') {
-  //     enemyObject.currentSprite = enemyObject.spriteSheets.downright
-  //     enemyObject.x += enemyObject.xVel
-  //     enemyObject.y += enemyObject.yVel
-  //   }
-  // }
+
+
 
   // console.log(enemyObject.direction, enemyObject.currentSprite)
     // runs attack animation

@@ -128,46 +128,46 @@ const BasicRender = ({}) => {
   const comboCanvas = useRef(null);
 
   const wolfenGroupCreator = [
-    // {
-    //   base: wolfen,
-    //   x: -100,
-    //   y: -100,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1564,
-    //   y: 1500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
-    // },
+    {
+      base: wolfen,
+      x: -100,
+      y: -100,
+    },
+    {
+      base: wolfen,
+      x: 200,
+      y: 200,
+    },
+    {
+      base: wolfen,
+      x: 1500,
+      y: 1564,
+    },
     {
       base: wolfen,
       x: 372,
-      y: 564,
+      y: 864,
     },
     {
       base: wolfen,
       x: 300,
-      y: 464,
+      y: 864,
     },
-    // {
-    //   base: wolfen,
-    //   x: -100,
-    //   y: -100,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1564,
-    //   y: 1500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
-    // },
+    {
+      base: wolfen,
+      x: -100,
+      y: -100,
+    },
+    {
+      base: wolfen,
+      x: 1564,
+      y: 1500,
+    },
+    {
+      base: wolfen,
+      x: 1500,
+      y: 1564,
+    },
     {
       base: wolfen,
       x: 372,
@@ -216,6 +216,7 @@ const BasicRender = ({}) => {
     });
     const dataVisCtx = dataVisCanvas.getContext("2d");
     const comboCtx = comboCanvas.current.getContext("2d");
+
     // const pixelCtx = pixelCanvas.current.getContext('2d', { alpha: false })
 
     // makes foreground transparent so you can see sprites under it
@@ -321,6 +322,9 @@ const BasicRender = ({}) => {
       }
     }
 
+    const collisions = new Image();
+    collisions.src = collision_1;
+
     class Collisions {
       constructor({ image, position, crop }) {
         this.position = position;
@@ -340,12 +344,12 @@ const BasicRender = ({}) => {
           this.image,
           this.crop.x,
           this.crop.y,
-          globalVars.width,
-          globalVars.height,
+          collisions.width,
+          collisions.height,
           this.position.x,
           this.position.y,
-          globalVars.width,
-          globalVars.height
+          collisions.width,
+          collisions.height
         );
       }
     }
@@ -394,8 +398,7 @@ const BasicRender = ({}) => {
     const foreground = new Image();
     foreground.src = foreground_1;
 
-    const collisions = new Image();
-    collisions.src = collision_1;
+
 
     const backgroundSprite = new Background({
       image: background,
@@ -421,6 +424,8 @@ const BasicRender = ({}) => {
       },
     });
 
+
+
     const collisionSprite = new Collisions({
       image: collisions,
       position: {
@@ -432,6 +437,21 @@ const BasicRender = ({}) => {
         y: backgroundHeightCenter,
       },
     });
+
+
+    // const collisionSprite = new Collisions({
+    //   image: collisions,
+    //   position: {
+    //     x: 0,
+    //     y: 0,
+    //   },
+    //   crop: {
+    //     x: backgroundWidthCenter,
+    //     y: backgroundHeightCenter,
+    //   },
+    // });
+
+    // console.log(collisions.width, collisions.height)
 
     const animate = () => {
 
@@ -463,6 +483,7 @@ const BasicRender = ({}) => {
       backgroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
       foregroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
       collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
+      // collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
 
 
 
@@ -564,7 +585,8 @@ const BasicRender = ({}) => {
           spriteCanvas,
           foregroundCanvas,
           cursorCanvas,
-          dataVisCanvas
+          dataVisCanvas,
+
         ]);
         frameRateCounter = 0;
       }

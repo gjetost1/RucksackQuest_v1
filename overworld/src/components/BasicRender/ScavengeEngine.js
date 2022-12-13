@@ -54,15 +54,15 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
       // baseHero.scavengeAnimation = true
       scavengeCounter++
 
-      if (scavengeCounter === scavengeFrames - 20) {
-        // console.log('sound')
-        baseHero.scavengeFx.play()
+      // if (scavengeCounter === scavengeFrames - 20) {
+      //   // console.log('sound')
+      //   baseHero.scavengeFx.play()
 
-      }
+      // }
 
       // once scavenging is complete we roll to find out what item is returned
       if (scavengeCounter >= scavengeFrames) {
-        // baseHero.scavengeFx.play()
+        baseHero.scavengeFx.play()
         baseHero.scavengeActive = false
         baseHero.scavengeAnimation = false
         baseHero.scavengePause = true

@@ -1,6 +1,8 @@
 import moveEngine from "./MoveEngine";
 import coordinateChange from "./CoordinateChange";
 import eventEngine from "./EventEngine";
+import globalVars from "./GlobalVars";
+import pixelPerfect from "./PixelPerfect";
 
 
 
@@ -83,12 +85,34 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, s
     // console.log('scavengeActive', baseHero.scavengeActive)
 
     // coordinateChange moves elements in relation to the hero to keep them at the right coordinates
-    for (let el of enemyArr) {
-      el = coordinateChange(baseHero, el);
+    for (let element of enemyArr) {
+
+      element = coordinateChange(baseHero, element); // this is all of the enemy groups
+
+      // this part is for the offScreen coordinates which handle clipping for off screen enemies
+      for (let el of element) {
+        if ((el.data.offScreenX || el.data.offScreenY)){
+          el.data.offScreenX = pixelPerfect(
+            el.data.offScreenX + baseHero.frameXChange,
+            'down',
+            'x',
+            globalVars.upscale
+            )
+          el.data.offScreenY = pixelPerfect(
+            el.data.offScreenY + baseHero.frameYChange,
+            'down',
+            'y',
+            globalVars.upscale
+            )
+          // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+          // dataVisCtx.fillRect(el.data.offScreenX, el.data.offScreenY, el.data.blockSize, el.data.blockSize)
+        }
+      }
     }
     if (dropItemArr.length) {
         dropItemArr = coordinateChange(baseHero, dropItemArr);
     }
+
 
   }
   baseHero.frameCountLimiter += baseHero.moveSpeed;

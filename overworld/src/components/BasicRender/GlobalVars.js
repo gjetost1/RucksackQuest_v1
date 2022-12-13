@@ -10,7 +10,7 @@ const perfectWidth = pixelPerfect(window.innerWidth, 'down', 'x', upscale)  // w
 const middleX = pixelPerfect(Math.round(width / 2), 'down', 'x', upscale)
 const middleY = pixelPerfect(Math.round(height / 2), 'down', 'x', upscale)
 const heroStartXCoord = 1000
-const heroStartYCoord = 1000
+const heroStartYCoord = 700
 const blockSize = 16 * upscale   // size of each grid block in pixels for collison objects and hero sprites
 const windowSpacerHeight = ((window.innerHeight || document.documentElement.clientHeight||
   document.body.clientHeight) - height) / 2

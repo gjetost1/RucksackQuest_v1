@@ -17,13 +17,62 @@ const animate = (element) => {
   return [true, element];
 };
 
+const frameCropLimit = 20
+let frameCropCounter = 0
+
 const enemyRender = (enemyArr, baseHero, spriteCtx, renderType) => {
   if (!enemyArr) return;
 
   for (let el of enemyArr) {
+
+    // console.log(el.data)
+    // if (
+    //   (el.data.x <= 0 ||
+    //     el.data.x >= globalVars.width ||
+    //     el.data.y <= 0 ||
+    //     el.data.y >= globalVars.height) &&
+    //   !el.data.dead
+    // ) {
+    //   frameCropCounter++
+    //   if (frameCropCounter >= frameCropLimit) {
+    //   frameCropCounter = 0
+
+    //     if (el.data.x <= 0) {
+    //       el.data.x -= globalVars.upscale
+    //       el.data.moving = true
+
+    //     } else if (el.data.x >= globalVars.width) {
+    //       el.data.x += globalVars.upscale
+    //     } else if (el.data.y <= 0) {
+    //       el.data.y -= globalVars.upscale
+    //     } else if (el.data.y >= globalVars.height) {
+    //       el.data.y += globalVars.upscale
+    //     }
+    //     // if (el.data.x <= 0) {
+    //     //   el.crop.x += globalVars.upscale
+    //     // } else if (el.data.x >= globalVars.width) {
+    //     //   el.crop.x -= globalVars.upscale
+    //     // } else if (el.data.y <= 0) {
+    //     //   el.crop.y += globalVars.upscale
+    //     // } else if (el.data.y >= globalVars.height) {
+    //     //   el.crop.y -= globalVars.upscale
+    //     // }
+    //   }
+    //   spriteCtx.drawImage(
+    //     el.image,
+    //     el.crop.x,
+    //     el.crop.y,
+    //     el.data.blockSize,
+    //     el.data.blockSize,
+    //     el.position.x,
+    //     el.position.y,
+    //     el.data.blockSize,
+    //     el.data.blockSize
+    //   );
+    // }
+
     // use 2 render instances so the enemy is in front of the hero when it's y value is less
     // and behind when the y value is more
-    // console.log(el.data)
     if (
       (el.data.y + el.data.blockSize / (globalVars.upscale * 2) <= baseHero.y &&
         renderType !== "front" &&
