@@ -29,7 +29,6 @@ import globalVars from "./GlobalVars";
 import heroRender from "./HeroRender";
 import cursorRender from "./CursorRender";
 import hudRender from "./HUDRender";
-import attackRender from "./AttackRender";
 import animatedObjectsRender, {
   generatePatch,
   Patch,
@@ -40,7 +39,6 @@ import { wolfen } from "./EnemyObjects";
 import inputEngine from "./InputEngine";
 import baseHeroGet from "./BaseHero";
 
-import sword_fx from "../../assets/sounds/sword/damage_sound.wav";
 import heroUpdate from "./HeroUpdate";
 import dropItemRender from "./DropItemRender";
 
@@ -100,7 +98,6 @@ let dropItemArr = [] // array that stores all items that are on the ground
 let bufferIntervalSet = true; // makes sure that the sprite buffer interval is set only once
 
 const BasicRender = ({}) => {
-  const swordFx = new Audio(sword_fx);
   // let eventObj = {}
 
   // declare the 3 (current) canvases. background is rendered first, then sprite, then foreground on top
@@ -131,21 +128,21 @@ const BasicRender = ({}) => {
   const comboCanvas = useRef(null);
 
   const wolfenGroupCreator = [
-    {
-      base: wolfen,
-      x: -100,
-      y: -100,
-    },
-    {
-      base: wolfen,
-      x: 1564,
-      y: 1500,
-    },
-    {
-      base: wolfen,
-      x: 1500,
-      y: 1564,
-    },
+    // {
+    //   base: wolfen,
+    //   x: -100,
+    //   y: -100,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1564,
+    //   y: 1500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1500,
+    //   y: 1564,
+    // },
     {
       base: wolfen,
       x: 372,
@@ -156,21 +153,21 @@ const BasicRender = ({}) => {
       x: 300,
       y: 464,
     },
-    {
-      base: wolfen,
-      x: -100,
-      y: -100,
-    },
-    {
-      base: wolfen,
-      x: 1564,
-      y: 1500,
-    },
-    {
-      base: wolfen,
-      x: 1500,
-      y: 1564,
-    },
+    // {
+    //   base: wolfen,
+    //   x: -100,
+    //   y: -100,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1564,
+    //   y: 1500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1500,
+    //   y: 1564,
+    // },
     {
       base: wolfen,
       x: 372,
@@ -196,7 +193,7 @@ const BasicRender = ({}) => {
   //   setInterval(() => {
   //     console.log("buffering");
   //     spriteBuffer(baseHero, wolfenGroup);
-  //   }, 3000);
+  //   }, 1000);
   // }
 
   // this is the main useEffect for rendering - it runs input checks,
@@ -437,6 +434,8 @@ const BasicRender = ({}) => {
     });
 
     const animate = () => {
+
+      // console.log(baseHero.bloodDrainActive, baseHero.bloodDrainAnimation)
       // clears all canvases for a new animation frame
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
       spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height);
@@ -527,27 +526,7 @@ const BasicRender = ({}) => {
       dropItemRender(dropItemArr, spriteCtx) // renders items that are on the ground
 
 
-      // draws hero sprite and equipment in attack animation if there is an ongoing attack
-      if (baseHero.attackAnimation) {
-        const attackRet = attackRender(
-          baseHero.heroCropX,
-          baseHero.heroSpriteSize,
-          swordFx,
-          baseHero.attackAnimation
-        );
-        baseHero.heroCropX = attackRet.heroCropX;
-        baseHero.attackAnimation = attackRet.attackAnimation;
-        playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
-      } else {
-        // draws hero sprite image to canvas without attack animation
-        // feed in sprite class instances in the order you want them rendered
-        // eg typically base player sprite first, then clothing, then equipment
-        playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
-      }
+      baseHero = heroRender(baseHero, playerSprite, swordSprite, spriteCtx)
 
       enemyRender(wolfenGroup, baseHero, spriteCtx, "front");
 

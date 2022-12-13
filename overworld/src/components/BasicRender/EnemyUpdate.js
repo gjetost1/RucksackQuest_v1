@@ -3,12 +3,16 @@ import globalVars from "./GlobalVars";
 import checkBoxCollision from "./CheckBoxCollision";
 import eventEngine from "./EventEngine";
 import attackEngine from "./AttackEngine";
-import checkRadius from "./CheckRadius";
+import checkRadius, { getDistance } from "./CheckRadius";
+import pixelPerfect from "./PixelPerfect";
+
 import bloodDrain from "./BloodDrain";
 import { animateDyingAndBloodDrain } from "./Animate";
 import scavengeEngine from "./ScavengeEngine";
 
 let enemyCollision = false;
+let currentlyScavenging = false;
+let currentlyBloodDraining = false;
 
 // animates dying and blood drain
 // const animate = (element) => {
@@ -52,10 +56,10 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
     }
     // doesn't update if the enemy is outside of the rendered canvas
     if (
-      (!el.data.x <= 0 ||
-        !el.data.x >= globalVars.width ||
-        !el.data.y <= 0 ||
-        !el.data.y >= globalVars.height) &&
+      // (!el.data.x <= 0 ||
+      //   !el.data.x >= globalVars.width ||
+      //   !el.data.y <= 0 ||
+      //   !el.data.y >= globalVars.height) &&
       !el.data.dead
     ) {
       // runs dying animation on death
@@ -75,11 +79,11 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
       // console.log(globalVars.heroCenterX, globalVars.heroCenterY, el.data.x, el.data.y, el.data.attackRadius, el.data.aggroRadius, el.data.fleeingRadius)
 
       // sets enemy to attacking status if the hero is within their aggroRadius
-
       if (
         checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.attackRadius)
         && el.data.attackCooldownOff
         && !el.data.fleeing
+        && !el.data.collisionOverride
       ) {
         // console.log('trigger attacking')
         el.data.attacking = true;
@@ -89,6 +93,7 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
         // const attackAnimTimeout = setTimeout(() => {
           // }, 1000)
 
+          // enemy will perform an attack if they are within this radius of the hero
           if (
             checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize - baseHero.blockSize / 8)
             ) {
@@ -125,9 +130,10 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
           }
 
 
-      } else if (
+      } else if ( // this is the chasing state for the enemy
         checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.aggroRadius)
-      ) {
+        && !el.data.collisionOverride
+        ) {
         // console.log('chasing')
         el.data.dashSpeed = el.data.baseDashSpeed
         el.data.chasing = true;
@@ -142,14 +148,18 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
         baseHero.takeDamage = false;
       }
 
-
-
       if (
         el.data.fleeing &&
         !checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.fleeingRadius)
       ) {
         el.data.fleeing = false;
         // console.log('fleeing end')
+      }
+
+      // makes sure the enemy moves when in collisionOverride state
+      // so that they might get unstuck...
+      if (el.data.collisionOverride) {
+        el.data.moving = true
       }
 
       // if the frameCountLimiter has been reached run the moveEngine to move
@@ -176,7 +186,7 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
     // if the enemy is close to the hero this checks for hero attacks
     // and hits on the enemy
     if (
-      checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize * 1.5)
+      checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize)
     ) {
 
 
@@ -187,21 +197,89 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
       }
 
       // handles blood draining of corpses
-      if (baseHero.bloodDrainActive && !el.data.scavenged) {
+  //  console.log(baseHero.bloodDrainActive)
+      if (baseHero.bloodDrainActive && !el.data.scavenged && el.data.currentBloodLevel > 0 && (!currentlyBloodDraining || currentlyBloodDraining === el) && !baseHero.bloodDrainPause && el.data.dead) {
+        // console.log('activate blood drain')
+        currentlyBloodDraining = el;
+        if (!baseHero.bloodDrainAnimation) {
+          // console.log('running this')
+          // const xDistance = pixelPerfect(el.data.x - globalVars.heroCenterX, 'down', 'x', globalVars.upscale)
+          // const yDistance = pixelPerfect(el.data.y - globalVars.heroCenterY - el.data.blockSize / 4, 'down', 'y', globalVars.upscale)
+          const xDistance = el.data.x - globalVars.heroCenterX
+          const yDistance = el.data.y - globalVars.heroCenterY - el.data.blockSize / 4
+          baseHero.targetCameraX += xDistance
+          baseHero.targetCameraY += yDistance
+          baseHero.bonusFrameXChange -= xDistance
+          baseHero.bonusFrameYChange -= yDistance
+          baseHero.heroCropX = 0
+          baseHero.animCounter = 0
+          baseHero.bloodDrainAnimation = true
+          baseHero.currentHeroSprite = baseHero.spriteSheets.blood_drain
+        }
+        // console.log('enemy col', enemyCollision)
         const bloodDrainRet = bloodDrain(el, baseHero, enemyCollision)
         el = bloodDrainRet[0]
         baseHero = bloodDrainRet[1]
-      } else {
+
+        if (!baseHero.bloodDrainActive) {
+          baseHero.currentHeroSprite = baseHero.spriteSheets.down
+          baseHero.cropX = 0
+          baseHero.cropY = 0
+
+        }
+
+      } else if (currentlyBloodDraining && currentlyBloodDraining !== el) {
+        // console.log('continue')
+
+        continue
+      } else if (currentlyBloodDraining) {
+        console.log('else if')
+
         baseHero.bloodDrainActive = false
+        currentlyBloodDraining = false
+        baseHero.bloodDrainAnimation = false
+
       }
 
+
+      // console.log(baseHero.scavengeActive)
       // handles scavenging of corpses
-      if (baseHero.scavengeActive && el.data.scavengeable && !el.data.scavenged && el.data.currentBloodLevel === el.data.maxBloodLevel) {
+      if (baseHero.scavengeActive && el.data.scavengeable && !el.data.scavenged && el.data.currentBloodLevel === el.data.maxBloodLevel && (!currentlyScavenging || currentlyScavenging === el) && !baseHero.scavengePause  && el.data.dead) {
+
+        currentlyScavenging = el
+        // if it is the first frame of a scavenge this sets up the hero sprite
+        // position and animation for scavenging
+        if (!baseHero.scavengeAnimation) {
+          // const xDistance = pixelPerfect(el.data.x - globalVars.heroCenterX, 'down', 'x', globalVars.upscale)
+          // const yDistance = pixelPerfect(el.data.y - globalVars.heroCenterY - el.data.blockSize / 4, 'down', 'y', globalVars.upscale)
+          const xDistance = el.data.x - globalVars.heroCenterX
+          const yDistance = el.data.y - globalVars.heroCenterY - el.data.blockSize / 4
+          baseHero.targetCameraX += xDistance
+          baseHero.targetCameraY += yDistance
+          baseHero.bonusFrameXChange -= xDistance
+          baseHero.bonusFrameYChange -= yDistance
+          baseHero.heroCropX = 0
+          baseHero.animCounter = 0
+          baseHero.scavengeAnimation = true
+          baseHero.currentHeroSprite = baseHero.spriteSheets.scavenge
+        }
         const scavengeRet = scavengeEngine(el, baseHero, dropItemArr, enemyCollision)
         el = scavengeRet[0]
         baseHero = scavengeRet[1]
         dropItemArr = scavengeRet[2]
-      } else {
+
+        if (!baseHero.scavengeActive) {
+          baseHero.currentHeroSprite = baseHero.spriteSheets.down
+          baseHero.cropX = 0
+          baseHero.cropY = 0
+
+        }
+      } else if (currentlyScavenging && currentlyScavenging !== el) {
+        continue
+      } else if (currentlyScavenging) {
+        baseHero.scavengeActive = false
+        baseHero.scavengeAnimation = false
+        currentlyScavenging = false
         if (el.data.scavenged) {
           el.crop.x = el.data.scavengedFrame * el.data.blockSize;
         }

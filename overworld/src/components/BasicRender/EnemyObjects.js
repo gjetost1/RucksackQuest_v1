@@ -77,8 +77,8 @@ const bloodSplatter = new damageSprite({
 // used to create the collision box colBox
 const colBuffer = 12; // number of pixels away from hero that detectors sit
 const cornerBuffer = 4;
-const horzBuffer = 6;
-const vertBuffer = 4;
+const horzBuffer = 0;
+const vertBuffer = 0;
 const blockSize = globalVars.blockSize;
 
 export const wolfen = {
@@ -103,7 +103,9 @@ export const wolfen = {
   attacking: false,
   chasing: false,
   fleeing: false,
-  aggroRadius: 340,
+  collisionCounter: 0, // used when enemy is attacking to stop them from repeatedly colliding with objects
+  collisionOverride: false,
+  aggroRadius: 440,
   fleeingRadius: 200,
   attackRadius: 180,
   currentSprite: wolfen_down,

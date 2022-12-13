@@ -1,9 +1,10 @@
 import moveEngine from "./MoveEngine";
 import coordinateChange from "./CoordinateChange";
 import eventEngine from "./EventEngine";
-import dropItemRender from "./DropItemRender";
 
-const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx) => {
+
+
+const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx) => {
   // moveEngine runs less than every frame to keep the hero sprite slower
   if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
     baseHero.frameCountLimiter = 0;
@@ -24,6 +25,10 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx) =
       baseHero.attackCooldownOff = false;
       baseHero.attackActive = true;
       baseHero.attackAnimation = true;
+      baseHero.heroCropX = baseHero.moveFrames * baseHero.blockSize
+      baseHero.animCounter = 0
+
+      baseHero.equipment.weapon.attackSound.play()
 
 
       baseHero = eventEngine(baseHero, "attack");
@@ -59,9 +64,10 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx) =
       // baseHero.attackActive = false
     }
 
+    // console.log(baseHero.keys.q.pressed, baseHero.scavengeActive, baseHero.scavengeAnimation)
     if (baseHero.keys.q.pressed) {
-      // console.log('pushed')
 
+      // console.log('pushed')
       baseHero.scavengeActive = true
       baseHero = eventEngine(baseHero, "drain");
     } else {
@@ -69,6 +75,9 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx) =
       //   baseHero.eventX = -400;
       //   baseHero.eventY = -400;
       // }
+
+      baseHero.scavengeAnimation = false
+      // console.log(baseHero.scavengeAnimate)
       baseHero.scavengeActive = false;
     }
     // console.log('scavengeActive', baseHero.scavengeActive)
@@ -83,6 +92,7 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx) =
 
   }
   baseHero.frameCountLimiter += baseHero.moveSpeed;
+
 
   return [baseHero, enemyArr, dropItemArr]
 }

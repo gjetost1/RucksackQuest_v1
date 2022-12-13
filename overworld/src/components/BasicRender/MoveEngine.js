@@ -3,9 +3,9 @@ import pixelPerfect from "./PixelPerfect";
 import globalVars from "./GlobalVars";
 import checkCollision from "./CheckCollision";
 
-const baseAnimSpeed = 2;
-let spriteAnimSpeed = baseAnimSpeed; // after how many frames the sprite frame will progress for walking animation
-let spriteAnimCounter = 0; // increments to trigger render of next animation frame
+// const baseAnimSpeed = 2;
+// let spriteAnimSpeed = baseAnimSpeed; // after how many frames the sprite frame will progress for walking animation
+// let spriteAnimCounter = 0; // increments to trigger render of next animation frame
 
 const colBuffer = 12; // number of pixels away from hero that detectors sit
 const cornerBuffer = 4;
@@ -308,7 +308,7 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
       baseHero.equipment.weapon.spriteSheets.right;
     baseHero.direction = "right";
   }
-  if (!keysPressed) {
+  if (!keysPressed && !baseHero.attackAnimation && !baseHero.scavengeAnimation && !baseHero.bloodDrainAnimation) {
     baseHero.heroCropX = 0;
   }
 
@@ -344,20 +344,16 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
 
   // iterates through the sprite sheet images to animate sprite - spriteAnimSpeed sets how fast this happens
   if (keysPressed) {
-    if (spriteAnimCounter >= spriteAnimSpeed) {
-      baseHero.heroCropX += baseHero.heroSpriteSize;
-      // spriteIndex++
-      if (baseHero.heroCropX > baseHero.heroSpriteSize * 6) {
-        baseHero.heroCropX = baseHero.heroSpriteSize;
-        // spriteIndex = 1
+    if (baseHero.spriteAnimCounter >= baseHero.spriteAnimSpeed) {
+      baseHero.heroCropX += baseHero.blockSize;
+      if (baseHero.heroCropX > baseHero.blockSize * (baseHero.moveFrames - 1)) {
+        baseHero.heroCropX = baseHero.blockSize;
       }
-      // if (spriteIndex > 6) {
-      //   spriteIndex = 1
-      // }
-      spriteAnimCounter = 0;
+      baseHero.spriteAnimCounter = 0;
     }
-    spriteAnimCounter++;
+    baseHero.spriteAnimCounter++;
   }
+
 
   // console.log('x:', baseHero.targetCameraX, baseHero.targetHeroX, 'y', baseHero.targetCameraY, baseHero.targetHeroY)
 

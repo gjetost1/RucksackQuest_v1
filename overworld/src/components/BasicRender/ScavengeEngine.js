@@ -37,23 +37,38 @@ const generateDropTable = (dropTable) => {
 
 // handles scavenging of corpses and creating drops
 let scavengeCounter = 0
+
 const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
-  const randomScavengeTime = Math.floor(Math.random() * 400) // variable scavenging time
-  const scavengeFrames = 100 + randomScavengeTime // determines how many frames the scavenging takes before returning something
+  // console.log('in scavenge engine', target, baseHero, dropItemArr, enemyCollision)
+
+  const randomScavengeTime = Math.floor(Math.random() * 200) // variable scavenging time
+  const scavengeFrames = 200 + randomScavengeTime // determines how many frames the scavenging takes before returning something
   // const scavengeFrames = 100
+
   let scavengedItem = null // item that will be returned
   if (baseHero.scavengeActive &&
     !enemyCollision &&
     target.data.dead &&
     target.data.scavengeable) {
       // console.log('scavenging', scavengeCounter)
-      baseHero.scavengeAnimActive = true
+      // baseHero.scavengeAnimation = true
       scavengeCounter++
+
+      if (scavengeCounter === scavengeFrames - 20) {
+        // console.log('sound')
+        baseHero.scavengeFx.play()
+
+      }
 
       // once scavenging is complete we roll to find out what item is returned
       if (scavengeCounter >= scavengeFrames) {
-        baseHero.scavengeFx.play()
+        // baseHero.scavengeFx.play()
         baseHero.scavengeActive = false
+        baseHero.scavengeAnimation = false
+        baseHero.scavengePause = true
+        setTimeout(() => {
+          baseHero.scavengePause = false
+        }, 1000)
         target.data.scavenged = true
         scavengeCounter = 0
         const scavengeTable = generateDropTable(target.data.scavengeTable) // creates an array from the target's drop table with probability numbers
@@ -75,7 +90,7 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
             } else if (randomY <= 0 && randomY > -target.data.blockSize / 3) {
               randomY = Math.round(randomX - target.data.blockSize / 3)
             }
-            console.log(randomX, randomY)
+            // console.log(randomX, randomY)
             let randomPositionX = target.data.x + target.data.blockSize / 2 + randomX
             let randomPositionY = target.data.y + target.data.blockSize / 2 + randomY
             randomPositionX =  pixelPerfect(

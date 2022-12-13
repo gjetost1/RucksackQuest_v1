@@ -19,33 +19,37 @@ const getPixel = (imgData, x, y) => {
 
 const checkCollision = (imgData, colBox, dataVisCtx) => {
   const collisions = {}
+  // console.log('hero col', colBox)
+
   for (let el of Object.entries(colBox)) {
 
       collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[3] !== 0
 
     // uncomment this to render an approximate visualization of the collision checkers to the canvas
-    // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+    dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
     // if (enemyObject) {
-    //   dataVisCtx.fillRect(enemyObject.x + el[1][0] - 2, enemyObject.y + el[1][1] - 2, 4, 4)
+      // dataVisCtx.fillRect(enemyObject.x + el[1][0] - 2, enemyObject.y + el[1][1] - 2, 4, 4)
     // } else {
-    //   dataVisCtx.fillRect(globalVars.heroCenterX + el[1][0] - 2, globalVars.heroCenterY + el[1][1] - 2, 4, 4)
+      // dataVisCtx.fillRect(globalVars.heroCenterX + el[1][0] - 2, globalVars.heroCenterY + el[1][1] - 2, 4, 4)
     // }
   }
 
   return collisions
 }
 
-export const checkGreenCollision = (imgData, colBox, dataVisCtx) => {
+export const checkGreenCollision = (imgData, colBox, dataVisCtx, enemyObject) => {
   const collisions = {}
+  // console.log('enemy col', colBox)
   for (let el of Object.entries(colBox)) {
+
 
     collisions[el[0]] = getPixel(imgData, el[1][0], el[1][1])[1] === 255
     // uncomment this to render an approximate visualization of the collision checkers to the canvas
     // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
     // if (enemyObject) {
-    //   dataVisCtx.fillRect(enemyObject.x + el[1][0] - 2, enemyObject.y + el[1][1] - 2, 4, 4)
+      // dataVisCtx.fillRect(enemyObject.x + el[1][0] - 2, enemyObject.y + el[1][1] - 2, 4, 4)
     // } else {
-    //   dataVisCtx.fillRect(globalVars.heroCenterX + el[1][0] - 2, globalVars.heroCenterY + el[1][1] - 2, 4, 4)
+      // dataVisCtx.fillRect(globalVars.heroCenterX + el[1][0] - 2, globalVars.heroCenterY + el[1][1] - 2, 4, 4)
     // }
   }
 

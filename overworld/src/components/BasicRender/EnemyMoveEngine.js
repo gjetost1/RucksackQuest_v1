@@ -1,6 +1,6 @@
 // import pixelPerfect from './PixelPerfect'
 import globalVars from "./GlobalVars";
-import { checkGreenCollision } from "./CheckCollision";
+import checkCollision, { checkGreenCollision } from "./CheckCollision";
 import baseHero from "./BaseHero";
 // import attackEngine from "./AttackEngine";
 
@@ -100,7 +100,7 @@ const moveTowardsHero = (target, dataVisCtx) => {
   //         | | |
   //   g     |f|f|     e
   //
-  // hero is at center of zone x, which is baseHero.blockSize height and width
+  // hero is at center of zone x, which is baseHero.blockSize height and width.
   // if enemy is in zones b, d, f, or h they will turn diagonally towards hero
   // if they hit one of the outside edges, and will switch to moving horizontally or
   // vertically towards the hero if they cross the middle line of that zone.
@@ -181,21 +181,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     // console.log('offscreen')
     return enemyObject;
   }
-  // if (
-  //   enemyObject.x <= -globalVars.blockSize
-  //   || enemyObject.y <= -globalVars.blockSize
-  // ) {
-  //   // console.log(enemyObject.x, enemyObject.y)
-  //   return enemyObject
-  // }
 
-  // if (
-  //   enemyObject.x < -globalVars.blockSize || enemyObject.x > globalVars.width + globalVars.blockSize
-  //       || enemyObject.y < -globalVars.blockSize || enemyObject.y > globalVars.height + globalVars.blockSize
-  // ) {
-  //   // console.log('offscreen')
-  //   return enemyObject
-  // }
 
   // if enemy isn't in attack mode it moves around randomly
   if (enemyObject.attacking) {
@@ -234,11 +220,12 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     enemyObject.y + enemyObject.blockSize
   );
   // console.log(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
-  const onlyGreenCol = true; // if true it only checks environment collision, otherwise it also checks enemy collisions
-  let collisions = checkGreenCollision(
+
+  let collisions = checkCollision(
     imgData,
     enemyObject.colBox,
-    dataVisCtx
+    dataVisCtx,
+    enemyObject
   );
   const col0 = collisions[0];
   const col1 = collisions[1];
@@ -265,6 +252,25 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     col9 ||
     col10 ||
     col11;
+
+    // if (allCol) {console.log('collision')}
+
+    // this makes the enemy stop chasing the hero for a little
+    // bit if they are repeatedly colliding
+    if (allCol && !enemyObject.collisionOverride) {
+      enemyObject.collisionCounter += 1
+    }
+    if (enemyObject.collisionCounter > 20) {
+      // console.log('collision override')
+      enemyObject.collisionCounter = 0
+      enemyObject.collisionOverride = true
+      const overrideTimeout = setTimeout(() => {
+      // console.log('end collision override')
+      clearTimeout(overrideTimeout)
+        enemyObject.collisionOverride = false
+      }, 900)
+    }
+
 
   // if dash is active increase the max velocity and add a boost to acceleration
   if (enemyObject.dashing) {
@@ -409,8 +415,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
         } else {
           enemyObject.direction = "down";
         }
-      }
-      {
+      } else {
         enemyObject.currentSprite = enemyObject.spriteSheets.upleft;
         enemyObject.x -= enemyObject.xVel;
         enemyObject.y -= enemyObject.yVel;

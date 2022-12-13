@@ -135,7 +135,7 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
   const fillTank = baseHero.equipment.bloodTanks.currentFillTank
   // changes fill tanks if current one is full
   if (fillTank.data.currentVolume >= fillTank.data.maxVolume) {
-    console.log('current tank change')
+    // console.log('current tank change')
     baseHero = bloodTankSet(baseHero);
   }
   if (baseHero.equipment.bloodTanks.tankDrainActive) {

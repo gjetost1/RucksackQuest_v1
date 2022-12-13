@@ -1,7 +1,6 @@
 import { animateDyingAndBloodDrain } from "./Animate";
-
+// handles blood draining of corpses
 const bloodDrain = (target, baseHero, enemyCollision) => {
-  // handles blood draining of enemies
   if (
     baseHero.bloodDrainActive &&
     !enemyCollision &&
@@ -24,6 +23,10 @@ const bloodDrain = (target, baseHero, enemyCollision) => {
       baseHero.equipment.bloodTanks.bloodSound.play();
       if (target.data.currentBloodLevel <= 0) {
         target.crop.x = target.data.bloodlessFrame * target.data.blockSize;
+        baseHero.bloodDrainPause = true
+        setTimeout(() => {
+          baseHero.bloodDrainPause = false
+        }, 1000)
         baseHero.equipment.bloodTanks.bloodSound.pause();
       }
       if (!baseHero.keys.e.pressed) {

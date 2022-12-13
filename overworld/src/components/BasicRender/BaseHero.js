@@ -8,6 +8,8 @@ import downleft from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_d
 import downright from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_downright.png";
 import upleft from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upleft.png";
 import upright from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_upright.png";
+import scavenge from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_scavenge.png";
+import blood_drain from "../../assets/sprites/hero_sprite_sheets/base_mini_sprite_blood_drain.png";
 
 import sword_down from "../../assets/sprites/hero_sword/hero_sword_down.png";
 import sword_up from "../../assets/sprites/hero_sword/hero_sword_up.png";
@@ -23,6 +25,7 @@ import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter
 
 import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
 
+import sword_fx from "../../assets/sounds/sword/damage_sound.wav";
 import blood_pour_src from "../../assets/sounds/hero/blood_pour.mp3";
 import damage_grunt_src from "../../assets/sounds/hero/man_grunt.mp3";
 import scavenge_splat_src from "../../assets/sounds/hero/scavenge_splat.mp3";
@@ -67,6 +70,10 @@ const bloodSplatter = new damageSprite({
   },
 });
 
+const swordFx = new Audio(sword_fx);
+swordFx.volume = 0.05;
+
+
 const blood_pour = new Audio(blood_pour_src);
 blood_pour.volume = 1;
 blood_pour.loop = true;
@@ -109,6 +116,13 @@ const baseHero = {
   dashSpeed: 34,
   frameCountLimiter: 0,
   maxFrameCountLimiter: 100,
+  spriteAnimCounter: 0,
+  spriteAnimSpeed: 2,
+  baseAnimSpeed: 2,
+  moveFrames: 7,
+  attackFrames: 3,
+  scavengeFrames: 9,
+  animFrames: 7,
   heroCropX: 0,
   heroCropY: 0,
   spriteSheets: {
@@ -120,11 +134,14 @@ const baseHero = {
     downright,
     upleft,
     upright,
+    scavenge,
+    blood_drain
   },
   currentHeroSprite: down,
   equipment: {
     weapon: {
       type: 'sword',
+      attackSound: swordFx,
       baseDamage: 20, // attack always does this amount of damage
       damageRange: 14, // attack may also do between 0 and this much additional damage
       knockBack: globalVars.upscale * 4, // amount enemy is knocked back if hit by attack
@@ -166,9 +183,13 @@ const baseHero = {
   attackCooldownOff: true,
   attackActive: false,
   bloodDrainActive: false,
+  bloodDrainPause: false,
   bloodDrainRate: 0.5,
+  bloodDrainAnimation: false,
+  bloodDrainFrames: 4,
   scavengeActive: false,
-  scavengeAnimActive: false,
+  scavengePause: false,
+  scavengeAnimation: false,
   scavengeFx: scavenge_splat,
   maxVitality: 300,
   currentVitality: 300,
