@@ -40,8 +40,8 @@ heart_img.src = heart_1
 export const hudHeart = new HudSprite({
   image: heart_img,
   position: {
-    x: globalVars.blockSize,
-    y: globalVars.perfectHeight - 136 + globalVars.blockSize
+    x: globalVars.offscreenBoundarySide,
+    y: globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide
   },
   crop: {
     x: 0,
@@ -59,8 +59,8 @@ lungs_img.src = lungs_1
 export const hudLungs = new HudSprite({
   image: lungs_img,
   position: {
-    x: globalVars.perfectWidth - 136 + globalVars.blockSize,
-    y: globalVars.perfectHeight - 136 + globalVars.blockSize
+    x: globalVars.perfectWidth - 136 + globalVars.offscreenBoundarySide,
+    y: globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide
   },
   crop: {
     x: 0,

@@ -30,11 +30,12 @@ let hoverActive = false // used to allow only one item to be highlighted at a ti
 const dropItemRender = (dropItemArr, spriteCtx, cursor) => {
 
   for (let el of dropItemArr) {
+    // console.log(cursor.x, el.data.x, cursor.y, el.data.y)
     if (!hoverActive
-      && cursor.x >= el.data.x
-      && cursor.x <= el.data.x + el.data.blockSize
-      && cursor.y >= el.data.y
-      && cursor.y <= el.data.y + el.data.blockSize) {
+      && cursor.x >= el.data.x - 48 * globalVars.upscale
+      && cursor.x <= el.data.x + el.data.blockSize - 48 * globalVars.upscale
+      && cursor.y >= el.data.y - 48 * globalVars.upscale
+      && cursor.y <= el.data.y + el.data.blockSize - 48 * globalVars.upscale) {
         el.data.cropX = el.data.blockSize
         hoverActive = true
       } else {

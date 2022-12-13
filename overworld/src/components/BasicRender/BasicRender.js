@@ -42,10 +42,10 @@ import baseHeroGet from "./BaseHero";
 import heroUpdate from "./HeroUpdate";
 import dropItemRender from "./DropItemRender";
 
-const upscale = globalVars.upscale; // multiplier for resolution - 2 means each visible pixel is 2 x 2 real pixels etc
-const height = globalVars.height;
-const width = globalVars.width;
-const blockSize = globalVars.blockSize; // size of each grid block in pixels for collison objects
+// const upscale = globalVars.upscale; // multiplier for resolution - 2 means each visible pixel is 2 x 2 real pixels etc
+// const height = globalVars.height;
+// const width = globalVars.width;
+// const blockSize = globalVars.blockSize; // size of each grid block in pixels for collison objects
 let baseHero = { ...baseHeroGet };
 let cursorX = -400; // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400;
@@ -121,59 +121,59 @@ const BasicRender = () => {
     const dataVisCanvas = new OffscreenCanvas(globalVars.width, globalVars.height); // used for development to visualize coordinates, hitboxes, radiuses, etc.
 
   // const pixelCanvas = useRef(null)
-  const comboCanvas = useRef(null);
+  const comboCanvas = useRef(null); // only visible canvas, combines all the other asset canvases and renders them except the collision canvas
 
   const wolfenGroupCreator = [
-    // {
-    //   base: wolfen,
-    //   x: -100,
-    //   y: -100,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 200,
-    //   y: 200,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 372,
-    //   y: 864,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 300,
-    //   y: 864,
-    // },
     {
       base: wolfen,
-      x: 64,
-      y: 64,
+      x: -100,
+      y: -100,
     },
-    // {
-    //   base: wolfen,
-    //   x: 1564,
-    //   y: 1500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 372,
-    //   y: 564,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 300,
-    //   y: 464,
-    // },
+    {
+      base: wolfen,
+      x: 200,
+      y: 200,
+    },
+    {
+      base: wolfen,
+      x: 1500,
+      y: 1564,
+    },
+    {
+      base: wolfen,
+      x: 372,
+      y: 864,
+    },
+    {
+      base: wolfen,
+      x: 300,
+      y: 864,
+    },
+    {
+      base: wolfen,
+      x: 192,
+      y: 192,
+    },
+    {
+      base: wolfen,
+      x: 1564,
+      y: 1500,
+    },
+    {
+      base: wolfen,
+      x: 1500,
+      y: 1564,
+    },
+    {
+      base: wolfen,
+      x: 372,
+      y: 564,
+    },
+    {
+      base: wolfen,
+      x: 300,
+      y: 464,
+    },
   ];
 
   // creates an enemy group
@@ -281,12 +281,12 @@ const BasicRender = () => {
       draw() {
         backgroundCtx.drawImage(
           this.image,
-          this.crop.x,
-          this.crop.y,
+          this.crop.x - globalVars.offscreenBoundaryTotal,
+          this.crop.y - globalVars.offscreenBoundaryTotal,
           globalVars.width,
           globalVars.height,
-          this.position.x,
-          this.position.y,
+          this.position.x - globalVars.offscreenBoundarySide,
+          this.position.y - globalVars.offscreenBoundarySide,
           globalVars.width,
           globalVars.height
         );
@@ -310,12 +310,12 @@ const BasicRender = () => {
       draw() {
         foregroundCtx.drawImage(
           this.image,
-          this.crop.x,
-          this.crop.y,
+          this.crop.x - globalVars.offscreenBoundaryTotal,
+          this.crop.y - globalVars.offscreenBoundaryTotal,
           globalVars.width,
           globalVars.height,
-          this.position.x,
-          this.position.y,
+          this.position.x - globalVars.offscreenBoundarySide,
+          this.position.y - globalVars.offscreenBoundarySide,
           globalVars.width,
           globalVars.height
         );
@@ -406,8 +406,8 @@ const BasicRender = () => {
         y: 0,
       },
       crop: {
-        x: globalVars.width + globalVars.blockSize * 2,
-        y: globalVars.width + globalVars.blockSize * 2,
+        x: globalVars.width,
+        y: globalVars.height,
       },
     });
 
@@ -418,8 +418,8 @@ const BasicRender = () => {
         y: 0,
       },
       crop: {
-        x: globalVars.width + globalVars.blockSize * 2,
-        y: globalVars.width + globalVars.blockSize * 2,
+        x: globalVars.width,
+        y: globalVars.height,
       },
     });
 
@@ -432,8 +432,8 @@ const BasicRender = () => {
         y: 0,
       },
       crop: {
-        x: globalVars.width + globalVars.blockSize * 2,
-        y: globalVars.width + globalVars.blockSize * 2,
+        x: globalVars.width,
+        y: globalVars.height,
       },
     });
 
@@ -458,10 +458,10 @@ const BasicRender = () => {
 
       // console.log(baseHero.bloodDrainActive, baseHero.bloodDrainAnimation)
       // clears all canvases for a new animation frame
-      backgroundCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
-      spriteCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
-      foregroundCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
-      cursorCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
+      backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
+      spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height);
+      foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
+      cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
 
       // handles hero inputs, actions, and movement
@@ -479,11 +479,11 @@ const BasicRender = () => {
       equipImage.src = baseHero.currentEquipmentSprite;
 
 
-      collisionCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
+      collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
-      backgroundSprite.cropChange(baseHero.cameraX + globalVars.blockSize, baseHero.cameraY + globalVars.blockSize);
-      foregroundSprite.cropChange(baseHero.cameraX + globalVars.blockSize, baseHero.cameraY + globalVars.blockSize);
-      collisionSprite.cropChange(baseHero.cameraX + globalVars.blockSize, baseHero.cameraY + globalVars.blockSize);
+      backgroundSprite.cropChange(baseHero.cameraX + globalVars.offscreenBoundaryTotal, baseHero.cameraY + globalVars.offscreenBoundaryTotal);
+      foregroundSprite.cropChange(baseHero.cameraX + globalVars.offscreenBoundaryTotal, baseHero.cameraY + globalVars.offscreenBoundaryTotal);
+      collisionSprite.cropChange(baseHero.cameraX + globalVars.offscreenBoundarySide, baseHero.cameraY + globalVars.offscreenBoundarySide);
       // collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
 
 
@@ -582,14 +582,14 @@ const BasicRender = () => {
         // pixelator(comboCtx, pixelCtx, backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas) // turn this on to burn it all down
 
         // this clears the edges if the canvas is smaller than the current window size
-        // backgroundCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
-        // spriteCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
-        // foregroundCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
-        // cursorCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
-        // backgroundCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
-        // spriteCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
-        // foregroundCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
-        // cursorCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
+        backgroundCtx.clearRect(globalVars.width - globalVars.offscreenBoundarySide, 0, globalVars.offscreenBoundarySide, globalVars.height);
+        spriteCtx.clearRect(globalVars.width - globalVars.offscreenBoundarySide, 0, globalVars.offscreenBoundarySide, globalVars.height);
+        foregroundCtx.clearRect(globalVars.width - globalVars.offscreenBoundarySide, 0, globalVars.offscreenBoundarySide, globalVars.height);
+        cursorCtx.clearRect(globalVars.width - globalVars.offscreenBoundarySide, 0, globalVars.offscreenBoundarySide, globalVars.height);
+        backgroundCtx.clearRect(0, globalVars.height - globalVars.offscreenBoundarySide, globalVars.width, globalVars.offscreenBoundarySide);
+        spriteCtx.clearRect(0, globalVars.height - globalVars.offscreenBoundarySide, globalVars.width, globalVars.offscreenBoundarySide);
+        foregroundCtx.clearRect(0, globalVars.height - globalVars.offscreenBoundarySide, globalVars.width, globalVars.offscreenBoundarySide);
+        cursorCtx.clearRect(0, globalVars.height - globalVars.offscreenBoundarySide, globalVars.width, globalVars.offscreenBoundarySide);
 
         drawToComboCanvas([
           backgroundCanvas,
@@ -612,10 +612,10 @@ const BasicRender = () => {
     <div id="main-container">
       {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id="canvas-container">
-        {/* <div
+        <div
           id="sizing"
-          style={{ height: globalVars.height, width: globalVars.width }}
-        ></div> */}
+          style={{ height: globalVars.height, width: globalVars.width, position: 'relative'}}
+        ></div>
         {/* <canvas id='collisionCanvas' ref={collisionCanvas} height={globalVars.height} width={globalVars.width}
         /> */}
         {/* <canvas id='backgroundCanvas' ref={backgroundCanvas} height={window.innerHeight} width={window.innerWidth} />
@@ -626,7 +626,7 @@ const BasicRender = () => {
           id="comboCanvas"
           ref={comboCanvas}
           height={globalVars.height} width={globalVars.width}
-          style={{ top: -globalVars.blockSize, left: -globalVars.blockSize }}
+          // style={{ top: -globalVars.offscreenBoundarySide, left: -globalVars.offscreenBoundarySide }}
         />
         {/* <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         {/* <div className='blur'></div> */}

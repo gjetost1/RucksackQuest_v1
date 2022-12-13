@@ -101,16 +101,16 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
       el.crop.y,
       el.blockSize,
       el.blockSize,
-      el.position.x + globalVars.blockSize,
-      perfectYPos(el) - el.blockSize * tankCount + globalVars.blockSize,
+      el.position.x + globalVars.offscreenBoundarySide,
+      perfectYPos(el) - el.blockSize * tankCount + globalVars.offscreenBoundarySide,
       el.blockSize,
       el.blockSize
     );
     // clears out contents that are sticking out underneath each tank,
     // which happens when the level is about 50% or less
     foregroundCtx.clearRect(
-      el.position.x + globalVars.blockSize,
-      el.position.y + el.blockSize - el.blockSize * tankCount + globalVars.blockSize,
+      el.position.x + globalVars.offscreenBoundarySide,
+      el.position.y + el.blockSize - el.blockSize * tankCount + globalVars.offscreenBoundarySide,
       el.blockSize,
       el.blockSize
     );
@@ -122,8 +122,8 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
       0,
       el.blockSize,
       el.blockSize,
-      el.position.x + globalVars.blockSize,
-      el.position.y - el.blockSize * tankCount + globalVars.blockSize,
+      el.position.x + globalVars.offscreenBoundarySide,
+      el.position.y - el.blockSize * tankCount + globalVars.offscreenBoundarySide,
       el.blockSize,
       el.blockSize
     );
@@ -172,8 +172,8 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
       0,
       activeTank.blockSize,
       activeTank.blockSize,
-      activeTank.position.x + globalVars.blockSize,
-      activeTank.position.y - activeTank.blockSize * currentTankCount + globalVars.blockSize,
+      activeTank.position.x + globalVars.offscreenBoundarySide,
+      activeTank.position.y - activeTank.blockSize * currentTankCount + globalVars.offscreenBoundarySide,
       activeTank.blockSize,
       activeTank.blockSize
     );
@@ -184,8 +184,8 @@ const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
       0,
       activeTank.blockSize,
       activeTank.blockSize,
-      activeTank.position.x + globalVars.blockSize,
-      activeTank.y - activeTank.blockSize * currentTankCount + globalVars.blockSize,
+      activeTank.position.x + globalVars.offscreenBoundarySide,
+      activeTank.y - activeTank.blockSize * currentTankCount + globalVars.offscreenBoundarySide,
       activeTank.blockSize,
       activeTank.blockSize
     );
@@ -264,8 +264,8 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
     0,
     384,
     192,
-    0 + globalVars.blockSize,
-    globalVars.perfectHeight - 136 + globalVars.blockSize,
+    globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide,
     384,
     192
   );
@@ -277,8 +277,8 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
     0,
     384,
     192,
-    globalVars.perfectWidth - 384 + globalVars.blockSize,
-    globalVars.perfectHeight - 136 + globalVars.blockSize,
+    globalVars.perfectWidth - 384 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide,
     384,
     192
   );
@@ -289,8 +289,8 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
     0,
     256,
     64,
-    104 + globalVars.blockSize,
-    globalVars.perfectHeight - 100 + globalVars.blockSize,
+    104 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
     256,
     64
   );
@@ -301,8 +301,8 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
     0,
     256,
     64,
-    globalVars.perfectWidth - 360 + globalVars.blockSize,
-    globalVars.perfectHeight - 100 + globalVars.blockSize,
+    globalVars.perfectWidth - 360 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
     256,
     64
   );
@@ -318,10 +318,10 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
       globalVars.upscale;
 
   cursorCtx.clearRect( //
-    veinsVitalityLevel,
-    globalVars.perfectHeight - 100,
-    256 + globalVars.blockSize,
-    64 + globalVars.blockSize
+    veinsVitalityLevel + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
+    256,
+    64
   );
 
   foregroundCtx.globalAlpha = 0.85;
@@ -338,10 +338,10 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
       // console.log(veinsFatigueLevel)
 
   cursorCtx.clearRect( //
-  veinsFatigueLevel - 260,
-    globalVars.perfectHeight - 100,
-    256 + globalVars.blockSize,
-    64 + globalVars.blockSize
+  veinsFatigueLevel - 260 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
+    256 ,
+    64
   );
 
 
