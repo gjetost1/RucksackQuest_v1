@@ -276,7 +276,6 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     col11;
 
     // if (allCol) {console.log('collision')}
-    console.log(enemyObject.x, enemyObject.y)
 
     // this makes the enemy stop chasing the hero for a little
     // bit if they are repeatedly colliding
