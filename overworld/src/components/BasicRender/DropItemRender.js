@@ -26,18 +26,28 @@ const moveOnSpawn = (el) => {
   el.data.animArc++
   return el
 }
-
-const dropItemRender = (dropItemArr, spriteCtx) => {
+let hoverActive = false // used to allow only one item to be highlighted at a time
+const dropItemRender = (dropItemArr, spriteCtx, cursor) => {
 
   for (let el of dropItemArr) {
+    if (!hoverActive
+      && cursor.x >= el.data.x
+      && cursor.x <= el.data.x + el.data.blockSize
+      && cursor.y >= el.data.y
+      && cursor.y <= el.data.y + el.data.blockSize) {
+        el.data.cropX = el.data.blockSize
+        hoverActive = true
+      } else {
+        el.data.cropX = 0
+      }
 
     if (el.data.animating) {
       // console.log('animating')
       el = moveOnSpawn(el)
       spriteCtx.drawImage(
         el.image,
-        0,
-        0,
+        el.data.cropX,
+        el.data.cropY,
         el.data.blockSize,
         el.data.blockSize,
         el.data.startX,
@@ -48,8 +58,8 @@ const dropItemRender = (dropItemArr, spriteCtx) => {
     } else {
       spriteCtx.drawImage(
         el.image,
-        0,
-        0,
+        el.data.cropX,
+        el.data.cropY,
         el.data.blockSize,
         el.data.blockSize,
         el.position.x,
@@ -62,6 +72,7 @@ const dropItemRender = (dropItemArr, spriteCtx) => {
     // console.log(el.data.name, el.data.x, el.data.y)
 
   }
+  hoverActive = false
   return dropItemArr
 }
 

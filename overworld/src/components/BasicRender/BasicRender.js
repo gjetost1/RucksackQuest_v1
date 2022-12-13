@@ -544,7 +544,7 @@ const BasicRender = ({}) => {
       dropItemArr = enemyUpdateArr[2];
 
       enemyRender(wolfenGroup, baseHero, spriteCtx, "back");
-      dropItemRender(dropItemArr, spriteCtx) // renders items that are on the ground
+      dropItemArr = dropItemRender(dropItemArr, spriteCtx, {x: cursorX, y: cursorY}) // renders items that are on the ground
 
 
       baseHero = heroRender(baseHero, playerSprite, swordSprite, spriteCtx)

@@ -61,12 +61,14 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
     // through anything. This creates a frozen coordinate point that is guaranteed
     // not to be clipping, but they can still move freely off the screen. Once they come
     // back into view on the canvas they will appear at this point
+
     if (
       (el.data.x < 0 ||
       el.data.x > globalVars.width - el.data.blockSize ||
       el.data.y < 0 ||
       el.data.y > globalVars.height - el.data.blockSize)
       && !(el.data.offScreenX || el.data.offScreenY)
+      && !el.data.dead
     ) {
       // console.log('set offscreen')
       el.data.offScreenX = el.data.x
@@ -82,10 +84,11 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
       // }
     }
 
-    if (el.data.offScreenX < -el.data.blockSize
+    if ((el.data.offScreenX || el.data.offScreenY)
+      && (el.data.offScreenX < -el.data.blockSize
       || el.data.offScreenX > globalVars.width + el.data.blockSize
       || el.data.offScreenY < -el.data.blockSize
-      || el.data.offScreenY > globalVars.height + el.data.blockSize) {
+      || el.data.offScreenY > globalVars.height + el.data.blockSize)) {
         // console.log('trigger')
         el.data.offScreenTrigger = true
       }
