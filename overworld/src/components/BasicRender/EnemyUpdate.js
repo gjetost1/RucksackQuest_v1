@@ -62,75 +62,75 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
     // not to be clipping, but they can still move freely off the screen. Once they come
     // back into view on the canvas they will appear at this point
 
-    if (
-      (el.data.x < 0 ||
-      el.data.x > globalVars.width - el.data.blockSize ||
-      el.data.y < 0 ||
-      el.data.y > globalVars.height - el.data.blockSize)
-      && !(el.data.offScreenX || el.data.offScreenY)
-      && !el.data.dead
-    ) {
-      // console.log('set offscreen')
-      el.data.offScreenX = el.data.x
-      el.data.offScreenY = el.data.y
-      // if (el.data.x <= 0) {
-      //   el.data.direction = 'left'
-      // } else if (el.data.x >= globalVars.width - el.data.blockSize) {
-      //   el.data.direction = 'right'
-      // } else if (el.data.y <= 0) {
-      //   el.data.direction = 'up'
-      // } else if (el.data.y >= globalVars.height - el.data.blockSize) {
-      //   el.data.direction = 'down'
-      // }
-    }
+    // if (
+    //   (el.data.x < 0 ||
+    //   el.data.x > globalVars.width - el.data.blockSize ||
+    //   el.data.y < 0 ||
+    //   el.data.y > globalVars.height - el.data.blockSize)
+    //   && !(el.data.offScreenX || el.data.offScreenY)
+    //   && !el.data.dead
+    // ) {
+    //   // console.log('set offscreen')
+    //   el.data.offScreenX = el.data.x
+    //   el.data.offScreenY = el.data.y
+    //   // if (el.data.x <= 0) {
+    //   //   el.data.direction = 'left'
+    //   // } else if (el.data.x >= globalVars.width - el.data.blockSize) {
+    //   //   el.data.direction = 'right'
+    //   // } else if (el.data.y <= 0) {
+    //   //   el.data.direction = 'up'
+    //   // } else if (el.data.y >= globalVars.height - el.data.blockSize) {
+    //   //   el.data.direction = 'down'
+    //   // }
+    // }
 
-    if ((el.data.offScreenX || el.data.offScreenY)
-      && (el.data.offScreenX < -el.data.blockSize
-      || el.data.offScreenX > globalVars.width + el.data.blockSize
-      || el.data.offScreenY < -el.data.blockSize
-      || el.data.offScreenY > globalVars.height + el.data.blockSize)) {
-        // console.log('trigger')
-        el.data.offScreenTrigger = true
-      }
+    // if ((el.data.offScreenX || el.data.offScreenY)
+    //   && (el.data.offScreenX < -el.data.blockSize
+    //   || el.data.offScreenX > globalVars.width + el.data.blockSize
+    //   || el.data.offScreenY < -el.data.blockSize
+    //   || el.data.offScreenY > globalVars.height + el.data.blockSize)) {
+    //     // console.log('trigger')
+    //     el.data.offScreenTrigger = true
+    //   }
 
-    if (el.data.offScreenTrigger && (el.data.offScreenX || el.data.offScreenY) &&
-      ((el.data.x >= -el.data.blockSize && el.data.x <= 0) ||
-      (el.data.x <= globalVars.width && el.data.x >= globalVars.width - el.data.blockSize) ||
-      (el.data.y >= -el.data.blockSize && el.data.y <= 0) ||
-      (el.data.y <= globalVars.height && el.data.y >= globalVars.height - el.data.blockSize))
-    ) {
-      // console.log('end offscreen')
-      el.data.offScreenTrigger = false
-      el.data.x = el.data.offScreenX
-      el.data.y = el.data.offScreenY
-      el.data.offScreenY = false
-      el.data.offScreenX = false
-      el.data.moving = true
+    // if (el.data.offScreenTrigger && (el.data.offScreenX || el.data.offScreenY) &&
+    //   ((el.data.x >= -el.data.blockSize && el.data.x <= 0) ||
+    //   (el.data.x <= globalVars.width && el.data.x >= globalVars.width - el.data.blockSize) ||
+    //   (el.data.y >= -el.data.blockSize && el.data.y <= 0) ||
+    //   (el.data.y <= globalVars.height && el.data.y >= globalVars.height - el.data.blockSize))
+    // ) {
+    //   // console.log('end offscreen')
+    //   el.data.offScreenTrigger = false
+    //   el.data.x = el.data.offScreenX
+    //   el.data.y = el.data.offScreenY
+    //   el.data.offScreenY = false
+    //   el.data.offScreenX = false
+    //   el.data.moving = true
 
-      // console.log(el.data.x, el.data.y)
+    //   // console.log(el.data.x, el.data.y)
 
-      if (el.data.x <= el.data.blockSize) {
-        el.data.direction = 'right'
-        // console.log("right")
-      } else if (el.data.x >= globalVars.width - el.data.blockSize) {
-        el.data.direction = 'left'
-        // console.log("left")
-      } else if (el.data.y <= el.data.blockSize) {
-        el.data.direction = 'down'
-        // console.log("down")
-      } else if (el.data.y >= globalVars.height - el.data.blockSize) {
-        el.data.direction = 'up'
-        // console.log("up")
-      }
-    }
+    //   if (el.data.x <= el.data.blockSize) {
+    //     el.data.direction = 'right'
+    //     // console.log("right")
+    //   } else if (el.data.x >= globalVars.width - el.data.blockSize) {
+    //     el.data.direction = 'left'
+    //     // console.log("left")
+    //   } else if (el.data.y <= el.data.blockSize) {
+    //     el.data.direction = 'down'
+    //     // console.log("down")
+    //   } else if (el.data.y >= globalVars.height - el.data.blockSize) {
+    //     el.data.direction = 'up'
+    //     // console.log("up")
+    //   }
+    // }
 
 
     // doesn't update if the enemy is dead
     if (
-      (el.data.x >= -el.data.blockSize &&
-        el.data.x <= globalVars.width &&
-        el.data.y >= -el.data.blockSize &&
-        el.data.y <= globalVars.height) &&
+      (el.data.x > -el.data.blockSize * 2 &&
+        el.data.x < globalVars.width + el.data.blockSize * 2 &&
+        el.data.y > -el.data.blockSize * 2 &&
+        el.data.y < globalVars.height + el.data.blockSize * 2) &&
       !el.data.dead
     ) {
 

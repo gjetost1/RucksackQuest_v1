@@ -97,8 +97,9 @@ let dropItemArr = [] // array that stores all items that are on the ground
 
 let bufferIntervalSet = true; // makes sure that the sprite buffer interval is set only once
 
-const BasicRender = ({}) => {
+const BasicRender = () => {
   // let eventObj = {}
+
 
   // declare the 3 (current) canvases. background is rendered first, then sprite, then foreground on top
   // foregroundCanvas is for scenery and objects that the hero or other sprites can go behind
@@ -107,77 +108,72 @@ const BasicRender = ({}) => {
   // const spriteCanvas = useRef(null)
   // const foregroundCanvas = useRef(null)
   // const cursorCanvas = useRef(null)
-  // const collisionCanvas = useRef(null)
   const backgroundCanvas = new OffscreenCanvas(
     globalVars.width,
     globalVars.height
-  );
-  const spriteCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
-  const foregroundCanvas = new OffscreenCanvas(
-    globalVars.width,
-    globalVars.height
-  );
-  const cursorCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
-  const collisionCanvas = new OffscreenCanvas(
-    globalVars.width,
-    globalVars.height
-  );
-  const dataVisCanvas = new OffscreenCanvas(globalVars.width, globalVars.height); // used for development to visualize coordinates, hitboxes, radiuses, etc.
+    );
+    const spriteCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
+    const foregroundCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
+    const cursorCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
+    const visionCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
+    const collisionCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
+    // const collisionCanvas = useRef(null)
+    const dataVisCanvas = new OffscreenCanvas(globalVars.width, globalVars.height); // used for development to visualize coordinates, hitboxes, radiuses, etc.
 
   // const pixelCanvas = useRef(null)
   const comboCanvas = useRef(null);
 
   const wolfenGroupCreator = [
+    // {
+    //   base: wolfen,
+    //   x: -100,
+    //   y: -100,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 200,
+    //   y: 200,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1500,
+    //   y: 1564,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 372,
+    //   y: 864,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 300,
+    //   y: 864,
+    // },
     {
       base: wolfen,
-      x: -100,
-      y: -100,
+      x: 64,
+      y: 64,
     },
-    {
-      base: wolfen,
-      x: 200,
-      y: 200,
-    },
-    {
-      base: wolfen,
-      x: 1500,
-      y: 1564,
-    },
-    {
-      base: wolfen,
-      x: 372,
-      y: 864,
-    },
-    {
-      base: wolfen,
-      x: 300,
-      y: 864,
-    },
-    {
-      base: wolfen,
-      x: -100,
-      y: -100,
-    },
-    {
-      base: wolfen,
-      x: 1564,
-      y: 1500,
-    },
-    {
-      base: wolfen,
-      x: 1500,
-      y: 1564,
-    },
-    {
-      base: wolfen,
-      x: 372,
-      y: 564,
-    },
-    {
-      base: wolfen,
-      x: 300,
-      y: 464,
-    },
+    // {
+    //   base: wolfen,
+    //   x: 1564,
+    //   y: 1500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1500,
+    //   y: 1564,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 372,
+    //   y: 564,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 300,
+    //   y: 464,
+    // },
   ];
 
   // creates an enemy group
@@ -196,10 +192,13 @@ const BasicRender = ({}) => {
   //   }, 1000);
   // }
 
+
+
   // this is the main useEffect for rendering - it runs input checks,
   // updates positions and animations, and then renders the frame using
   // the animate() function
   useEffect(() => {
+
     // creates context for each canvas. Invoke all drawing/rendering to canvas
     // using the context for the layer you want to render to
     // const backgroundCtx = backgroundCanvas.current.getContext('2d', { alpha: false })
@@ -211,6 +210,7 @@ const BasicRender = ({}) => {
     const spriteCtx = spriteCanvas.getContext("2d");
     const foregroundCtx = foregroundCanvas.getContext("2d");
     const cursorCtx = cursorCanvas.getContext("2d");
+    const visionCtx = visionCanvas.getContext("2d");
     const collisionCtx = collisionCanvas.getContext("2d", {
       willReadFrequently: true,
     });
@@ -392,8 +392,7 @@ const BasicRender = ({}) => {
 
     const background = new Image();
     background.src = background_1;
-    const backgroundWidthCenter = background.naturalWidth / 2;
-    const backgroundHeightCenter = background.naturalHeight / 2;
+
 
     const foreground = new Image();
     foreground.src = foreground_1;
@@ -407,8 +406,8 @@ const BasicRender = ({}) => {
         y: 0,
       },
       crop: {
-        x: backgroundWidthCenter,
-        y: backgroundHeightCenter,
+        x: globalVars.width + globalVars.blockSize * 2,
+        y: globalVars.width + globalVars.blockSize * 2,
       },
     });
 
@@ -419,8 +418,8 @@ const BasicRender = ({}) => {
         y: 0,
       },
       crop: {
-        x: backgroundWidthCenter,
-        y: backgroundHeightCenter,
+        x: globalVars.width + globalVars.blockSize * 2,
+        y: globalVars.width + globalVars.blockSize * 2,
       },
     });
 
@@ -433,8 +432,8 @@ const BasicRender = ({}) => {
         y: 0,
       },
       crop: {
-        x: backgroundWidthCenter,
-        y: backgroundHeightCenter,
+        x: globalVars.width + globalVars.blockSize * 2,
+        y: globalVars.width + globalVars.blockSize * 2,
       },
     });
 
@@ -455,12 +454,14 @@ const BasicRender = ({}) => {
 
     const animate = () => {
 
+
+
       // console.log(baseHero.bloodDrainActive, baseHero.bloodDrainAnimation)
       // clears all canvases for a new animation frame
-      backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
-      spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height);
-      foregroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
-      cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height);
+      backgroundCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
+      spriteCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
+      foregroundCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
+      cursorCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
 
 
       // handles hero inputs, actions, and movement
@@ -478,11 +479,11 @@ const BasicRender = ({}) => {
       equipImage.src = baseHero.currentEquipmentSprite;
 
 
-      collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height);
+      collisionCtx.clearRect(0, 0, globalVars.width + globalVars.blockSize * 2, globalVars.height + globalVars.blockSize * 2);
 
-      backgroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
-      foregroundSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
-      collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
+      backgroundSprite.cropChange(baseHero.cameraX + globalVars.blockSize, baseHero.cameraY + globalVars.blockSize);
+      foregroundSprite.cropChange(baseHero.cameraX + globalVars.blockSize, baseHero.cameraY + globalVars.blockSize);
+      collisionSprite.cropChange(baseHero.cameraX + globalVars.blockSize, baseHero.cameraY + globalVars.blockSize);
       // collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
 
 
@@ -579,19 +580,30 @@ const BasicRender = ({}) => {
       };
       if (frameRateCounter === frameRatePeak) {
         // pixelator(comboCtx, pixelCtx, backgroundCanvas, spriteCanvas, foregroundCanvas, cursorCanvas) // turn this on to burn it all down
-        // drawToComboCanvas(['backgroundCanvas', 'spriteCanvas', 'foregroundCanvas', 'cursorCanvas'])
+
+        // this clears the edges if the canvas is smaller than the current window size
+        // backgroundCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
+        // spriteCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
+        // foregroundCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
+        // cursorCtx.clearRect(globalVars.width - globalVars.blockSize, 0, globalVars.blockSize, globalVars.height);
+        // backgroundCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
+        // spriteCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
+        // foregroundCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
+        // cursorCtx.clearRect(0, globalVars.height - globalVars.blockSize, globalVars.width, globalVars.blockSize);
+
         drawToComboCanvas([
           backgroundCanvas,
           spriteCanvas,
           foregroundCanvas,
           cursorCanvas,
           dataVisCanvas,
-
+          // collisionCanvas
         ]);
         frameRateCounter = 0;
       }
       frameRateCounter++;
     };
+
 
     animate();
   }, []);
@@ -600,20 +612,21 @@ const BasicRender = ({}) => {
     <div id="main-container">
       {/* <div id='instructions'>WASD to move - SHIFT to dash - LEFT MOUSE BUTTON to attack</div> */}
       <div id="canvas-container">
-        <div
+        {/* <div
           id="sizing"
-          style={{ height: window.innerHeight, width: window.innerWidth }}
-        ></div>
-        {/* <canvas id='collisionCanvas' ref={collisionCanvas} height={window.innerHeight} width={window.innerWidth} />
-        <canvas id='backgroundCanvas' ref={backgroundCanvas} height={window.innerHeight} width={window.innerWidth} />
+          style={{ height: globalVars.height, width: globalVars.width }}
+        ></div> */}
+        {/* <canvas id='collisionCanvas' ref={collisionCanvas} height={globalVars.height} width={globalVars.width}
+        /> */}
+        {/* <canvas id='backgroundCanvas' ref={backgroundCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='spriteCanvas' ref={spriteCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='foregroundCanvas' ref={foregroundCanvas} height={window.innerHeight} width={window.innerWidth} />
         <canvas id='cursorCanvas' ref={cursorCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         <canvas
           id="comboCanvas"
           ref={comboCanvas}
-          height={window.innerHeight}
-          width={window.innerWidth}
+          height={globalVars.height} width={globalVars.width}
+          style={{ top: -globalVars.blockSize, left: -globalVars.blockSize }}
         />
         {/* <canvas id='pixelCanvas' ref={pixelCanvas} height={window.innerHeight} width={window.innerWidth} /> */}
         {/* <div className='blur'></div> */}

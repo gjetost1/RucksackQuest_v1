@@ -9,16 +9,16 @@ import './App.css';
 
 // const height = 640
 // const width = 960
+// const windowHeight = window.innerHeight
+// const windowWidth = window.innerWidth
 
-// const height = window.innerHeight * .976
-// const width = window.innerWidth * .99
 
 function App() {
   // const canvas = React.useRef();
 
   return (
     <>
-      <BasicRender />
+      <BasicRender/>
       {/* <Renderer id='background' canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
       {/* <RenderBoy id='player-sprite' canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}
       {/* <PlayingField canvas={canvas} height={globalvars.scene_height} width={globalvars.scene_width} /> */}

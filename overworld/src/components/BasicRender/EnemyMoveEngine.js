@@ -172,28 +172,28 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
   // console.log(enemyObject.currentFatigue)
 
 
-  if (
-    enemyObject.x <= -enemyObject.blockSize ||
-    enemyObject.x >= globalVars.width  ||
-    enemyObject.y <= -enemyObject.blockSize ||
-    enemyObject.y >= globalVars.height
-  ) {
-    // console.log('offscreen')
-    if (enemyObject.x <= enemyObject.blockSize) {
-      enemyObject.direction = 'right'
-      // console.log("right")
-    } else if (enemyObject.x >= globalVars.width - enemyObject.blockSize) {
-      enemyObject.direction = 'left'
-      // console.log("left")
-    } else if (enemyObject.y <= enemyObject.blockSize) {
-      enemyObject.direction = 'down'
-      // console.log("down")
-    } else if (enemyObject.y >= globalVars.height - enemyObject.blockSize) {
-      enemyObject.direction = 'up'
-      // console.log("up")
-    }
-    return enemyObject;
-  }
+  // if (
+  //   enemyObject.x <= -enemyObject.blockSize ||
+  //   enemyObject.x >= globalVars.width  ||
+  //   enemyObject.y <= -enemyObject.blockSize ||
+  //   enemyObject.y >= globalVars.height
+  // ) {
+  //   // console.log('offscreen')
+  //   if (enemyObject.x <= enemyObject.blockSize) {
+  //     enemyObject.direction = 'right'
+  //     // console.log("right")
+  //   } else if (enemyObject.x >= globalVars.width - enemyObject.blockSize) {
+  //     enemyObject.direction = 'left'
+  //     // console.log("left")
+  //   } else if (enemyObject.y <= enemyObject.blockSize) {
+  //     enemyObject.direction = 'down'
+  //     // console.log("down")
+  //   } else if (enemyObject.y >= globalVars.height - enemyObject.blockSize) {
+  //     enemyObject.direction = 'up'
+  //     // console.log("up")
+  //   }
+  //   return enemyObject;
+  // }
 
 
   // if enemy isn't in attack mode it moves around randomly
@@ -228,15 +228,17 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
 
   let imgData
   if (enemyObject.x > 0 && enemyObject.y > 0) {
+    // console.log(enemyObject.x, enemyObject.y)
     imgData = collisionCtx.getImageData(
       enemyObject.x,
       enemyObject.y,
       enemyObject.x + enemyObject.blockSize,
       enemyObject.y + enemyObject.blockSize
-    );
-  } else {
+      );
+    } else {
+    // console.log(enemyObject.x, enemyObject.y)
     imgData = collisionCtx.getImageData(
-      1, 1, 64, 64
+      1, 1, 1, 1
     )
   }
   // console.log(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
@@ -274,6 +276,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     col11;
 
     // if (allCol) {console.log('collision')}
+    console.log(enemyObject.x, enemyObject.y)
 
     // this makes the enemy stop chasing the hero for a little
     // bit if they are repeatedly colliding
