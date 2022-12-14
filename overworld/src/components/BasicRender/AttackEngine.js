@@ -90,7 +90,7 @@ const attackEngine = (attacker, target, dataVisCtx) => {
     const damageRange = Math.round(Math.random() * tempDamageRange)
     // console.log(tempBaseDamage + damageRange)
     target.currentVitality -= tempBaseDamage + damageRange; // deals damage to target
-    // target.currentVitality -= 200;
+    target.currentVitality -= 200;
     target.takeDamage = true;
     target.damageActive = true;
     target.damageAnim.active = true;

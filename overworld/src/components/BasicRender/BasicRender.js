@@ -77,7 +77,7 @@ onmousemove = (event) => {
 // const grassPatch = generatePatch(760, 560, 5, 6, [grass_low_1])
 // const barrelPatch = generatePatch(400, 500, 3, 3, [barrel_low_1])
 
-const grassPatch1 = new Patch(500, 500, 20, 20, [grass_1, grass_2, grass_3], 0.05);
+const grassPatch1 = new Patch(100, 100, 20, 20, [grass_1, grass_2, grass_3], 0.05);
 const grassPatch2 = new Patch(
   -500,
   -500,
@@ -129,28 +129,28 @@ const BasicRender = () => {
   const wolfenGroupCreator = [
     {
       base: wolfen,
-      x: -100,
-      y: -100,
+      x: 700,
+      y: 500,
     },
     {
       base: wolfen,
-      x: 200,
-      y: 200,
+      x: 700,
+      y: 500,
     },
     {
       base: wolfen,
-      x: 1500,
-      y: 1564,
+      x: 500,
+      y: 500,
     },
     {
       base: wolfen,
-      x: 372,
-      y: 864,
+      x: 572,
+      y: 664,
     },
     {
       base: wolfen,
-      x: 300,
-      y: 864,
+      x: 500,
+      y: 464,
     },
     // {
     //   base: wolfen,

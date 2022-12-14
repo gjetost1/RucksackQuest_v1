@@ -256,7 +256,8 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
 
       // console.log(baseHero.scavengeActive)
       // handles scavenging of corpses
-      if (baseHero.scavengeActive && el.data.scavengeable && !el.data.scavenged && el.data.currentBloodLevel === el.data.maxBloodLevel && (!currentlyScavenging || currentlyScavenging === el) && !baseHero.scavengePause  && el.data.dead) {
+      // console.log(baseHero.scavengeActive, el.data.scavengeable, !el.data.scavenged, el.data.currentBloodLevel === el.data.maxBloodLevel, (!currentlyScavenging || currentlyScavenging === el), !baseHero.scavengePause, el.data.dead)
+      if (baseHero.scavengeActive && el.data.scavengeable && !el.data.scavenged && el.data.currentBloodLevel === el.data.maxBloodLevel && (!currentlyScavenging || currentlyScavenging === el) && !baseHero.scavengePause && el.data.dead) {
 
         currentlyScavenging = el
         // if it is the first frame of a scavenge this sets up the hero sprite

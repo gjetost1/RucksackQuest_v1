@@ -37,17 +37,29 @@ const generateDropTable = (dropTable) => {
 
 // handles scavenging of corpses and creating drops
 let scavengeCounter = 0
+let randomScavengeTime = 0
+// let genRandomFrames = true
+let currentTarget = null
 
 const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
   // console.log('in scavenge engine', target, baseHero, dropItemArr, enemyCollision)
+  // if (genRandomFrames) {
+  //   randomScavengeTime = Math.floor(Math.random() * 200) // variable scavenging time
+  //   genRandomFrames = false
+  //   scavengeCounter = 0
+  // }
 
-  const randomScavengeTime = Math.floor(Math.random() * 200) // variable scavenging time
+  if (currentTarget !== target) {
+    scavengeCounter = 0
+    randomScavengeTime = Math.floor(Math.random() * 200) // variable scavenging time
+    currentTarget = target
+  }
   const scavengeFrames = 200 + randomScavengeTime // determines how many frames the scavenging takes before returning something
-  // const scavengeFrames = 100
+  // const scavengeFrames = 200
 
   let scavengedItem = null // item that will be returned
+
   if (baseHero.scavengeActive &&
-    !enemyCollision &&
     target.data.dead &&
     target.data.scavengeable) {
       // console.log('scavenging', scavengeCounter)
@@ -60,12 +72,14 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
 
       // }
 
+      console.log(scavengeCounter, scavengeFrames)
       // once scavenging is complete we roll to find out what item is returned
       if (scavengeCounter >= scavengeFrames) {
         baseHero.scavengeFx.play()
         baseHero.scavengeActive = false
         baseHero.scavengeAnimation = false
         baseHero.scavengePause = true
+        // genRandomFrames = true
         setTimeout(() => {
           baseHero.scavengePause = false
         }, 1000)
