@@ -42,12 +42,6 @@ let randomScavengeTime = 0
 let currentTarget = null
 
 const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
-  // console.log('in scavenge engine', target, baseHero, dropItemArr, enemyCollision)
-  // if (genRandomFrames) {
-  //   randomScavengeTime = Math.floor(Math.random() * 200) // variable scavenging time
-  //   genRandomFrames = false
-  //   scavengeCounter = 0
-  // }
 
   if (currentTarget !== target) {
     scavengeCounter = 0
