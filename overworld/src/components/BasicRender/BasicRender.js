@@ -1,17 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import "./BasicRender.css";
-import moveEngine from "./MoveEngine";
-import enemyMoveEngine from "./EnemyMoveEngine";
+// import moveEngine from "./MoveEngine";
+// import enemyMoveEngine from "./EnemyMoveEngine";
 import enemyUpdate from "./EnemyUpdate";
 import enemyRender from "./EnemyRender";
 import enemyGenerator from "./EnemyGenerator";
-import coordinateChange from "./CoordinateChange";
-import eventEngine from "./EventEngine";
-import spriteBuffer from "./SpriteBuffer";
-import pixelator from "./Pixelator";
-import background_1 from "../../assets/backgrounds/test/big_map_background_2.png";
-import collision_1 from "../../assets/backgrounds/test/big_map_collision_2.png";
-import foreground_1 from "../../assets/backgrounds/test/big_map_foreground_2.png";
+// import coordinateChange from "./CoordinateChange";
+// import eventEngine from "./EventEngine";
+// import spriteBuffer from "./SpriteBuffer";
+// import pixelator from "./Pixelator";
+import { backgroundSprite, foregroundSprite, collisionSprite } from "./SpriteClasses";
+
 import cursor_1 from "../../assets/hand_cursor.png";
 import {
   grass_1,
@@ -234,208 +233,18 @@ const BasicRender = () => {
     // cropped - crop size is based on rectWidth and rectHeight which is
     // currently set globally
 
-    class Sprite {
-      constructor({ image, position, crop, blockSize }) {
-        this.position = position;
-        this.image = image;
-        this.crop = crop;
-        this.blocksize = blockSize;
-      }
-
-      cropChange(cropX, cropY) {
-        this.crop = {
-          x: cropX,
-          y: cropY,
-        };
-      }
-
-      draw() {
-        spriteCtx.drawImage(
-          this.image,
-          this.crop.x,
-          this.crop.y,
-          this.blocksize,
-          this.blocksize,
-          this.position.x,
-          this.position.y,
-          this.blocksize,
-          this.blocksize
-        );
-      }
-    }
-
-    class Background {
-      constructor({ image, position, crop }) {
-        this.position = position;
-        this.image = image;
-        this.crop = crop;
-      }
-
-      cropChange(cropX, cropY) {
-        this.crop = {
-          x: cropX,
-          y: cropY,
-        };
-      }
-
-      draw() {
-        backgroundCtx.drawImage(
-          this.image,
-          this.crop.x - globalVars.offscreenBoundaryTotal,
-          this.crop.y - globalVars.offscreenBoundaryTotal,
-          globalVars.width,
-          globalVars.height,
-          this.position.x - globalVars.offscreenBoundarySide,
-          this.position.y - globalVars.offscreenBoundarySide,
-          globalVars.width,
-          globalVars.height
-        );
-      }
-    }
-
-    class Foreground {
-      constructor({ image, position, crop }) {
-        this.position = position;
-        this.image = image;
-        this.crop = crop;
-      }
-
-      cropChange(cropX, cropY) {
-        this.crop = {
-          x: cropX,
-          y: cropY,
-        };
-      }
-
-      draw() {
-        foregroundCtx.drawImage(
-          this.image,
-          this.crop.x - globalVars.offscreenBoundaryTotal,
-          this.crop.y - globalVars.offscreenBoundaryTotal,
-          globalVars.width,
-          globalVars.height,
-          this.position.x - globalVars.offscreenBoundarySide,
-          this.position.y - globalVars.offscreenBoundarySide,
-          globalVars.width,
-          globalVars.height
-        );
-      }
-    }
-
-    const collisions = new Image();
-    collisions.src = collision_1;
-
-    class Collisions {
-      constructor({ image, position, crop }) {
-        this.position = position;
-        this.image = image;
-        this.crop = crop;
-      }
-
-      cropChange(cropX, cropY) {
-        this.crop = {
-          x: cropX,
-          y: cropY,
-        };
-      }
-
-      draw() {
-        collisionCtx.drawImage(
-          this.image,
-          this.crop.x,
-          this.crop.y,
-          collisions.width,
-          collisions.height,
-          this.position.x,
-          this.position.y,
-          collisions.width,
-          collisions.height
-        );
-      }
-    }
-
-    // we create the sprite, background, and foreground instances we will be rendering
-    const playerImage = new Image();
-    playerImage.src = baseHero.currentHeroSprite;
-
-    const playerSprite = new Sprite({
-      image: playerImage,
-      position: {
-        x: globalVars.heroCenterX,
-        y: globalVars.heroCenterY,
-      },
-      crop: {
-        x: baseHero.heroCropX,
-        y: baseHero.heroCropY,
-      },
-      blockSize: baseHero.blockSize,
-    });
-
-    const equipImage = new Image();
-    equipImage.src = baseHero.currentEquipmentSprite;
-
-    const swordSprite = new Sprite({
-      image: equipImage,
-      position: {
-        x: globalVars.heroCenterX,
-        y: globalVars.heroCenterY,
-      },
-      crop: {
-        x: baseHero.heroCropX,
-        y: baseHero.heroCropY,
-      },
-      blockSize: baseHero.blockSize,
-    });
-
-    const cursor = new Image();
-    cursor.src = cursor_1;
-
-    const background = new Image();
-    background.src = background_1;
-
-
-    const foreground = new Image();
-    foreground.src = foreground_1;
 
 
 
-    const backgroundSprite = new Background({
-      image: background,
-      position: {
-        x: 0,
-        y: 0,
-      },
-      crop: {
-        x: globalVars.width,
-        y: globalVars.height,
-      },
-    });
-
-    const foregroundSprite = new Foreground({
-      image: foreground,
-      position: {
-        x: 0,
-        y: 0,
-      },
-      crop: {
-        x: globalVars.width,
-        y: globalVars.height,
-      },
-    });
 
 
 
-    const collisionSprite = new Collisions({
-      image: collisions,
-      position: {
-        x: 0,
-        y: 0,
-      },
-      crop: {
-        x: globalVars.width,
-        y: globalVars.height,
-      },
-    });
+
+
+
+
+
+
 
 
     // const collisionSprite = new Collisions({

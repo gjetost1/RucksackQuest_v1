@@ -91,7 +91,7 @@ const horzBuffer = 14;
 const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
-const baseHero = {
+const baseHeroObj = {
   type: 'hero',
   cameraX: globalVars.heroStartXCoord,
   cameraY: globalVars.heroStartYCoord,
@@ -276,5 +276,40 @@ const baseHero = {
     [0, globalVars.blockSize],
   ],
 };
+
+
+// we create the sprite, background, and foreground instances we will be rendering
+const playerImage = new Image();
+playerImage.src = baseHero.currentHeroSprite;
+
+export const playerSprite = new Sprite({
+  image: playerImage,
+  position: {
+    x: globalVars.heroCenterX,
+    y: globalVars.heroCenterY,
+  },
+  crop: {
+    x: baseHero.heroCropX,
+    y: baseHero.heroCropY,
+  },
+  blockSize: baseHero.blockSize,
+  data,
+});
+
+const equipImage = new Image();
+equipImage.src = baseHero.currentEquipmentSprite;
+
+export const swordSprite = new Sprite({
+  image: equipImage,
+  position: {
+    x: globalVars.heroCenterX,
+    y: globalVars.heroCenterY,
+  },
+  crop: {
+    x: baseHero.heroCropX,
+    y: baseHero.heroCropY,
+  },
+  blockSize: baseHero.blockSize,
+});
 
 export default baseHero;
