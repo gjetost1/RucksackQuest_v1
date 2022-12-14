@@ -20,7 +20,8 @@ const animate = (element) => {
 const frameCropLimit = 20
 let frameCropCounter = 0
 
-const enemyRender = (enemyArr, baseHero, spriteCtx, renderType) => {
+const enemyRender = (enemyArr, baseHeroObj, spriteCtx, renderType) => {
+  let baseHero = baseHeroObj
   if (!enemyArr) return;
 
   for (let el of enemyArr) {

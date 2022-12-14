@@ -2,36 +2,7 @@ import globalVars from "./GlobalVars";
 import background_1 from "../../assets/backgrounds/test/big_map_background_2.png";
 import collision_1 from "../../assets/backgrounds/test/big_map_collision_2.png";
 import foreground_1 from "../../assets/backgrounds/test/big_map_foreground_2.png";
-
-class Sprite {
-  constructor({ image, position, crop, blockSize }) {
-    this.position = position;
-    this.image = image;
-    this.crop = crop;
-    this.blocksize = blockSize;
-  }
-
-  cropChange(cropX, cropY) {
-    this.crop = {
-      x: cropX,
-      y: cropY,
-    };
-  }
-
-  // draw() {
-  //   spriteCtx.drawImage(
-  //     this.image,
-  //     this.crop.x,
-  //     this.crop.y,
-  //     this.blocksize,
-  //     this.blocksize,
-  //     this.position.x,
-  //     this.position.y,
-  //     this.blocksize,
-  //     this.blocksize
-  //   );
-  // }
-}
+import cursor_1 from "../../assets/hand_cursor.png";
 
 
 class CanvasImage {
@@ -93,7 +64,7 @@ class Collisions {
 }
 
 
-const cursor = new Image();
+export const cursor = new Image();
 cursor.src = cursor_1;
 
 

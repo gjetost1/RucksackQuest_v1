@@ -91,7 +91,7 @@ const horzBuffer = 14;
 const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
-const baseHeroObj = {
+export const baseHeroTemplate = {
   type: 'hero',
   cameraX: globalVars.heroStartXCoord,
   cameraY: globalVars.heroStartYCoord,
@@ -111,11 +111,11 @@ const baseHeroObj = {
   baseYVel: 4,
   currentXVel: 4,
   currentYVel: 4,
-  baseMoveSpeed: 20,
-  moveSpeed: 20,
-  dashSpeed: 34,
+  baseMoveSpeed: 200,
+  moveSpeed: 200,
+  dashSpeed: 340,
   frameCountLimiter: 0,
-  maxFrameCountLimiter: 100,
+  maxFrameCountLimiter: 1000,
   spriteAnimCounter: 0,
   spriteAnimSpeed: 2,
   baseAnimSpeed: 2,
@@ -182,6 +182,10 @@ const baseHeroObj = {
   // coolDownLevelMax: 100,
   attackCooldownOff: true,
   attackActive: false,
+  jumpActive: false,
+  currentJumpFrames: 14,
+  baseJumpFrames: 14,
+  jumpCounter: 0,
   bloodDrainActive: false,
   bloodDrainPause: false,
   bloodDrainRate: 0.5,
@@ -236,6 +240,9 @@ const baseHeroObj = {
     mouse1: {
       pressed: false,
     },
+    mouse2: {
+      pressed: false,
+    },
   },
   colBox: {
     0: [horzBuffer, colBuffer + vertBuffer * 2],
@@ -277,27 +284,56 @@ const baseHeroObj = {
   ],
 };
 
+class Sprite {
+  constructor({ image, position, crop, blockSize, data }) {
+    this.position = position;
+    this.image = image;
+    this.crop = crop;
+    this.blocksize = blockSize;
+  }
+
+  cropChange(cropX, cropY) {
+    this.crop = {
+      x: cropX,
+      y: cropY,
+    };
+  }
+
+  // draw() {
+  //   spriteCtx.drawImage(
+  //     this.image,
+  //     this.crop.x,
+  //     this.crop.y,
+  //     this.blocksize,
+  //     this.blocksize,
+  //     this.position.x,
+  //     this.position.y,
+  //     this.blocksize,
+  //     this.blocksize
+  //   );
+  // }
+}
+
 
 // we create the sprite, background, and foreground instances we will be rendering
 const playerImage = new Image();
-playerImage.src = baseHero.currentHeroSprite;
+playerImage.src = baseHeroTemplate.currentHeroSprite;
 
-export const playerSprite = new Sprite({
+export const baseHeroSprite = new Sprite({
   image: playerImage,
   position: {
     x: globalVars.heroCenterX,
     y: globalVars.heroCenterY,
   },
   crop: {
-    x: baseHero.heroCropX,
-    y: baseHero.heroCropY,
+    x: baseHeroTemplate.heroCropX,
+    y: baseHeroTemplate.heroCropY,
   },
-  blockSize: baseHero.blockSize,
-  data,
+  blockSize: baseHeroTemplate.blockSize,
 });
 
 const equipImage = new Image();
-equipImage.src = baseHero.currentEquipmentSprite;
+equipImage.src = baseHeroTemplate.currentEquipmentSprite;
 
 export const swordSprite = new Sprite({
   image: equipImage,
@@ -306,10 +342,10 @@ export const swordSprite = new Sprite({
     y: globalVars.heroCenterY,
   },
   crop: {
-    x: baseHero.heroCropX,
-    y: baseHero.heroCropY,
+    x: baseHeroTemplate.heroCropX,
+    y: baseHeroTemplate.heroCropY,
   },
-  blockSize: baseHero.blockSize,
+  blockSize: baseHeroTemplate.blockSize,
 });
 
-export default baseHero;
+// export default baseHero;

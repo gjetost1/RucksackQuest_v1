@@ -14,6 +14,7 @@ const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
 const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
+
   if (!baseHero) return;
 
   const lastTargetCameraX = baseHero.targetCameraX;
@@ -66,13 +67,12 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   // in each respective hero object or enemy object file.
 
 
-  const onlyGreenCol = false; // if true it only checks environment collision, otherwise it also checks enemy collisions
+
   let heroCollisions = checkCollision(
     imgData,
     baseHero.colBox,
     collisionCtx,
-    dataVisCtx,
-    onlyGreenCol
+    dataVisCtx
   );
   const col0 = heroCollisions[0];
   const col1 = heroCollisions[1];
@@ -102,6 +102,24 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
 
   let xVel = 0;
   let yVel = 0;
+
+  // jumps if space is pressed
+  if (baseHero.jumpActive) {
+    baseHero.moveSpeed = baseHero.dashSpeed * 2
+    if (baseHero.jumpCounter <= baseHero.currentJumpFrames / 2) {
+      baseHero.targetCameraY -= baseHero.currentYVel;
+      baseHero.frameYChange += baseHero.currentYVel;
+    } else if (baseHero.jumpCounter >= baseHero.currentJumpFrames) {
+      baseHero.jumpActive = false
+      baseHero.jumpCounter = 0
+      baseHero.moveSpeed = baseHero.baseMoveSpeed
+    } else if (baseHero.jumpCounter > baseHero.currentJumpFrames / 2) {
+      baseHero.targetCameraY += baseHero.currentYVel;
+      baseHero.frameYChange -= baseHero.currentYVel;
+    }
+    baseHero.jumpCounter++
+    // console.log(baseHero.moveSpeed, baseHero.baseMoveSpeed)
+  }
 
   // if shift/dash is active increase the max velocity and add a boost to acceleration
   if (baseHero.keys.Shift.pressed && baseHero.currentFatigue > 0) {

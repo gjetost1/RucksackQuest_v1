@@ -9,9 +9,8 @@ import enemyGenerator from "./EnemyGenerator";
 // import eventEngine from "./EventEngine";
 // import spriteBuffer from "./SpriteBuffer";
 // import pixelator from "./Pixelator";
-import { backgroundSprite, foregroundSprite, collisionSprite } from "./SpriteClasses";
+import { backgroundSprite, foregroundSprite, collisionSprite, cursor } from "./SpriteClasses";
 
-import cursor_1 from "../../assets/hand_cursor.png";
 import {
   grass_1,
   grass_low_1,
@@ -36,16 +35,20 @@ import animatedObjectsRender, {
 import { wolfen } from "./EnemyObjects";
 
 import inputEngine from "./InputEngine";
-import baseHeroGet from "./BaseHero";
+import { baseHeroTemplate, baseHeroSprite, swordSprite } from "./BaseHero";
 
 import heroUpdate from "./HeroUpdate";
 import dropItemRender from "./DropItemRender";
+
+
+let baseHeroObj = {...baseHeroTemplate}
 
 // const upscale = globalVars.upscale; // multiplier for resolution - 2 means each visible pixel is 2 x 2 real pixels etc
 // const height = globalVars.height;
 // const width = globalVars.width;
 // const blockSize = globalVars.blockSize; // size of each grid block in pixels for collison objects
-let baseHero = { ...baseHeroGet };
+// let baseHeroObj = baseHeroSprite;
+// console.log(baseHeroObj)
 let cursorX = -400; // sets cursor starting coordinates outside the canvas so it is invisible
 let cursorY = -400;
 
@@ -56,8 +59,9 @@ let frameRateCounter = 0;
 // this gets the coordinates of the cursor so it can be rendered on the canvas
 document.addEventListener("mousemove", (action) => {});
 onmousemove = (event) => {
-  cursorX = event.x;
-  cursorY = event.y;
+  // console.log('moving', event)
+  cursorX = event.layerX;
+  cursorY = event.layerY;
   // cursorX = event.x - globalVars.windowSpacerWidth
   // cursorY = event.y - globalVars.windowSpacerHeight
 };
@@ -113,7 +117,7 @@ const BasicRender = () => {
     );
     const spriteCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
     const foregroundCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
-    const cursorCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
+    const cursorCanvas = new OffscreenCanvas(globalVars.width - globalVars.blockSize, globalVars.height - globalVars.blockSize);
     const visionCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
     const collisionCanvas = new OffscreenCanvas(globalVars.width, globalVars.height);
     // const collisionCanvas = useRef(null)
@@ -148,31 +152,31 @@ const BasicRender = () => {
       x: 300,
       y: 864,
     },
-    {
-      base: wolfen,
-      x: 192,
-      y: 192,
-    },
-    {
-      base: wolfen,
-      x: 1564,
-      y: 1500,
-    },
-    {
-      base: wolfen,
-      x: 1500,
-      y: 1564,
-    },
-    {
-      base: wolfen,
-      x: 372,
-      y: 564,
-    },
-    {
-      base: wolfen,
-      x: 300,
-      y: 464,
-    },
+    // {
+    //   base: wolfen,
+    //   x: 192,
+    //   y: 192,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1564,
+    //   y: 1500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 1500,
+    //   y: 1564,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 372,
+    //   y: 564,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 300,
+    //   y: 464,
+    // },
   ];
 
   // creates an enemy group
@@ -184,10 +188,10 @@ const BasicRender = () => {
   // de-loaded by the browser after not being used for a while
   // if (bufferIntervalSet) {
   //   bufferIntervalSet = false;
-  //   spriteBuffer(baseHero, wolfenGroup);
+  //   spriteBuffer(baseHeroObj, wolfenGroup);
   //   setInterval(() => {
   //     console.log("buffering");
-  //     spriteBuffer(baseHero, wolfenGroup);
+  //     spriteBuffer(baseHeroObj, wolfenGroup);
   //   }, 1000);
   // }
 
@@ -223,7 +227,7 @@ const BasicRender = () => {
 
     // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
     // for inputs. returns keys object which is checked for what keys are currently pressed each frame
-    baseHero.keys = inputEngine(baseHero.keys);
+    baseHeroObj.keys = inputEngine(baseHeroObj.keys);
 
     // Sprite is the main class for hero and enemy sprites
     // image is the .png for the spritesheet you are rendering
@@ -265,7 +269,7 @@ const BasicRender = () => {
 
 
 
-      // console.log(baseHero.bloodDrainActive, baseHero.bloodDrainAnimation)
+      // console.log(baseHeroObj.bloodDrainActive, baseHeroObj.bloodDrainAnimation)
       // clears all canvases for a new animation frame
       backgroundCtx.clearRect(0, 0, globalVars.width, globalVars.height);
       spriteCtx.clearRect(0, 0, globalVars.width, globalVars.height);
@@ -274,26 +278,26 @@ const BasicRender = () => {
 
 
       // handles hero inputs, actions, and movement
-      const heroUpdateRet = heroUpdate(baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx)
-      baseHero = heroUpdateRet[0]
+      const heroUpdateRet = heroUpdate(baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx)
+      baseHeroObj = heroUpdateRet[0]
       enemyArr = heroUpdateRet[1]
       dropItemArr = heroUpdateRet[2]
 
       // SHOULD MOVE THIS INTO HEROUPDATE ONCE HERO IS A CONTAINED CLASS LIKE ENEMIES
       // sets hero and equipment positions based on moveEngine output
       // and sets spritesheet for direction they are facing as well
-      playerSprite.position = { x: baseHero.x, y: baseHero.y };
-      swordSprite.position = { x: baseHero.x, y: baseHero.y };
-      playerImage.src = baseHero.currentHeroSprite;
-      equipImage.src = baseHero.currentEquipmentSprite;
+      baseHeroSprite.position = { x: baseHeroObj.x, y: baseHeroObj.y };
+      swordSprite.position = { x: baseHeroObj.x, y: baseHeroObj.y };
+      baseHeroSprite.image.src = baseHeroObj.currentHeroSprite;
+      swordSprite.image.src = baseHeroObj.currentEquipmentSprite;
 
 
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
-      backgroundSprite.cropChange(baseHero.cameraX + globalVars.offscreenBoundaryTotal, baseHero.cameraY + globalVars.offscreenBoundaryTotal);
-      foregroundSprite.cropChange(baseHero.cameraX + globalVars.offscreenBoundaryTotal, baseHero.cameraY + globalVars.offscreenBoundaryTotal);
-      collisionSprite.cropChange(baseHero.cameraX + globalVars.offscreenBoundarySide, baseHero.cameraY + globalVars.offscreenBoundarySide);
-      // collisionSprite.cropChange(baseHero.cameraX, baseHero.cameraY);
+      backgroundSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundaryTotal, baseHeroObj.cameraY + globalVars.offscreenBoundaryTotal);
+      foregroundSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundaryTotal, baseHeroObj.cameraY + globalVars.offscreenBoundaryTotal);
+      collisionSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundarySide, baseHeroObj.cameraY + globalVars.offscreenBoundarySide);
+      // collisionSprite.cropChange(baseHeroObj.cameraX, baseHeroObj.cameraY);
 
 
 
@@ -302,15 +306,37 @@ const BasicRender = () => {
 
       // renders collision sprite, which is behind the background and not visible on canvas
       // you can change the z-index of the collision div in the css if you want to see it visualized
-      collisionSprite.draw();
-      // renders current background sprite
-      backgroundSprite.draw();
+      // collisionSprite.draw();
+      collisionCtx.drawImage(
+            collisionSprite.image,
+            collisionSprite.crop.x,
+            collisionSprite.crop.y,
+            globalVars.width,
+            globalVars.height,
+            collisionSprite.position.x,
+            collisionSprite.position.y,
+            globalVars.width,
+            globalVars.height
+          );
+        // renders current background sprite
+        // backgroundSprite.draw();
+        backgroundCtx.drawImage(
+          backgroundSprite.image,
+          backgroundSprite.crop.x - globalVars.offscreenBoundaryTotal,
+          backgroundSprite.crop.y - globalVars.offscreenBoundaryTotal,
+          globalVars.width,
+          globalVars.height,
+          backgroundSprite.position.x - globalVars.offscreenBoundarySide,
+          backgroundSprite.position.y - globalVars.offscreenBoundarySide,
+          globalVars.width,
+          globalVars.height
+      );
 
       foregroundCtx.globalAlpha = 1;
 
       animatedObjectsRender(
         grassPatch1.definition(),
-        baseHero,
+        baseHeroObj,
         backgroundCtx,
         foregroundCtx,
         collisionCtx,
@@ -318,7 +344,7 @@ const BasicRender = () => {
       );
       animatedObjectsRender(
         grassPatch2.definition(),
-        baseHero,
+        baseHeroObj,
         backgroundCtx,
         foregroundCtx,
         collisionCtx,
@@ -326,7 +352,7 @@ const BasicRender = () => {
       );
       animatedObjectsRender(
         grassPatch3.definition(),
-        baseHero,
+        baseHeroObj,
         backgroundCtx,
         foregroundCtx,
         collisionCtx,
@@ -334,43 +360,57 @@ const BasicRender = () => {
       );
       animatedObjectsRender(
         barrelPatch.definition(),
-        baseHero,
+        baseHeroObj,
         backgroundCtx,
         foregroundCtx,
         collisionCtx,
         dataVisCtx
       );
       foregroundCtx.globalAlpha = 0.85;
+      // console.log('after animated objects render', baseHeroObj)
 
       const enemyUpdateArr = enemyUpdate(
         wolfenGroup,
-        baseHero,
+        baseHeroObj,
         dropItemArr,
         collisionCtx,
         dataVisCtx
       );
+      // console.log('enemy update arr', enemyUpdateArr[1])
       wolfenGroup = enemyUpdateArr[0];
-      baseHero = enemyUpdateArr[1];
+      baseHeroObj = enemyUpdateArr[1];
+      // console.log('enemy update arr', baseHeroObj)
       dropItemArr = enemyUpdateArr[2];
 
-      enemyRender(wolfenGroup, baseHero, spriteCtx, "back");
+      enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
       dropItemArr = dropItemRender(dropItemArr, spriteCtx, {x: cursorX, y: cursorY}) // renders items that are on the ground
 
 
-      baseHero = heroRender(baseHero, playerSprite, swordSprite, spriteCtx)
+      baseHeroObj = heroRender(baseHeroObj, baseHeroSprite, swordSprite, spriteCtx)
 
-      enemyRender(wolfenGroup, baseHero, spriteCtx, "front");
+      enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "front");
 
       // this renders foreground objects with opacity so that you can see the hero behind them
-      foregroundSprite.draw();
-      baseHero = hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHero);
+      // foregroundSprite.draw();
+      foregroundCtx.drawImage(
+        foregroundSprite.image,
+        foregroundSprite.crop.x - globalVars.offscreenBoundaryTotal,
+        foregroundSprite.crop.y - globalVars.offscreenBoundaryTotal,
+        globalVars.width,
+        globalVars.height,
+        foregroundSprite.position.x - globalVars.offscreenBoundarySide,
+        foregroundSprite.position.y - globalVars.offscreenBoundarySide,
+        globalVars.width,
+        globalVars.height
+    );
+      baseHeroObj = hudRender(spriteCtx, cursorCtx, foregroundCtx, baseHeroObj);
       cursorRender(cursorCtx, cursor, cursorX, cursorY);
 
       // this was used to visualize the hitbox coordinate checkers for collision detection, might use again to tweak that
       // backgroundCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-      // backgroundCtx.fillRect( globalVars.heroStartXCoord - baseHero.cameraX, globalVars.heroStartYCoord - baseHero.cameraY, 8, 8)
+      // backgroundCtx.fillRect( globalVars.heroStartXCoord - baseHeroObj.cameraX, globalVars.heroStartYCoord - baseHeroObj.cameraY, 8, 8)
       // dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
-      // dataVisCtx.fillRect(baseHero.eventX, baseHero.eventY, 4, 4)
+      // dataVisCtx.fillRect(baseHeroObj.eventX, baseHeroObj.eventY, 4, 4)
       // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
       // dataVisCtx.fillRect(globalVars.middleX, globalVars.middleY, 4, 4) // shows true middle pixel of screen, at least as far as the pixel upscale allows
 

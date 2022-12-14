@@ -33,7 +33,8 @@ let currentlyBloodDraining = false;
 
 
 
-const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) => {
+const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCtx) => {
+  let baseHero = baseHeroObj
   if (!enemyArr) return;
 
   for (let el of enemyArr) {
@@ -56,6 +57,13 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
         el.data.blockSize
       );
     }
+
+    if ((el.data.x <= 0 &&
+      el.data.x > globalVars.width  &&
+      el.data.y <= 0  &&
+      el.data.y > globalVars.height )) {
+        console.log('offscreen')
+      }
 
     // doesn't update if the enemy is dead
     if (
@@ -169,7 +177,7 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
       // if the frameCountLimiter has been reached run the moveEngine to move
       // the enemy
       if (el.data.frameCountLimiter >= el.data.maxFrameCountLimiter) {
-        el.data = enemyMoveEngine(el.data, collisionCtx, dataVisCtx);
+        el.data = enemyMoveEngine(el.data, baseHero, collisionCtx, dataVisCtx);
         // console.log(el.data)
         el.data.frameCountLimiter = 0;
       }
@@ -308,6 +316,7 @@ const enemyUpdate = (enemyArr, baseHero, dropItemArr, collisionCtx, dataVisCtx) 
     // dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
     // dataVisCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
   }
+
   return [enemyArr, baseHero, dropItemArr];
 };
 

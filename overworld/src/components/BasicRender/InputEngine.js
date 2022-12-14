@@ -78,7 +78,7 @@ const inputEngine = (keys) => {
     switch(action.key) {
       case ' ':
         keys.Space.pressed = true
-        setTimeout(() => keys.Space.pressed = false, 30)
+        // setTimeout(() => keys.Space.pressed = false, 30)
         // console.log('jump')
       break
       case 'Shift':
@@ -146,6 +146,9 @@ const inputEngine = (keys) => {
         keys.mouse1.pressed = true
       break
       case 2:
+        keys.mouse2.pressed = true
+      break
+      case 1:
         action.preventDefault() // prevents the middle mouse button from going into all direction scroll mode
       break
       default:
@@ -157,6 +160,9 @@ const inputEngine = (keys) => {
     switch(action.button) {
       case 0:
         keys.mouse1.pressed = false
+      break
+      case 2:
+        keys.mouse2.pressed = false
       break
       default:
       break

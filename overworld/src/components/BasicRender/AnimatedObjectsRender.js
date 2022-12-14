@@ -100,46 +100,6 @@ export class Patch {
 // xScale and yScale determine how close together the images are. a value of 1
 // places each image as its full width and height, less than that crunches them
 // together.
-// export const generatePatch = (startX, startY, height, width, img) => {
-
-//   const xSpace = img[0].blockSize * img[0].xScale
-//   const ySpace = img[0].blockSize * img[0].yScale
-//   const returnArr = []
-//   const cornerMulti = .4
-//   for(let j = 0; j < height; j++) {
-//     for (let i = 0; i < width; i++) {
-//       if ((j < height / (height * cornerMulti) && i < width / (width * cornerMulti)) ||
-//       (j > height - (height / (height * cornerMulti)) && i > width - (width / (height * cornerMulti))) ||
-//       (j < height / (height * cornerMulti) && i > width - (width / (height * cornerMulti))) ||
-//       (j > height - (height / (height * cornerMulti)) && i < width / (width * cornerMulti))
-//       ) {
-//         const skip = Math.random() * 10
-//         if (skip > 4) { // gives chance that corner images will not be rendered to create a more organic shape to the patch
-//           continue
-//         }
-//       }
-//       let offset = 0
-//       if(j % 2 === 0) {
-//         offset = xSpace / 2
-//       }
-//       const randomizeImg = Math.floor(Math.random() * img.length)
-//       const imgInstance = {...img[randomizeImg]}
-//       imgInstance.delay =  100 + (((j + 1) * 10) / (i + 1) + Math.floor(Math.random() * 300))
-//       const x = (startX + i * xSpace) + offset
-//       const y = startY + j * ySpace
-//       returnArr.push({
-//         img: imgInstance,
-//         x,
-//         y,
-//         cMasks: buildCMask([
-//           {x, y, xBlocks: 1, yBlocks: 1, gridSize: imgInstance.blockSize}
-//         ])
-//       })
-//     }
-//   }
-//   // console.log(returnArr)
-//   return returnArr
-// }
 
 let windBlow = true; // determines if the grass is animating or not
 
@@ -147,12 +107,13 @@ let windBlow = true; // determines if the grass is animating or not
 // objects to be rendered should be passed in format created by generate patch above
 const animatedObjectsRender = (
   objects,
-  baseHero,
+  baseHeroObj,
   backgroundCtx,
   foregroundCtx,
   collisionCtx,
   dataVisCtx
 ) => {
+  let baseHero = baseHeroObj
   if (!windBlow) {
     if (Math.floor(Math.random() * 1000) === 13) {
       windBlow = true;

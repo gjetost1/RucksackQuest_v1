@@ -40,34 +40,35 @@ const animateHero = (renderArr, spriteCtx) => {
   return renderArr
 }
 
-const heroRender = (baseHero, playerSprite, swordSprite, spriteCtx) => {
+const heroRender = (baseHeroObj, baseHeroSprite, swordSprite, spriteCtx) => {
 
+  let baseHero = baseHeroObj
 
   // draws hero sprite and equipment in attack animation if there is an ongoing attack
   if (baseHero.attackAnimation) {
     // console.log('running attack animation')
     baseHero.spriteAnimSpeed = 12
     baseHero = attackAnimate(baseHero);
-    playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
+    baseHeroSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
     swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-    // baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
-    animateHero([playerSprite, swordSprite], spriteCtx)
+    // baseHero = heroRender([baseHeroObj, swordSprite], baseHero, spriteCtx);
+    animateHero([baseHeroSprite, swordSprite], spriteCtx)
     // renderArr = animateHero
   } else if (baseHero.scavengeAnimation) {
     baseHero.spriteAnimSpeed = 12
     // console.log('animating scavenge')
     baseHero = scavengeAnimate(baseHero);
-    playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
+    baseHeroSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
     swordSprite.cropChange(10000, 10000);
-    // baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
-    animateHero([playerSprite], spriteCtx)
+    // baseHero = heroRender([baseHeroObj, swordSprite], baseHero, spriteCtx);
+    animateHero([baseHeroSprite], spriteCtx)
   } else if (baseHero.bloodDrainAnimation) {
     // console.log('animating blood drain')
     baseHero.spriteAnimSpeed = 18
     baseHero = bloodDrainAnimate(baseHero)
-    playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
+    baseHeroSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
     swordSprite.cropChange(10000, 10000);
-    animateHero([playerSprite], spriteCtx)
+    animateHero([baseHeroSprite], spriteCtx)
   }
    else {
     // console.log('regular animation')
@@ -78,12 +79,12 @@ const heroRender = (baseHero, playerSprite, swordSprite, spriteCtx) => {
     // draws hero sprite image to canvas without attack animation
     // feed in sprite class instances in the order you want them rendered
     // eg typically base player sprite first, then clothing, then equipment
-    playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
+    baseHeroSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
     if (baseHero.currentHeroSprite !== baseHero.spriteSheets.scavenge && baseHero.currentHeroSprite !== baseHero.spriteSheets.bloodDrain) {
       swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
     }
-    // baseHero = heroRender([playerSprite, swordSprite], baseHero, spriteCtx);
-    animateHero([playerSprite, swordSprite], spriteCtx)
+    // baseHero = heroRender([baseHeroObj, swordSprite], baseHero, spriteCtx);
+    animateHero([baseHeroSprite, swordSprite], spriteCtx)
 
   }
     // draws blood effect if damaged
@@ -104,6 +105,7 @@ const heroRender = (baseHero, playerSprite, swordSprite, spriteCtx) => {
     baseHero.damageAnim = animated[1];
   }
 
+  // baseHeroObj.data = baseHero
 
   return baseHero
 }

@@ -31,11 +31,12 @@ const dropItemRender = (dropItemArr, spriteCtx, cursor) => {
 
   for (let el of dropItemArr) {
     // console.log(cursor.x, el.data.x, cursor.y, el.data.y)
+    // console.log(globalVars.offscreenBoundarySide)
     if (!hoverActive
-      && cursor.x >= el.data.x - 48 * globalVars.upscale
-      && cursor.x <= el.data.x + el.data.blockSize - 48 * globalVars.upscale
-      && cursor.y >= el.data.y - 48 * globalVars.upscale
-      && cursor.y <= el.data.y + el.data.blockSize - 48 * globalVars.upscale) {
+      && cursor.x >= el.data.x - globalVars.offscreenBoundarySide
+      && cursor.x <= el.data.x + el.data.blockSize - globalVars.offscreenBoundarySide
+      && cursor.y >= el.data.y - globalVars.offscreenBoundarySide
+      && cursor.y <= el.data.y + el.data.blockSize - globalVars.offscreenBoundarySide) {
         el.data.cropX = el.data.blockSize
         hoverActive = true
       } else {

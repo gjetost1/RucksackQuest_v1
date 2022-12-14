@@ -6,7 +6,8 @@ import pixelPerfect from "./PixelPerfect";
 
 
 
-const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx) => {
+const heroUpdate = (baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx) => {
+  let baseHero = baseHeroObj
   // moveEngine runs less than every frame to keep the hero sprite slower
   if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
     baseHero.frameCountLimiter = 0;
@@ -52,6 +53,14 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, s
       }, 100);
     }
 
+    if (baseHero.keys.Space.pressed) {
+      console.log('jump!')
+      baseHero.jumpActive = true
+    }
+
+    if (baseHero.keys.mouse2.pressed) {
+      console.log('right mouse button!')
+    }
     // starts blood draining
     if (baseHero.keys.e.pressed) {
       baseHero.bloodDrainActive = true;
@@ -116,7 +125,6 @@ const heroUpdate = (baseHero, enemyArr, dropItemArr, collisionCtx, dataVisCtx, s
 
   }
   baseHero.frameCountLimiter += baseHero.moveSpeed;
-
 
   return [baseHero, enemyArr, dropItemArr]
 }

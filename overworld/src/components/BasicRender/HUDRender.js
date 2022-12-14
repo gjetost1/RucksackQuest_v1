@@ -4,11 +4,11 @@ import veins from "../../assets/hud/veins_2.png";
 import fatigue_veins from "../../assets/hud/fatigue_veins.png";
 import ui_background from "../../assets/hud/UI_background.png";
 import ui_background_2 from "../../assets/hud/UI_background_2.png";
-import baseHero from "./BaseHero";
+// import baseHero from "./BaseHero";
 import blood_tank_full_fx_src from '../../assets/sounds/hud/blood_tank_full.mp3'
 
 
-let lastStam = baseHero.currentVitality;
+let lastStam = 0;
 let bloodAnimation = false;
 
 const blood_tank_full_fx = new Audio(blood_tank_full_fx_src);
@@ -219,7 +219,10 @@ const perfectYPos = (element) => {
 let firstTankSort = true; // true if code is running for first time in session
 let tankActivateCooldown = false;
 
-const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
+const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHeroObj) => {
+  // console.log(baseHeroObj.data)
+  let baseHero = baseHeroObj
+  // console.log(baseHero)
   // runs every time game is booted up to make sure tanks are sorted
   if (firstTankSort) {
     baseHero = bloodTankSort(baseHero);
@@ -425,47 +428,11 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
 
   hudLungs.animCounter++;
 
+  // baseHeroObj.data = baseHero
+
+  // console.log('end of hud render', baseHero)
   return baseHero;
 
-  // if (baseHero.currentVitality > baseHero.maxVitality - baseHero.maxVitality / 3) {
-  //   spriteCtx.fillStyle = 'rgb(57, 201, 237)'
-  // } else if (baseHero.currentVitality > baseHero.maxVitality - (baseHero.maxVitality / 3) * 2) {
-  //   spriteCtx.fillStyle = 'rgb(240, 143, 33)'
-  // } else {
-  //   spriteCtx.fillStyle = 'rgb(240, 57, 33)'
-  // }
-
-  // // stamDisplay turns stamina bar into the proper length based on percentage of stamina remaining
-  // const stamDisplay = (currentVitality / maxVitality) * (heroBlockSize - (heroBlockSize / 2))
-  // // renders stamina bar if stamina is less than maximum
-  // if (currentVitality < maxVitality) {
-  //   spriteCtx.fillStyle = 'rgba(65, 65, 65, .5)'
-  //   spriteCtx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, (heroBlockSize - (heroBlockSize / 2)), upscale)
-  //   if (currentVitality > maxVitality - maxVitality / 3) {
-  //     spriteCtx.fillStyle = 'rgba(57, 201, 237, .7)'
-  //   } else if (currentVitality > maxVitality - (maxVitality / 3) * 2) {
-  //     spriteCtx.fillStyle = 'rgb(240, 143, 33, .7)'
-  //   } else {
-  //     spriteCtx.fillStyle = 'rgb(240, 57, 33, .7)'
-  //   }
-  //   spriteCtx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, stamDisplay, upscale)
-  // }
-
-  // ability display with cooldown level
-  // if (!attackCooldownOff) {
-  //   const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * (upscale * 2)
-  //   ctx.fillStyle = 'rgb(65, 65, 65)'
-  //   ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 2, upscale * 2)
-  //   if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
-  //     ctx.fillStyle = 'rgb(57, 201, 237)'
-  //     ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 2, upscale * 2)
-  //   } else {
-  //     ctx.fillStyle = 'rgb(240, 57, 33)'
-  //     ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize + (upscale * 2) - cooldownDisplay, upscale * 2, cooldownDisplay)
-  //   }
-
-  //   // ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 7, upscale * 7)
-  // }
 };
 
 export default hudRender;

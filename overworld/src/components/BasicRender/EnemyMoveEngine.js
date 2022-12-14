@@ -1,7 +1,7 @@
 // import pixelPerfect from './PixelPerfect'
 import globalVars from "./GlobalVars";
 import checkCollision, { checkGreenCollision } from "./CheckCollision";
-import baseHero from "./BaseHero";
+// import baseHero from "./BaseHero";
 // import attackEngine from "./AttackEngine";
 
 
@@ -67,7 +67,7 @@ const dashFunc = (target, probability) => {
 };
 
 // turns enemy towards hero based when in chase or attack modes
-const moveTowardsHero = (target, dataVisCtx) => {
+const moveTowardsHero = (target, baseHero, dataVisCtx) => {
   // declare the center coordinates of the hero
   const heroCenterX = globalVars.middleX;
   const heroCenterY = globalVars.middleY;
@@ -168,7 +168,7 @@ const moveTowardsHero = (target, dataVisCtx) => {
   return target;
 };
 
-const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
+const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
   // console.log(enemyObject.currentFatigue)
 
 
@@ -199,7 +199,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
   // if enemy isn't in attack mode it moves around randomly
   if (enemyObject.attacking) {
     // console.log("attacking");
-    enemyObject = moveTowardsHero(enemyObject, dataVisCtx);
+    enemyObject = moveTowardsHero(enemyObject, baseHero, dataVisCtx);
     enemyObject.moving = true;
     enemyObject.dashing = true;
   } else if (!enemyObject.chasing || enemyObject.fleeing) {
@@ -210,7 +210,7 @@ const enemyMoveEngine = (enemyObject, collisionCtx, dataVisCtx) => {
     enemyObject = startStopMovementFunc(enemyObject, 100);
   } else if (enemyObject.chasing && !enemyObject.attacking) {
     // if it is in chase mode it moves towards the hero
-    enemyObject = moveTowardsHero(enemyObject, dataVisCtx);
+    enemyObject = moveTowardsHero(enemyObject, baseHero, dataVisCtx);
     enemyObject.moving = true;
     // enemyObject = startStopMovementFunc(enemyObject, 100)
     enemyObject = dashFunc(enemyObject, 100);
