@@ -1,218 +1,356 @@
-import globalVars from "./GlobalVars"
-import { hudHeart, bloodTank_1, bloodTank_2 } from "./HudObjects"
-import veins from '../../assets/hud/veins_2.png'
-import ui_background from '../../assets/hud/UI_background.png'
-import baseHero from "./BaseHero"
+import globalVars from "./GlobalVars";
+import { hudHeart, hudLungs} from "./HudObjects";
+import veins from "../../assets/hud/veins_2.png";
+import fatigue_veins from "../../assets/hud/fatigue_veins.png";
+import ui_background from "../../assets/hud/UI_background.png";
+import ui_background_2 from "../../assets/hud/UI_background_2.png";
+// import baseHero from "./BaseHero";
+import blood_tank_full_fx_src from '../../assets/sounds/hud/blood_tank_full.mp3'
 
-let lastStam = baseHero.currentStam
-let bloodAnimation = false
 
-const veins_img = new Image()
-veins_img.src = veins
+let lastStam = 0;
+let bloodAnimation = false;
 
-const ui_background_img = new Image()
-ui_background_img.src = ui_background
+const blood_tank_full_fx = new Audio(blood_tank_full_fx_src);
+blood_tank_full_fx.volume = .3;
+
+const veins_img = new Image();
+veins_img.src = veins;
+
+const fatigue_veins_img = new Image();
+fatigue_veins_img.src = fatigue_veins;
+
+const ui_background_img_left = new Image();
+ui_background_img_left.src = ui_background;
+
+const ui_background_img_right = new Image();
+ui_background_img_right.src = ui_background_2;
 
 // checks current bloodTanks and moves empties to the back of the queue
 // also sets the first tank with blood in it as the active tank
-const bloodTankSort = (baseHero, userActivated) => {
+const bloodTankSort = (baseHero) => {
   // console.log('sorting')
-  let allEmpty = true
-  let firstFill = true
-  baseHero.equipment.bloodTanks.sort((a, b) => {
-    const tankA = a.data.currentVolume
-    const tankB = b.data.currentVolume
+  baseHero.equipment.bloodTanks.inventory.sort((a, b) => {
+    const tankA = a.data.currentVolume;
+    const tankB = b.data.currentVolume;
     if (tankA > tankB) {
-      return -1
+      return 1;
     } else if (tankB > tankA) {
-      return 1
+      return -1;
     }
-    return 0
-  })
-  for (let i = 0; i < baseHero.equipment.bloodTanks.length; i++) {
-    let tank = baseHero.equipment.bloodTanks[i]
-    tank.data.active = false
-    if (tank.data.currentVolume < tank.data.maxVolume && firstFill) {
-      // console.log('first fill')
-      baseHero.equipment.currentFillTank = tank
-      firstFill = false
+    return 0;
+  });
+  // console.log( baseHero.equipment.bloodTanks)
+  return baseHero;
+};
+
+
+// bloodTankSet determines which blood tank should be filled next, and which one is active
+const bloodTankSet = (baseHero) => {
+  let firstTank = true;
+  let nextTank = false
+  for (let i = 0; i < baseHero.equipment.bloodTanks.inventory.length; i++) {
+    const tank = baseHero.equipment.bloodTanks.inventory[i];
+    if (firstTank) {
+      firstTank = false
+      baseHero.equipment.bloodTanks.currentTank = tank
+      baseHero.equipment.bloodTanks.currentFillTank = tank
+    }
+    if (tank.data.currentVolume < tank.data.maxVolume) {
+      // console.log(tank)
+      baseHero.equipment.bloodTanks.currentFillTank = tank
+    }
+    if (nextTank) {
+      baseHero.equipment.bloodTanks.currentTank = tank
+      nextTank = false
     }
     if (tank.data.currentVolume <= 0) {
-      tank.data.depleted = true
-    } else {
-      allEmpty = false
+      nextTank = true
     }
+
   }
-  if (firstFill) {
-    baseHero.equipment.currentFillTank = baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1]
-    // console.log('all full', baseHero.equipment.currentFillTank)
-  }
-  baseHero.equipment.allTanksEmpty = allEmpty
-  // console.log('all empty', allEmpty)
 
-  for (let i = baseHero.equipment.bloodTanks.length - 1; i >= 0; i--) {
-    const tank = baseHero.equipment.bloodTanks[i]
-      if (userActivated) {
-        if (tank.data.currentVolume > 0) {
-          tank.data.active = true
-          // tank.data.fill = true
-          baseHero.equipment.currentTank = tank
-          return baseHero
-        } else if (baseHero.equipment.allTanksEmpty) {
-          baseHero.equipment.bloodTanks[baseHero.equipment.bloodTanks.length - 1].data.active = true
-        }
-      } else {
-        baseHero.equipment.currentTank = false
-      }
-    }
-  // console.log( baseHero.equipment.bloodTanks)
-  return baseHero
-}
-
-
+  return baseHero;
+};
 
 const bloodAnimate = (element) => {
-  element.animCounter++
+  element.animCounter++;
   if (element.animCounter >= element.animFrames) {
-    element.crop.x += element.blockSize
-    element.animCounter = 0
+    element.crop.x += element.blockSize;
+    element.animCounter = 0;
     if (element.crop.x >= element.blockSize * element.totalAnimFrames) {
-      element.crop.x = 0
+      element.crop.x = 0;
     }
   }
-}
+};
 
 const bloodTankRender = (baseHero, cursorCtx, foregroundCtx, stamDrain) => {
-  let tankCount = baseHero.equipment.bloodTanks.length - 1
-  // console.log(baseHero.equipment.bloodTanks)
-  // for (let el of baseHero.equipment.bloodTanks) {
-  for (let i = baseHero.equipment.bloodTanks.length - 1; i >= 0; i--) {
-    const el = baseHero.equipment.bloodTanks[i]
-    if (!el.data.depleted) {
-    foregroundCtx.drawImage(el.contentsImage, el.crop.x, el.crop.y, el.blockSize, el.blockSize, el.position.x, perfectYPos(el) - el.blockSize * tankCount, el.blockSize, el.blockSize)
-    foregroundCtx.clearRect(el.position.x, el.position.y + el.blockSize - el.blockSize * tankCount, el.blockSize, el.blockSize)
+  let tankCount = baseHero.equipment.bloodTanks.inventory.length - 1; // used to space out tanks properly on render
+  let currentTankCount = 0 // used to render the active tank in the right position
+  for (let i = 0; i < baseHero.equipment.bloodTanks.inventory.length; i++) {
+    const el = baseHero.equipment.bloodTanks.inventory[i];
+    if (el === baseHero.equipment.bloodTanks.currentTank) {
+      currentTankCount = tankCount
     }
-    if (el.data.active) {
-      if (stamDrain > 0 && baseHero.currentStam < baseHero.maxStam) {
-        el.data.currentVolume -= stamDrain
-        bloodAnimation = true
-      } else if (baseHero.currentStam >= baseHero.maxStam && el.crop.x === 0) {
-        bloodAnimation = false
-        el.crop.x = 0
-        el.animCounter = 0
+
+
+    // draw contents of tank first
+    foregroundCtx.drawImage(
+      el.contentsImage,
+      el.crop.x,
+      el.crop.y,
+      el.blockSize,
+      el.blockSize,
+      el.position.x + globalVars.offscreenBoundarySide,
+      perfectYPos(el) - el.blockSize * tankCount + globalVars.offscreenBoundarySide,
+      el.blockSize,
+      el.blockSize
+    );
+    // clears out contents that are sticking out underneath each tank,
+    // which happens when the level is about 50% or less
+    foregroundCtx.clearRect(
+      el.position.x + globalVars.offscreenBoundarySide,
+      el.position.y + el.blockSize - el.blockSize * tankCount + globalVars.offscreenBoundarySide,
+      el.blockSize,
+      el.blockSize
+    );
+
+    // draws tank container off image
+    cursorCtx.drawImage(
+      el.offImage,
+      0,
+      0,
+      el.blockSize,
+      el.blockSize,
+      el.position.x + globalVars.offscreenBoundarySide,
+      el.position.y - el.blockSize * tankCount + globalVars.offscreenBoundarySide,
+      el.blockSize,
+      el.blockSize
+    );
+    tankCount--;
+  }
+
+  // draws active tank on top of all rendered tanks
+  const activeTank = baseHero.equipment.bloodTanks.currentTank // currently active tank
+  const fillTank = baseHero.equipment.bloodTanks.currentFillTank
+  // changes fill tanks if current one is full
+  if (fillTank.data.currentVolume >= fillTank.data.maxVolume) {
+    // console.log('current tank change')
+    baseHero = bloodTankSet(baseHero);
+  }
+  if (baseHero.equipment.bloodTanks.tankDrainActive) {
+     if (stamDrain > 0 && baseHero.currentVitality < baseHero.maxVitality) {
+        activeTank.data.currentVolume -= stamDrain;
+        bloodAnimation = true;
+      } else if (
+        baseHero.currentVitality >= baseHero.maxVitality &&
+        activeTank.crop.x === 0
+      ) {
+        bloodAnimation = false;
+        activeTank.crop.x = 0;
+        activeTank.animCounter = 0;
       }
-      if (el.data.currentVolume <= 0) {
-        baseHero = bloodTankSort(baseHero, true)
-      } else if (el.data.currentVolume <= 0 && baseHero.equipment.allTanksEmpty) {
-        baseHero = bloodTankSort(baseHero, false)
+      if (activeTank.data.currentVolume <= 0) {
+        activeTank.crop.x = 0
+        blood_tank_full_fx.play()
+        activeTank.data.currentVolume = 0
+        baseHero = bloodTankSet(baseHero);
       }
       if (bloodAnimation) {
-        bloodAnimate(el)
+        bloodAnimate(activeTank);
       }
-    }
-    if (baseHero.equipment.changeCurrentFillTank) {
-      baseHero.equipment.changeCurrentFillTank = false
-      baseHero = bloodTankSort(baseHero, false)
+
+    if (baseHero.equipment.bloodTanks.changeCurrentFillTank) {
+      baseHero.equipment.bloodTanks.changeCurrentFillTank = false;
+      baseHero = bloodTankSet(baseHero);
     }
 
-    if (el.data.active) {
-      cursorCtx.drawImage(el.onImage, 0, 0, el.blockSize, el.blockSize, el.position.x, el.position.y - el.blockSize * tankCount, el.blockSize, el.blockSize)
-    } else {
-      cursorCtx.drawImage(el.offImage, 0, 0, el.blockSize, el.blockSize, el.position.x, el.position.y - el.blockSize * tankCount, el.blockSize, el.blockSize)
-    }
 
-    tankCount--
-      // reduces volume of blood container when vitality regenerates
-    // foregroundCtx.drawImage(bloodTank_1.contentsImage, bloodTank_1.crop.x, bloodTank_1.crop.y, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, perfectYPos(bloodTank_1), bloodTank_1.blockSize, bloodTank_1.blockSize)
-    // cursorCtx.drawImage(bloodTank_1.image, 0, 0, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, bloodTank_1.position.y, bloodTank_1.blockSize, bloodTank_1.blockSize)
+    cursorCtx.drawImage(
+      activeTank.onImage,
+      0,
+      0,
+      activeTank.blockSize,
+      activeTank.blockSize,
+      activeTank.position.x + globalVars.offscreenBoundarySide,
+      activeTank.position.y - activeTank.blockSize * currentTankCount + globalVars.offscreenBoundarySide,
+      activeTank.blockSize,
+      activeTank.blockSize
+    );
+  } else {
+    cursorCtx.drawImage(
+      activeTank.offImage,
+      0,
+      0,
+      activeTank.blockSize,
+      activeTank.blockSize,
+      activeTank.position.x + globalVars.offscreenBoundarySide,
+      activeTank.y - activeTank.blockSize * currentTankCount + globalVars.offscreenBoundarySide,
+      activeTank.blockSize,
+      activeTank.blockSize
+    );
   }
-}
-
+};
 
 const perfectYPos = (element) => {
   if (element.data.currentVolume === element.data.maxVolume) {
-    return element.position.y
+    return element.position.y;
   }
   if (element.data.currentVolume <= 0) {
-
-    return element.position.y + element.blockSize - element.blockSize / 4
+    return element.position.y + element.blockSize - element.blockSize / 4;
   }
   // console.log(element.blockSize - (Math.round(element.blockSize * (element.data.currentVolume / element.data.maxVolume) / globalVars.upscale)* globalVars.upscale))
   // console.log(element.data.currentVolume)
   // console.log(element.blockSize - (Math.round(element.blockSize * (element.data.currentVolume / element.data.maxVolume) / globalVars.upscale) * globalVars.upscale))
-  return element.position.y + (element.blockSize / 2) - Math.round((element.blockSize * (element.data.currentVolume / element.data.maxVolume) / globalVars.upscale) / 2) * globalVars.upscale + (globalVars.upscale * 2)
-}
+  return (
+    element.position.y +
+    element.blockSize / 2 -
+    Math.round(
+      (element.blockSize *
+        (element.data.currentVolume / element.data.maxVolume)) /
+        globalVars.upscale /
+        2
+    ) *
+      globalVars.upscale +
+    globalVars.upscale * 2
+  );
+};
 
+let firstTankSort = true; // true if code is running for first time in session
+let tankActivateCooldown = false;
 
-
-let firstTankSort = true
-let tankActivateCooldown = false
-
-const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
-
+const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHeroObj) => {
+  // console.log(baseHeroObj.data)
+  let baseHero = baseHeroObj
+  // console.log(baseHero)
   // runs every time game is booted up to make sure tanks are sorted
   if (firstTankSort) {
-    baseHero = bloodTankSort(baseHero, false)
-    firstTankSort = false
+    baseHero = bloodTankSort(baseHero);
+    baseHero = bloodTankSet(baseHero);
+    firstTankSort = false;
   }
 
-  const stamDrain = baseHero.currentStam - lastStam
-
-  lastStam = baseHero.currentStam
-
-
+  // is negative if stamina is draining this frame, positive if it is growing
+  const stamDrain = baseHero.currentVitality - lastStam;
+  lastStam = baseHero.currentVitality;
 
   // activates bloodTank on key press
   if (baseHero.keys.x.pressed && !tankActivateCooldown) {
-    if (baseHero.equipment.currentTank) {
-      baseHero.equipment.currentTank.crop.x = 0
+    baseHero.equipment.bloodTanks.bloodSound.pause();
+    baseHero = bloodTankSet(baseHero);
+    if (baseHero.equipment.bloodTanks.currentTank) {
+      baseHero.equipment.bloodTanks.currentTank.crop.x = 0;
     }
-    tankActivateCooldown = true
-    // baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
-    baseHero = bloodTankSort(baseHero, !baseHero.equipment.currentTank)
+    tankActivateCooldown = true;
+    baseHero.equipment.bloodTanks.tankDrainActive = !baseHero.equipment.bloodTanks.tankDrainActive
     setTimeout(() => {
-      tankActivateCooldown = false
-    }, 300)
+      tankActivateCooldown = false;
+    }, 300);
   }
 
+  if (baseHero.equipment.bloodTanks.changeCurrentTank) {
+    console.log('changing current tank')
+    baseHero.equipment.bloodTanks.changeCurrentTank = false
+    baseHero = bloodTankSet(baseHero);
+  }
 
-    // sets color of stamina bar based on remaining stamina percentage
-  // if (currentStam > maxStam - maxStam / 3) {
-  //   hudHeart.animFrames = hudHeart.animFramesBase
-  // } else if (currentStam > maxStam - (maxStam / 3) * 2) {
-  //   hudHeart.animFrames = 16
-  // } else {
-  //   hudHeart.animFrames = 10
-  // }
-  // console.log(hudHeart.animFramesBase * (currentStam / maxStam))
+  foregroundCtx.globalAlpha = 1;
 
-  // cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, 32, 256, 64)
-  // foregroundCtx.globalAlpha = 1
-  // foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, 0, 384, 192)
-  // foregroundCtx.globalAlpha = .85
-
-  foregroundCtx.globalAlpha = 1
-
-  // foregroundCtx.drawImage(bloodTank_2.contentsImage, bloodTank_2.crop.x, bloodTank_2.crop.y, bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.position.x, perfectYPos(bloodTank_2), bloodTank_2.blockSize, bloodTank_2.blockSize)
-  // foregroundCtx.clearRect(bloodTank_2.position.x, bloodTank_2.position.y + bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.blockSize)
-
-  // // foregroundCtx.drawImage(bloodTank_2.contentsImage, bloodTank_2.crop.x, bloodTank_2.crop.y, bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.position.x, perfectYPos(bloodTank_2), bloodTank_2.blockSize, bloodTank_2.blockSize)
-  // cursorCtx.drawImage(bloodTank_2.image, 0, 0, bloodTank_2.blockSize, bloodTank_2.blockSize, bloodTank_2.position.x, bloodTank_2.position.y, bloodTank_2.blockSize, bloodTank_2.blockSize)
-  // foregroundCtx.drawImage(bloodTank_1.contentsImage, bloodTank_1.crop.x, bloodTank_1.crop.y, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, perfectYPos(bloodTank_1), bloodTank_1.blockSize, bloodTank_1.blockSize)
-  // cursorCtx.drawImage(bloodTank_1.image, 0, 0, bloodTank_1.blockSize, bloodTank_1.blockSize, bloodTank_1.position.x, bloodTank_1.position.y, bloodTank_1.blockSize, bloodTank_1.blockSize)
-
-  bloodTankRender(baseHero, cursorCtx, foregroundCtx, stamDrain)
-
-  cursorCtx.drawImage(veins_img, 0, 0, 256, 64, 104, globalVars.perfectHeight - 100, 256, 64)
-  foregroundCtx.drawImage(ui_background_img, 0, 0, 384, 192, 0, globalVars.perfectHeight - 136, 384, 192)
-  const bloodStaminaLevel = 72 + Math.round((256 * (baseHero.currentStam / baseHero.maxStam)) / globalVars.upscale) * globalVars.upscale
-  // cursorCtx.clearRect(Math.round((320 * (health / maxHealth)) / globalVars.upscale) * globalVars.upscale , 32, 256, 64)
-  cursorCtx.clearRect(bloodStaminaLevel, globalVars.perfectHeight - 100, 256, 64)
+  bloodTankRender(baseHero, cursorCtx, foregroundCtx, stamDrain);
 
 
 
+  // left ui background
+  foregroundCtx.drawImage(
+    ui_background_img_left,
+    0,
+    0,
+    384,
+    192,
+    globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide,
+    384,
+    192
+  );
 
-  foregroundCtx.globalAlpha = .85
+  // right ui background
+  foregroundCtx.drawImage(
+    ui_background_img_right,
+    0,
+    0,
+    384,
+    192,
+    globalVars.perfectWidth - 384 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide,
+    384,
+    192
+  );
+
+  cursorCtx.drawImage(
+    veins_img,
+    0,
+    0,
+    256,
+    64,
+    104 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
+    256,
+    64
+  );
+
+  cursorCtx.drawImage(
+    fatigue_veins_img,
+    0,
+    0,
+    256,
+    64,
+    globalVars.perfectWidth - 360 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
+    256,
+    64
+  );
+
+
+  // does a pixel perfect obstruction of vitality level
+  const veinsVitalityLevel =
+    72 +
+    Math.round(
+      (256 * (baseHero.currentVitality / baseHero.maxVitality)) /
+        globalVars.upscale
+    ) *
+      globalVars.upscale;
+
+  cursorCtx.clearRect( //
+    veinsVitalityLevel + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
+    256,
+    64
+  );
+
+  foregroundCtx.globalAlpha = 0.85;
+
+  // does a pixel perfect obstruction of fatigue level
+  const veinsFatigueLevel =
+  globalVars.perfectWidth - 72 -
+    Math.round(
+      (256 * (baseHero.currentFatigue / baseHero.maxFatigue)) /
+        globalVars.upscale
+    ) *
+      globalVars.upscale;
+
+      // console.log(veinsFatigueLevel)
+
+  cursorCtx.clearRect( //
+  veinsFatigueLevel - 260 + globalVars.offscreenBoundarySide,
+    globalVars.perfectHeight - 100 + globalVars.offscreenBoundarySide,
+    256 ,
+    64
+  );
+
+
+  foregroundCtx.globalAlpha = 0.85;
+
+
   //animate blood container
 
   // if (bloodTank_1.animCounter >= bloodTank_1.animFrames) {
@@ -224,75 +362,77 @@ const hudRender = (spriteCtx, cursorCtx, foregroundCtx, baseHero) => {
   // }
   // bloodTank_1.animCounter++
 
+  // maps speed of heart beat to remaining vitality
+  hudHeart.animFrames = Math.floor(
+    hudHeart.animFramesBase * (baseHero.currentVitality / baseHero.maxVitality)
+  );
 
-  // maps speed of heart beat to remaining stamina
-  hudHeart.animFrames = Math.floor(hudHeart.animFramesBase * (baseHero.currentStam / baseHero.maxStam))
-
-
-
-  if (hudHeart.animFrames <= hudHeart.animFramesMin) { // sets a minimum speed for heart beat
-    hudHeart.animFrames = hudHeart.animFramesMin
+  if (hudHeart.animFrames <= hudHeart.animFramesMin) {
+    // sets a minimum speed for heart beat
+    hudHeart.animFrames = hudHeart.animFramesMin;
   }
 
   // draws hudHeart to cursor canvas
-  cursorCtx.drawImage(hudHeart.image, hudHeart.crop.x, hudHeart.crop.y, hudHeart.blockSize, hudHeart.blockSize, hudHeart.position.x, hudHeart.position.y, hudHeart.blockSize, hudHeart.blockSize)
+  cursorCtx.drawImage(
+    hudHeart.image,
+    hudHeart.crop.x,
+    hudHeart.crop.y,
+    hudHeart.blockSize,
+    hudHeart.blockSize,
+    hudHeart.position.x,
+    hudHeart.position.y,
+    hudHeart.blockSize,
+    hudHeart.blockSize
+  );
 
   if (hudHeart.animCounter >= hudHeart.animFrames) {
-    hudHeart.crop.x += hudHeart.blockSize
-    hudHeart.animCounter = 0
+    hudHeart.crop.x += hudHeart.blockSize;
+    hudHeart.animCounter = 0;
     if (hudHeart.crop.x >= hudHeart.blockSize * hudHeart.totalAnimFrames) {
-      hudHeart.crop.x = 0
+      hudHeart.crop.x = 0;
     }
   }
 
-  hudHeart.animCounter++
+  hudHeart.animCounter++;
 
-  return baseHero
+  // maps speed of lung breaths to fatigue level
+  hudLungs.animFrames = Math.floor(
+    hudLungs.animFramesBase * (baseHero.currentFatigue / baseHero.maxFatigue)
+  );
 
+  if (hudLungs.animFrames <= hudHeart.animFramesMin) {
+    // sets a minimum speed for lung breath
+    hudLungs.animFrames = hudLungs.animFramesMin;
+  }
 
-  // if (baseHero.currentStam > baseHero.maxStam - baseHero.maxStam / 3) {
-  //   spriteCtx.fillStyle = 'rgb(57, 201, 237)'
-  // } else if (baseHero.currentStam > baseHero.maxStam - (baseHero.maxStam / 3) * 2) {
-  //   spriteCtx.fillStyle = 'rgb(240, 143, 33)'
-  // } else {
-  //   spriteCtx.fillStyle = 'rgb(240, 57, 33)'
-  // }
+  // draws hudLungs to cursor canvas
+  cursorCtx.drawImage(
+    hudLungs.image,
+    hudLungs.crop.x,
+    hudLungs.crop.y,
+    hudLungs.blockSize,
+    hudLungs.blockSize,
+    hudLungs.position.x,
+    hudLungs.position.y,
+    hudLungs.blockSize,
+    hudLungs.blockSize
+  );
 
+  if (hudLungs.animCounter >= hudLungs.animFrames) {
+    hudLungs.crop.x += hudLungs.blockSize;
+    hudLungs.animCounter = 0;
+    if (hudLungs.crop.x >= hudLungs.blockSize * hudLungs.totalAnimFrames) {
+      hudLungs.crop.x = 0;
+    }
+  }
 
-  // // stamDisplay turns stamina bar into the proper length based on percentage of stamina remaining
-  // const stamDisplay = (currentStam / maxStam) * (heroBlockSize - (heroBlockSize / 2))
-  // // renders stamina bar if stamina is less than maximum
-  // if (currentStam < maxStam) {
-  //   spriteCtx.fillStyle = 'rgba(65, 65, 65, .5)'
-  //   spriteCtx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, (heroBlockSize - (heroBlockSize / 2)), upscale)
-  //   if (currentStam > maxStam - maxStam / 3) {
-  //     spriteCtx.fillStyle = 'rgba(57, 201, 237, .7)'
-  //   } else if (currentStam > maxStam - (maxStam / 3) * 2) {
-  //     spriteCtx.fillStyle = 'rgb(240, 143, 33, .7)'
-  //   } else {
-  //     spriteCtx.fillStyle = 'rgb(240, 57, 33, .7)'
-  //   }
-  //   spriteCtx.fillRect(playerSprite.position.x + (heroBlockSize / upscale), playerSprite.position.y, stamDisplay, upscale)
-  // }
+  hudLungs.animCounter++;
 
+  // baseHeroObj.data = baseHero
 
+  // console.log('end of hud render', baseHero)
+  return baseHero;
 
-  // ability display with cooldown level
-  // if (!attackCooldownOff) {
-  //   const cooldownDisplay = (coolDownLevel / coolDownLevelMax) * (upscale * 2)
-  //   ctx.fillStyle = 'rgb(65, 65, 65)'
-  //   ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 2, upscale * 2)
-  //   if (attackCooldownOff || coolDownLevel === coolDownLevelMax) {
-  //     ctx.fillStyle = 'rgb(57, 201, 237)'
-  //     ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize, upscale * 2, upscale * 2)
-  //   } else {
-  //     ctx.fillStyle = 'rgb(240, 57, 33)'
-  //     ctx.fillRect(playerSprite.position.x  + upscale * 2, playerSprite.position.y + heroBlockSize + (upscale * 2) - cooldownDisplay, upscale * 2, cooldownDisplay)
-  //   }
+};
 
-  //   // ctx.drawImage(swordIcon, playerSprite.position.x, playerSprite.position.y + heroBlockSize, upscale * 7, upscale * 7)
-  // }
-
-}
-
-export default hudRender
+export default hudRender;

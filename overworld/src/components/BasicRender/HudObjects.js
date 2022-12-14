@@ -1,11 +1,13 @@
 import globalVars from './GlobalVars'
 import heart_1 from '../../assets/hud/heart_1.png'
+import lungs_1 from '../../assets/hud/lungs_1.png'
 import blood_container_small_off from '../../assets/hud/blood_container_small_off.png'
 import blood_container_small_on from '../../assets/hud/blood_container_small_on.png'
 import blood from '../../assets/hud/blood.png'
 import blood_container_large_off from '../../assets/hud/blood_container_large_off.png'
 import blood_container_large_on from '../../assets/hud/blood_container_large_on.png'
 import blood_large from '../../assets/hud/blood_large.png'
+
 
 class HudSprite {
   constructor({ image, offImage, onImage, contentsImage, position, crop, blockSize, animFramesBase, totalAnimFrames, animFramesMin, data}) {
@@ -38,8 +40,8 @@ heart_img.src = heart_1
 export const hudHeart = new HudSprite({
   image: heart_img,
   position: {
-    x: 0,
-    y: globalVars.perfectHeight - 136
+    x: globalVars.offscreenBoundarySide,
+    y: globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide
   },
   crop: {
     x: 0,
@@ -48,6 +50,25 @@ export const hudHeart = new HudSprite({
   blockSize: 128,
   animFramesBase: 26,
   animFramesMin: 8,
+  totalAnimFrames: 6
+})
+
+const lungs_img = new Image()
+lungs_img.src = lungs_1
+
+export const hudLungs = new HudSprite({
+  image: lungs_img,
+  position: {
+    x: globalVars.perfectWidth - 136 + globalVars.offscreenBoundarySide,
+    y: globalVars.perfectHeight - 136 + globalVars.offscreenBoundarySide
+  },
+  crop: {
+    x: 0,
+    y: 0
+  },
+  blockSize: 128,
+  animFramesBase: 60,
+  animFramesMin: 10,
   totalAnimFrames: 6
 })
 
@@ -77,12 +98,12 @@ export const bloodTank_1 = new HudSprite({
   animFramesMin: 8,
   totalAnimFrames: 8,
   data: {
-    currentVolume: 300,
+    currentVolume: 10,
     maxVolume: 300,
     type: 'vitality',
     active: false,
     depleted: false,
-    growthFactor: 4.5
+    recoveryRate: .3,
   }
 })
 
@@ -117,7 +138,7 @@ export const bloodTank_2 = new HudSprite({
     type: 'vitality',
     active: false,
     depleted: false,
-    growthFactor: 4
+    recoveryRate: .2
   }
 })
 
@@ -143,6 +164,6 @@ export const bloodTank_3 = new HudSprite({
     type: 'vitality',
     active: false,
     depleted: false,
-    growthFactor: 4.5
+    recoveryRate: .3
   }
 })
