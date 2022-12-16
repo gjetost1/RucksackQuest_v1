@@ -41,12 +41,15 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   // we can use this to see if the collision canvas is transparent or not, and also check for specific colors
   // this is fed to the collision detector function with an object of the pixel coordinates we want to check.
   // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
-  const imgData = collisionCtx.getImageData(
-    baseHero.targetHeroX,
-    baseHero.targetHeroY,
-    baseHero.targetHeroX + globalVars.blockSize,
-    baseHero.targetHeroY + globalVars.blockSize
-  );
+
+  // const imgData = collisionCtx.getImageData(
+  //   baseHero.targetHeroX,
+  //   baseHero.targetHeroY,
+  //   baseHero.targetHeroX + globalVars.blockSize,
+  //   baseHero.targetHeroY + globalVars.blockSize
+  // );
+
+
 
   // console.log(baseHero.targetHeroX, baseHero.targetHeroY)
 
@@ -68,9 +71,16 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
 
 
 
+  // let heroCollisions = checkCollision(
+  //   imgData,
+  //   baseHero.colBox,
+  //   collisionCtx,
+  //   dataVisCtx
+  // );
   let heroCollisions = checkCollision(
-    imgData,
     baseHero.colBox,
+    baseHero.x,
+    baseHero.y,
     collisionCtx,
     dataVisCtx
   );

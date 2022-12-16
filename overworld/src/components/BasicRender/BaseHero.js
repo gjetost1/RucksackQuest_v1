@@ -99,6 +99,8 @@ export const baseHeroTemplate = {
   targetCameraY: globalVars.heroStartYCoord,
   x: globalVars.heroCenterX,
   y: globalVars.heroCenterY,
+  middleX: globalVars.heroCenterX + blockSize / 2,
+  middleY: globalVars.heroCenterY + blockSize / 2,
   targetHeroX: globalVars.heroCenterX,
   targetHeroY: globalVars.heroCenterY,
   frameXChange: 0,

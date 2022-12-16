@@ -34,6 +34,7 @@ let currentlyBloodDraining = false;
 
 
 const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCtx) => {
+
   let baseHero = baseHeroObj
   if (!enemyArr) return;
 
@@ -62,7 +63,7 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
       el.data.x > globalVars.width  &&
       el.data.y <= 0  &&
       el.data.y > globalVars.height )) {
-        console.log('offscreen')
+        // console.log('offscreen')
       }
 
     // doesn't update if the enemy is dead
@@ -90,6 +91,7 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
 
       // console.log(globalVars.heroCenterX, globalVars.heroCenterY, el.data.x, el.data.y, el.data.attackRadius, el.data.aggroRadius, el.data.fleeingRadius)
 
+
       // sets enemy to attacking status if the hero is within their aggroRadius
       if (
         checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, el.data.attackRadius)
@@ -109,6 +111,7 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
           if (
             checkRadius(globalVars.middleX, globalVars.middleY, enemyCenterX, enemyCenterY, baseHero.blockSize - baseHero.blockSize / 8)
             ) {
+              // console.log('attacking')
               el.data.spriteAnimCounter = 0;
               el.cropX = el.data.blockSize * el.data.movementFrames;
               el.data.animFrames = el.data.movementFrames + el.data.attackFrames - 1;
@@ -116,7 +119,7 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
               el.data.attackAnimCooldown = true
               el.data.attackActive = true;
               el.data.attackCooldownOff = false;
-              el.data = eventEngine(el.data, "attack");
+              // el.data = eventEngine(el.data, "attack");
               const attackEngineReturn = attackEngine(el.data, baseHero, dataVisCtx);
               baseHero = attackEngineReturn[0];
               // const heroCollision = attackEngineReturn[1];
@@ -178,6 +181,9 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
       // the enemy
       if (el.data.frameCountLimiter >= el.data.maxFrameCountLimiter) {
         el.data = enemyMoveEngine(el.data, baseHero, collisionCtx, dataVisCtx);
+
+
+
         // console.log(el.data)
         el.data.frameCountLimiter = 0;
       }
@@ -316,7 +322,12 @@ const enemyUpdate = (enemyArr, baseHeroObj, dropItemArr, collisionCtx, dataVisCt
     // uncomment to show enemy attack hitbox
     // dataVisCtx.fillStyle = 'rgba(0, 255, 0, 1)'
     // dataVisCtx.fillRect(el.data.eventX, el.data.eventY, 4, 4)
+
+
+
   }
+
+
 
   return [enemyArr, baseHero, dropItemArr];
 };

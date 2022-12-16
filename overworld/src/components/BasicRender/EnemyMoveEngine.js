@@ -66,8 +66,10 @@ const dashFunc = (target, probability) => {
   return target;
 };
 
+let zoneArr
 // turns enemy towards hero based when in chase or attack modes
 const moveTowardsHero = (target, baseHero, dataVisCtx) => {
+
   // declare the center coordinates of the hero
   const heroCenterX = globalVars.middleX;
   const heroCenterY = globalVars.middleY;
@@ -110,60 +112,199 @@ const moveTowardsHero = (target, baseHero, dataVisCtx) => {
   // the hero.
 
 
-  if (enemyCenterX <= baseHero.x + baseHero.blockSize
-    && enemyCenterY <= heroCenterY
-    && enemyCenterX >= baseHero.x
-    ) {
-      if (enemyCenterX === heroCenterX) {
-        target.direction = "down";
-      } else if (enemyCenterX === baseHero.x) {
-        target.direction = "downright";
-      } else if(enemyCenterX === baseHero.x + baseHero.blockSize) {
-        target.direction = "downleft";
+  // create array that defines the boundaries of each zone
+  if (!zoneArr) {
+    zoneArr = [
+      {
+        zone: 'a',
+        x: 0,
+        y: 0,
+        width: baseHero.x,
+        height: baseHero.y,
+      },
+      {
+        zone: 'b',
+        x: baseHero.x,
+        y: 0,
+        width: baseHero.blockSize,
+        height: baseHero.middleY,
+      },
+      {
+        zone: 'c',
+        x: baseHero.x + baseHero.blockSize,
+        y: 0,
+        width: globalVars.width / 2 - baseHero.blockSize / 2,
+        height: baseHero.y,
+      },
+      {
+        zone: 'd',
+        x: baseHero.middleX,
+        y: baseHero.y,
+        width: globalVars.width / 2 ,
+        height: baseHero.blockSize,
+      },
+      {
+        zone: 'e',
+        x: baseHero.x + baseHero.blockSize,
+        y: baseHero.y + baseHero.blockSize,
+        width: globalVars.width / 2 - baseHero.blockSize / 2,
+        height: globalVars.height / 2 - baseHero.blockSize / 2,
+      },
+      {
+        zone: 'f',
+        x: baseHero.x ,
+        y: baseHero.middleY,
+        width: baseHero.blockSize,
+        height: globalVars.height / 2,
+      },
+      {
+        zone: 'g',
+        x: 0,
+        y: baseHero.y + baseHero.blockSize,
+        width: baseHero.x,
+        height: globalVars.height / 2 - baseHero.blockSize / 2,
+      },
+      {
+        zone: 'h',
+        x: 0,
+        y: baseHero.y,
+        width: globalVars.width / 2,
+        height: baseHero.blockSize,
       }
-    } else if (enemyCenterX <= heroCenterX
-      && enemyCenterY <= baseHero.y + baseHero.blockSize
-      && enemyCenterY >= baseHero.y) {
-        if (enemyCenterY === heroCenterY) {
-        target.direction = "right";
-        } else if (enemyCenterY === baseHero.y) {
-        target.direction = "downright";
-        } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
-        target.direction = "upright";
+    ]
+  }
+
+  const zoneProcessor = (targetX, targetY, zoneArr, dataVisCtx) => {
+
+    for (let el of zoneArr) {
+      // dataVisCtx.fillRect(el.x, el.y, el.width, el.height)
+      if (
+        (targetX >= el.x && targetX <= el.x + el.width)
+        && (targetY >= el.y && targetY <= el.y + el.height)
+        ) {
+          return el.zone
         }
-      } else if (enemyCenterX >= heroCenterX
-        && enemyCenterY <= baseHero.y + baseHero.blockSize
-        && enemyCenterY >= baseHero.y) {
-          if (enemyCenterY === heroCenterY) {
+    }
+    return false
+  }
+
+  const zoneId = zoneProcessor(target.x, target.y, zoneArr, dataVisCtx)
+  // console.log(zoneId)
+
+  // determines which way to turn the enemy depending on which zone they are in
+  if (zoneId) {
+    switch (zoneId) {
+      case 'a':
+        target.direction = 'downright';
+      break
+      case 'b':
+        if (enemyCenterX === heroCenterX) {
+            target.direction = "down";
+          } else if (enemyCenterX === baseHero.x) {
+            target.direction = "downright";
+          } else if(enemyCenterX === baseHero.x + baseHero.blockSize) {
+            target.direction = "downleft";
+          }
+      break
+      case 'c':
+        target.direction = 'downleft';
+      break
+      case 'd':
+        if (enemyCenterY === heroCenterY) {
             target.direction = "left";
           } else if (enemyCenterY === baseHero.y) {
             target.direction = "downleft";
           } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
             target.direction = "upleft";
           }
-        } else if (enemyCenterX <= baseHero.x + baseHero.blockSize
-          && enemyCenterY >= heroCenterY
-          && enemyCenterX >= baseHero.x) {
-            if (enemyCenterX === heroCenterX) {
-              target.direction = "up";
-            } else if (enemyCenterX === baseHero.x) {
-              target.direction = "upright";
-            } else if (enemyCenterX === baseHero.x + baseHero.blockSize) {
-              target.direction = "upleft";
-            }
-          } else if (enemyCenterX < baseHero.x
-            && enemyCenterY < baseHero.y) {
-              target.direction = "downright";
-            } else if (enemyCenterX > baseHero.x
-              && enemyCenterY < baseHero.y + baseHero.blockSize) {
-                target.direction = "downleft";
-            } else if (enemyCenterX > baseHero.x + baseHero.blockSize
-              && enemyCenterY > baseHero.y + baseHero.blockSize) {
-                target.direction = "upleft"
-              } else if (enemyCenterX < baseHero.x
-                && enemyCenterY > baseHero.y + baseHero.blockSize) {
-                  target.direction = "upright"
-                }
+      break
+      case 'e':
+        target.direction = 'upleft';
+      break
+      case 'f':
+        if (enemyCenterX === heroCenterX) {
+            target.direction = "up";
+          } else if (enemyCenterX === baseHero.x) {
+            target.direction = "upright";
+          } else if (enemyCenterX === baseHero.x + baseHero.blockSize) {
+            target.direction = "upleft";
+          }
+      break
+      case 'g':
+        target.direction = 'upright';
+      break
+      case 'h':
+        if (enemyCenterY === heroCenterY) {
+          target.direction = "right";
+          } else if (enemyCenterY === baseHero.y) {
+          target.direction = "downright";
+          } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
+          target.direction = "upright";
+          }
+      break
+      default:
+        return
+    }
+  }
+
+
+
+  // if (enemyCenterX <= baseHero.x + baseHero.blockSize
+  //   && enemyCenterY <= heroCenterY
+  //   && enemyCenterX >= baseHero.x
+  //   ) {
+  //     if (enemyCenterX === heroCenterX) {
+  //       target.direction = "down";
+  //     } else if (enemyCenterX === baseHero.x) {
+  //       target.direction = "downright";
+  //     } else if(enemyCenterX === baseHero.x + baseHero.blockSize) {
+  //       target.direction = "downleft";
+  //     }
+  //   } else if (enemyCenterX <= heroCenterX
+  //     && enemyCenterY <= baseHero.y + baseHero.blockSize
+  //     && enemyCenterY >= baseHero.y) {
+  //       if (enemyCenterY === heroCenterY) {
+  //       target.direction = "right";
+  //       } else if (enemyCenterY === baseHero.y) {
+  //       target.direction = "downright";
+  //       } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
+  //       target.direction = "upright";
+  //       }
+  //     } else if (enemyCenterX >= heroCenterX
+  //       && enemyCenterY <= baseHero.y + baseHero.blockSize
+  //       && enemyCenterY >= baseHero.y) {
+  //         if (enemyCenterY === heroCenterY) {
+  //           target.direction = "left";
+  //         } else if (enemyCenterY === baseHero.y) {
+  //           target.direction = "downleft";
+  //         } else if (enemyCenterY === baseHero.y + baseHero.blockSize) {
+  //           target.direction = "upleft";
+  //         }
+  //       } else if (enemyCenterX <= baseHero.x + baseHero.blockSize
+  //         && enemyCenterY >= heroCenterY
+  //         && enemyCenterX >= baseHero.x) {
+  //           if (enemyCenterX === heroCenterX) {
+  //             target.direction = "up";
+  //           } else if (enemyCenterX === baseHero.x) {
+  //             target.direction = "upright";
+  //           } else if (enemyCenterX === baseHero.x + baseHero.blockSize) {
+  //             target.direction = "upleft";
+  //           }
+  //         } else if (enemyCenterX < baseHero.x
+  //           && enemyCenterY < baseHero.y) {
+  //             target.direction = "downright";
+  //           } else if (enemyCenterX > baseHero.x
+  //             && enemyCenterY < baseHero.y + baseHero.blockSize) {
+  //               target.direction = "downleft";
+  //           } else if (enemyCenterX > baseHero.x + baseHero.blockSize
+  //             && enemyCenterY > baseHero.y + baseHero.blockSize) {
+  //               target.direction = "upleft"
+  //             } else if (enemyCenterX < baseHero.x
+  //               && enemyCenterY > baseHero.y + baseHero.blockSize) {
+  //                 target.direction = "upright"
+  //               }
+
+
 
   return target;
 };
@@ -195,7 +336,6 @@ const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
   //   return enemyObject;
   // }
 
-
   // if enemy isn't in attack mode it moves around randomly
   if (enemyObject.attacking) {
     // console.log("attacking");
@@ -226,28 +366,49 @@ const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
 
   // console.log(enemyObject.spriteSheets.downright)
 
-  let imgData
-  if (enemyObject.x > 0 && enemyObject.y > 0) {
+
+  // let imgData
+  // if (enemyObject.x > 0 && enemyObject.y > 0) {
     // console.log(enemyObject.x, enemyObject.y)
-    imgData = collisionCtx.getImageData(
-      enemyObject.x,
-      enemyObject.y,
-      enemyObject.x + enemyObject.blockSize,
-      enemyObject.y + enemyObject.blockSize
-      );
-    } else {
+
+    // imgData = collisionCtx.getImageData(
+    //   enemyObject.x,
+    //   enemyObject.y,
+    //   1,
+    //   1
+    //   );
+
+
+    // imgData = collisionCtx.getImageData(
+    //   enemyObject.x,
+    //   enemyObject.y,
+    //   enemyObject.x + enemyObject.blockSize,
+    //   enemyObject.y + enemyObject.blockSize
+    //   );
+
+
+    // } else {
     // console.log(enemyObject.x, enemyObject.y)
-    imgData = collisionCtx.getImageData(
-      1, 1, 1, 1
-    )
-  }
+  //   imgData = collisionCtx.getImageData(
+  //     1, 1, 1, 1
+  //   )
+  // }
+
   // console.log(enemyObject.x, enemyObject.y, enemyObject.x + enemyObject.blockSize, enemyObject.y + enemyObject.blockSize)
 
-  let collisions = checkCollision(
-    imgData,
+  // let collisions = checkCollision(
+  //   imgData,
+  //   enemyObject.colBox,
+  //   dataVisCtx,
+  //   enemyObject
+  // );
+  // checkGreenCollision
+  let collisions = checkGreenCollision(
     enemyObject.colBox,
-    dataVisCtx,
-    enemyObject
+    enemyObject.x,
+    enemyObject.y,
+    collisionCtx,
+    dataVisCtx
   );
   const col0 = collisions[0];
   const col1 = collisions[1];
@@ -275,9 +436,6 @@ const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
     col10 ||
     col11;
 
-    // console.log(enemyObject.x, enemyObject.y)
-
-    // if (allCol) {console.log('collision')}
 
     // this makes the enemy stop chasing the hero for a little
     // bit if they are repeatedly colliding
@@ -285,7 +443,7 @@ const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
       enemyObject.collisionCounter += 1
     }
     if (enemyObject.collisionCounter > 20) {
-      // console.log('collision override')
+      console.log('collision override')
       enemyObject.collisionCounter = 0
       enemyObject.collisionOverride = true
       const overrideTimeout = setTimeout(() => {

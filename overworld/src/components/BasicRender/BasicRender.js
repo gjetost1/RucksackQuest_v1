@@ -7,7 +7,7 @@ import enemyRender from "./EnemyRender";
 import enemyGenerator from "./EnemyGenerator";
 // import coordinateChange from "./CoordinateChange";
 // import eventEngine from "./EventEngine";
-// import spriteBuffer from "./SpriteBuffer";
+import spriteBuffer from "./SpriteBuffer";
 // import pixelator from "./Pixelator";
 import { backgroundSprite, foregroundSprite, collisionSprite, cursor } from "./SpriteClasses";
 
@@ -127,11 +127,11 @@ const BasicRender = () => {
   const comboCanvas = useRef(null); // only visible canvas, combines all the other asset canvases and renders them except the collision canvas
 
   const wolfenGroupCreator = [
-    // {
-    //   base: wolfen,
-    //   x: 700,
-    //   y: 500,
-    // },
+    {
+      base: wolfen,
+      x: 700,
+      y: 500,
+    },
     // {
     //   base: wolfen,
     //   x: 700,
@@ -152,31 +152,7 @@ const BasicRender = () => {
     //   x: 500,
     //   y: 464,
     // },
-    // {
-    //   base: wolfen,
-    //   x: 192,
-    //   y: 192,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1564,
-    //   y: 1500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 372,
-    //   y: 564,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 300,
-    //   y: 464,
-    // },
+
   ];
 
   // creates an enemy group
@@ -186,14 +162,14 @@ const BasicRender = () => {
 
   // sets an interval to re-load sprites since they flicker if they have been
   // de-loaded by the browser after not being used for a while
-  // if (bufferIntervalSet) {
-  //   bufferIntervalSet = false;
-  //   spriteBuffer(baseHeroObj, wolfenGroup);
-  //   setInterval(() => {
-  //     console.log("buffering");
-  //     spriteBuffer(baseHeroObj, wolfenGroup);
-  //   }, 1000);
-  // }
+  if (bufferIntervalSet) {
+    bufferIntervalSet = false;
+    spriteBuffer(baseHeroObj, wolfenGroup);
+    setInterval(() => {
+      console.log("buffering");
+      spriteBuffer(baseHeroObj, wolfenGroup);
+    }, 2000);
+  }
 
 
 
@@ -238,19 +214,6 @@ const BasicRender = () => {
     // currently set globally
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     // const collisionSprite = new Collisions({
     //   image: collisions,
     //   position: {
@@ -277,11 +240,13 @@ const BasicRender = () => {
       cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
 
+
       // handles hero inputs, actions, and movement
       const heroUpdateRet = heroUpdate(baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx)
       baseHeroObj = heroUpdateRet[0]
       enemyArr = heroUpdateRet[1]
       dropItemArr = heroUpdateRet[2]
+
 
       // SHOULD MOVE THIS INTO HEROUPDATE ONCE HERO IS A CONTAINED CLASS LIKE ENEMIES
       // sets hero and equipment positions based on moveEngine output
@@ -294,11 +259,12 @@ const BasicRender = () => {
 
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
+
+
       backgroundSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundaryTotal, baseHeroObj.cameraY + globalVars.offscreenBoundaryTotal);
       foregroundSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundaryTotal, baseHeroObj.cameraY + globalVars.offscreenBoundaryTotal);
       collisionSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundarySide, baseHeroObj.cameraY + globalVars.offscreenBoundarySide);
       // collisionSprite.cropChange(baseHeroObj.cameraX, baseHeroObj.cameraY);
-
 
 
       // makes the canvases render a frame
@@ -307,6 +273,9 @@ const BasicRender = () => {
       // renders collision sprite, which is behind the background and not visible on canvas
       // you can change the z-index of the collision div in the css if you want to see it visualized
       // collisionSprite.draw();
+
+
+
       collisionCtx.drawImage(
             collisionSprite.image,
             collisionSprite.crop.x,
@@ -333,6 +302,7 @@ const BasicRender = () => {
       );
 
       foregroundCtx.globalAlpha = 1;
+
 
       animatedObjectsRender(
         grassPatch1.definition(),
@@ -369,24 +339,35 @@ const BasicRender = () => {
       foregroundCtx.globalAlpha = 0.85;
       // console.log('after animated objects render', baseHeroObj)
 
+
+
+      // let startTime = performance.now()
+      // let endTime = performance.now()
+      // console.log(`took ${endTime - startTime} milliseconds`)
+
+
       const enemyUpdateArr = enemyUpdate(
         wolfenGroup,
         baseHeroObj,
         dropItemArr,
         collisionCtx,
         dataVisCtx
-      );
-      // console.log('enemy update arr', enemyUpdateArr[1])
-      wolfenGroup = enemyUpdateArr[0];
-      baseHeroObj = enemyUpdateArr[1];
-      // console.log('enemy update arr', baseHeroObj)
-      dropItemArr = enemyUpdateArr[2];
+        );
+        // console.log('enemy update arr', enemyUpdateArr[1])
+        wolfenGroup = enemyUpdateArr[0];
+        baseHeroObj = enemyUpdateArr[1];
+        // console.log('enemy update arr', baseHeroObj)
+        dropItemArr = enemyUpdateArr[2];
 
-      enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
+
+
+        enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
+
       dropItemArr = dropItemRender(dropItemArr, spriteCtx, {x: cursorX, y: cursorY}) // renders items that are on the ground
 
 
       baseHeroObj = heroRender(baseHeroObj, baseHeroSprite, swordSprite, spriteCtx)
+
 
       enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "front");
 
@@ -451,10 +432,13 @@ const BasicRender = () => {
         frameRateCounter = 0;
       }
       frameRateCounter++;
+
+
     };
 
-
     animate();
+
+
   }, []);
 
   return (
