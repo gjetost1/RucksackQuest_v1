@@ -361,7 +361,7 @@ const BasicRender = () => {
 
 
 
-        enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
+      wolfenGroup = enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
 
       dropItemArr = dropItemRender(dropItemArr, spriteCtx, {x: cursorX, y: cursorY}) // renders items that are on the ground
 
@@ -369,7 +369,7 @@ const BasicRender = () => {
       baseHeroObj = heroRender(baseHeroObj, baseHeroSprite, swordSprite, spriteCtx)
 
 
-      enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "front");
+      wolfenGroup = enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "front");
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       // foregroundSprite.draw();

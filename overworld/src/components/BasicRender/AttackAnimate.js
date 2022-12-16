@@ -1,17 +1,20 @@
 // handles animation of hero attack
 
-const attackAnimate = (baseHero) => {
-  baseHero.spriteAnimCounter++
-  if (baseHero.spriteAnimCounter >= baseHero.spriteAnimSpeed) {
-    baseHero.heroCropX += baseHero.blockSize;
-    if (baseHero.heroCropX >= baseHero.blockSize * (baseHero.moveFrames + baseHero.attackFrames)) {
-      baseHero.heroCropX = 0
-      baseHero.spriteAnimCounter = 0
-      baseHero.attackAnimation = false
+const attackAnimate = (target) => {
+  target.spriteAnimCounter++;
+  if (target.spriteAnimCounter >= target.spriteAnimSpeed) {
+    target.cropX += target.blockSize;
+    if (
+      target.cropX >=
+      target.blockSize * (target.moveFrames + target.attackFrames)
+    ) {
+      target.cropX = 0;
+      target.spriteAnimCounter = 0;
+      target.attackAnimation = false;
     }
-    baseHero.spriteAnimCounter = 0;
+    target.spriteAnimCounter = 0;
   }
-  return baseHero
-}
+  return target;
+};
 
-export default attackAnimate
+export default attackAnimate;

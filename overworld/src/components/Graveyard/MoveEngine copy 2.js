@@ -707,10 +707,10 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
   // iterates through the sprite sheet images to animate sprite - spriteAnimSpeed sets how fast this happens
   if (keysPressed) {
     if (spriteAnimCounter >= spriteAnimSpeed) {
-      baseHero.heroCropX += baseHero.heroSpriteSize;
+      baseHero.cropX += baseHero.heroSpriteSize;
       // spriteIndex++
-      if (baseHero.heroCropX > baseHero.heroSpriteSize * 6) {
-        baseHero.heroCropX = baseHero.heroSpriteSize;
+      if (baseHero.cropX > baseHero.heroSpriteSize * 6) {
+        baseHero.cropX = baseHero.heroSpriteSize;
         // spriteIndex = 1
       }
       // if (spriteIndex > 6) {
@@ -723,42 +723,42 @@ const moveEngine = (baseHero, cMasks, blockSize, collisionCtx) => {
 
   if (!keysPressed) {
     if (baseHero.xVel < 0 && baseHero.yVel < 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.upleft; //sets appropriate sprite for direction of movement
       baseHero.swordSpriteSheet = sword_spritesheets.upleft;
       // baseHero.heroSprite = hero_upleft[0] //sets appropriate sprite for direction of movement
     } else if (baseHero.xVel < 0 && baseHero.yVel > 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.downleft;
       baseHero.swordSpriteSheet = sword_spritesheets.downleft;
       // baseHero.heroSprite = hero_downleft[0]
     } else if (baseHero.xVel > 0 && baseHero.yVel > 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.downright;
       baseHero.swordSpriteSheet = sword_spritesheets.downright;
       // baseHero.heroSprite = hero_downright[0]
     } else if (baseHero.xVel > 0 && baseHero.yVel < 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.upright;
       baseHero.swordSpriteSheet = sword_spritesheets.upright;
       // baseHero.heroSprite = hero_upright[0]
     } else if (baseHero.xVel < 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.left;
       baseHero.swordSpriteSheet = sword_spritesheets.left;
       // baseHero.heroSprite = hero_left[0]
     } else if (baseHero.xVel > 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.right;
       baseHero.swordSpriteSheet = sword_spritesheets.right;
       // baseHero.heroSprite = hero_right[0]
     } else if (baseHero.yVel < 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.up;
       baseHero.swordSpriteSheet = sword_spritesheets.up;
       // baseHero.heroSprite = hero_up[0]
     } else if (baseHero.yVel > 0) {
-      baseHero.heroCropX = 0;
+      baseHero.cropX = 0;
       baseHero.heroSprite = hero_spritesheets.down;
       baseHero.swordSpriteSheet = sword_spritesheets.down;
       // baseHero.heroSprite = hero_down[0]

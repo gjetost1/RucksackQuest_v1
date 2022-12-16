@@ -242,8 +242,8 @@ const BasicRender = ({}) => {
         y: globalVars.heroCenterY,
       },
       crop: {
-        x: baseHero.heroCropX,
-        y: baseHero.heroCropY,
+        x: baseHero.cropX,
+        y: baseHero.cropY,
       },
     });
 
@@ -257,8 +257,8 @@ const BasicRender = ({}) => {
         y: globalVars.heroCenterY,
       },
       crop: {
-        x: baseHero.heroCropX,
-        y: baseHero.heroCropY,
+        x: baseHero.cropX,
+        y: baseHero.cropY,
       },
     });
 
@@ -463,22 +463,22 @@ const BasicRender = ({}) => {
       // draws hero sprite and equipment in attack animation if there is an ongoing attack
       if (baseHero.attackAnimation) {
         const attackRet = attackRender(
-          baseHero.heroCropX,
+          baseHero.cropX,
           baseHero.heroSpriteSize,
           swordFx,
           baseHero.attackAnimation
         );
-        baseHero.heroCropX = attackRet.heroCropX;
+        baseHero.cropX = attackRet.cropX;
         baseHero.attackAnimation = attackRet.attackAnimation;
-        playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
+        playerSprite.cropChange(baseHero.cropX, baseHero.cropY);
+        swordSprite.cropChange(baseHero.cropX, baseHero.cropY);
         heroRender([playerSprite, swordSprite]);
       } else {
         // draws hero sprite image to canvas without attack animation
         // feed in sprite class instances in the order you want them rendered
         // eg typically base player sprite first, then clothing, then equipment
-        playerSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
-        swordSprite.cropChange(baseHero.heroCropX, baseHero.heroCropY);
+        playerSprite.cropChange(baseHero.cropX, baseHero.cropY);
+        swordSprite.cropChange(baseHero.cropX, baseHero.cropY);
         heroRender([playerSprite, swordSprite]);
       }
 

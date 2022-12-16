@@ -73,16 +73,15 @@ const bloodSplatter = new damageSprite({
 const swordFx = new Audio(sword_fx);
 swordFx.volume = 0.05;
 
-
 const blood_pour = new Audio(blood_pour_src);
 blood_pour.volume = 1;
 blood_pour.loop = true;
 
 const damage_grunt = new Audio(damage_grunt_src);
-damage_grunt.volume = .4;
+damage_grunt.volume = 0.4;
 
 const scavenge_splat = new Audio(scavenge_splat_src);
-scavenge_splat.volume = .3;
+scavenge_splat.volume = 0.3;
 
 // used to create the collision box colBox for hero
 const colBuffer = 12; // number of pixels away from hero that detectors sit
@@ -92,7 +91,7 @@ const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
 export const baseHeroTemplate = {
-  type: 'hero',
+  type: "hero",
   cameraX: globalVars.heroStartXCoord,
   cameraY: globalVars.heroStartYCoord,
   targetCameraX: globalVars.heroStartXCoord,
@@ -125,8 +124,8 @@ export const baseHeroTemplate = {
   attackFrames: 3,
   scavengeFrames: 9,
   animFrames: 7,
-  heroCropX: 0,
-  heroCropY: 0,
+  cropX: 0,
+  cropY: 0,
   spriteSheets: {
     up,
     down,
@@ -137,12 +136,12 @@ export const baseHeroTemplate = {
     upleft,
     upright,
     scavenge,
-    blood_drain
+    blood_drain,
   },
   currentHeroSprite: down,
   equipment: {
     weapon: {
-      type: 'sword',
+      type: "sword",
       attackSound: swordFx,
       baseDamage: 20, // attack always does this amount of damage
       damageRange: 14, // attack may also do between 0 and this much additional damage
@@ -160,11 +159,7 @@ export const baseHeroTemplate = {
       },
     },
     bloodTanks: {
-      inventory: [
-        bloodTank_1,
-        bloodTank_2,
-        bloodTank_3,
-      ],
+      inventory: [bloodTank_1, bloodTank_2, bloodTank_3],
       allTanksEmpty: false,
       currentTank: false,
       currentFillTank: false,
@@ -316,7 +311,6 @@ class Sprite {
   // }
 }
 
-
 // we create the sprite, background, and foreground instances we will be rendering
 const playerImage = new Image();
 playerImage.src = baseHeroTemplate.currentHeroSprite;
@@ -328,8 +322,8 @@ export const baseHeroSprite = new Sprite({
     y: globalVars.heroCenterY,
   },
   crop: {
-    x: baseHeroTemplate.heroCropX,
-    y: baseHeroTemplate.heroCropY,
+    x: baseHeroTemplate.cropX,
+    y: baseHeroTemplate.cropY,
   },
   blockSize: baseHeroTemplate.blockSize,
 });
@@ -344,8 +338,8 @@ export const swordSprite = new Sprite({
     y: globalVars.heroCenterY,
   },
   crop: {
-    x: baseHeroTemplate.heroCropX,
-    y: baseHeroTemplate.heroCropY,
+    x: baseHeroTemplate.cropX,
+    y: baseHeroTemplate.cropY,
   },
   blockSize: baseHeroTemplate.blockSize,
 });
