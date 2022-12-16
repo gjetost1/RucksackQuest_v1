@@ -38,7 +38,6 @@ const checkCollision = (colBox, x, y, collisionCtx, dataVisCtx) => {
 
 export const checkGreenCollision = (colBox, x, y, collisionCtx, dataVisCtx) => {
   const collisions = {}
-
   for (let el of Object.entries(colBox)) {
     const imgData = collisionCtx.getImageData(
       x + el[1][0],
@@ -46,8 +45,7 @@ export const checkGreenCollision = (colBox, x, y, collisionCtx, dataVisCtx) => {
       1,
       1
       );
-      collisions[el[0]] = imgData.data[1] > 200
-
+      collisions[el[0]] = imgData.data[1] === 255
       // uncomment to see collision detector coordinates
       // dataVisCtx.fillRect(x + el[1][0] - 2, y + el[1][1] - 2, 4, 4)
   }

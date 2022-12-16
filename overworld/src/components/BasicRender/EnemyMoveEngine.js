@@ -403,6 +403,23 @@ const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
   //   enemyObject
   // );
   // checkGreenCollision
+
+    // get boolean values for each detector of enemy hitbox (heroColBox)
+  // true if it is in collision state
+  // false if it is not in collision state
+  // there are 12 detectors for better precision - 4 or 8 didn't capture some collision states properly
+  // corners are arranged more or less like this:
+  //
+  //   1_2____3_4
+  //  0|        |5
+  //   |        |
+  // 11|        |6
+  //  10-9----8-7
+  //
+  // the hit box is actually more like a circle than a square generally, but can be adjusted
+  // by the colBuffer, cornerBuffer, horzeBuffer, and vertBuffer variables
+  // in each respective hero object or enemy object file.
+  
   let collisions = checkGreenCollision(
     enemyObject.colBox,
     enemyObject.x,

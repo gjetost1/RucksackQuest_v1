@@ -162,14 +162,14 @@ const BasicRender = () => {
 
   // sets an interval to re-load sprites since they flicker if they have been
   // de-loaded by the browser after not being used for a while
-  if (bufferIntervalSet) {
-    bufferIntervalSet = false;
-    spriteBuffer(baseHeroObj, wolfenGroup);
-    setInterval(() => {
-      console.log("buffering");
-      spriteBuffer(baseHeroObj, wolfenGroup);
-    }, 2000);
-  }
+  // if (bufferIntervalSet) {
+  //   bufferIntervalSet = false;
+  //   spriteBuffer(baseHeroObj, wolfenGroup);
+  //   setInterval(() => {
+  //     console.log("buffering");
+  //     spriteBuffer(baseHeroObj, wolfenGroup);
+  //   }, 2000);
+  // }
 
 
 

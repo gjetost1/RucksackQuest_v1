@@ -77,8 +77,8 @@ const bloodSplatter = new damageSprite({
 // used to create the collision box colBox
 const colBuffer = 12; // number of pixels away from hero that detectors sit
 const cornerBuffer = 4;
-const horzBuffer = 0;
-const vertBuffer = 0;
+const horzBuffer = -1; // negative value places the hit detector outside the render box, which prevents the enemy from colliding with it's own collision element
+const vertBuffer = -1;
 const blockSize = globalVars.blockSize;
 
 export const wolfen = {
