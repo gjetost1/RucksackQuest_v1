@@ -25,7 +25,8 @@ import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter
 
 import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
 
-import sword_fx from "../../assets/sounds/sword/damage_sound.wav";
+import sword_swing_fx from "../../assets/sounds/sword/damage_sound.wav";
+import sword_hit_fx from "../../assets/sounds/sword/flesh_hit.mp3";
 import blood_pour_src from "../../assets/sounds/hero/blood_pour.mp3";
 import damage_grunt_src from "../../assets/sounds/hero/man_grunt.mp3";
 import scavenge_splat_src from "../../assets/sounds/hero/scavenge_splat.mp3";
@@ -70,8 +71,11 @@ const bloodSplatter = new damageSprite({
   },
 });
 
-const swordFx = new Audio(sword_fx);
-swordFx.volume = 0.05;
+const swordSwingFx = new Audio(sword_swing_fx);
+swordSwingFx.volume = 0.05;
+
+const swordHitFx = new Audio(sword_hit_fx);
+swordHitFx.volume = 0.3;
 
 const blood_pour = new Audio(blood_pour_src);
 blood_pour.volume = 1;
@@ -142,7 +146,8 @@ export const baseHeroTemplate = {
   equipment: {
     weapon: {
       type: "sword",
-      attackSound: swordFx,
+      attackSound: swordSwingFx,
+      hitSound: swordHitFx,
       baseDamage: 20, // attack always does this amount of damage
       damageRange: 14, // attack may also do between 0 and this much additional damage
       knockBack: globalVars.upscale * 4, // amount enemy is knocked back if hit by attack

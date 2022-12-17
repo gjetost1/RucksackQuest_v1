@@ -19,6 +19,7 @@ import beast_heart from "../../assets/sprites/pickups/beast_heart.png";
 
 import wolf_yelp_src from "../../assets/sounds/enemy/wolf_snarl.mp3";
 import wolf_howl_src from "../../assets/sounds/enemy/wolf_howl_sad.mp3";
+import sword_hit_fx from "../../assets/sounds/sword/flesh_hit.mp3";
 
 // const beast_bone = new Image();
 // beast_bone.src = beast_bone_src;
@@ -33,6 +34,8 @@ const wolf_yelp = new Audio(wolf_yelp_src);
 wolf_yelp.volume = 0.5;
 const wolf_howl = new Audio(wolf_howl_src);
 wolf_howl.volume = 0.2;
+const swordHitFx = new Audio(sword_hit_fx);
+swordHitFx.volume = 0.3;
 
 // creates the sprite for enemy damage effects
 class damageSprite {
@@ -247,6 +250,7 @@ export const wolfen = {
   dying: false,
   damageSound: wolf_yelp,
   dyingSound: wolf_howl,
+  hitSound: swordHitFx,
   damageAnim: bloodSplatter,
   damageActive: false,
   solid: true,

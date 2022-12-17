@@ -66,7 +66,7 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
 
       // }
 
-      console.log(scavengeCounter, scavengeFrames)
+      // console.log(scavengeCounter, scavengeFrames)
       // once scavenging is complete we roll to find out what item is returned
       if (scavengeCounter >= scavengeFrames) {
         baseHero.scavengeFx.play()

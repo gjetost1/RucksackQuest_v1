@@ -276,7 +276,6 @@ const enemyUpdate = (
 
         continue;
       } else if (currentlyBloodDraining) {
-        console.log("else if");
 
         baseHero.bloodDrainActive = false;
         currentlyBloodDraining = false;

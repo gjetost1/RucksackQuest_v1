@@ -434,7 +434,7 @@ const enemyMoveEngine = (enemyObject, baseHero, collisionCtx, dataVisCtx) => {
     enemyObject.collisionCounter += 1;
   }
   if (enemyObject.collisionCounter > 20) {
-    console.log("collision override");
+    // console.log("collision override");
     enemyObject.collisionCounter = 0;
     enemyObject.collisionOverride = true;
     const overrideTimeout = setTimeout(() => {
