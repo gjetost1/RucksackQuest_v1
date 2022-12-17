@@ -1,7 +1,7 @@
 import pixelPerfect from "./PixelPerfect";
 // import baseHero from './BaseHero'
 import globalVars from "./GlobalVars";
-import checkCollision from "./CheckCollision";
+import checkCollision, { checkGreenCollision } from "./CheckCollision";
 
 // const baseAnimSpeed = 2;
 // let spriteAnimSpeed = baseAnimSpeed; // after how many frames the sprite frame will progress for walking animation
@@ -72,13 +72,24 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   //   collisionCtx,
   //   dataVisCtx
   // );
-  let heroCollisions = checkCollision(
-    baseHero.colBox,
-    baseHero.x,
-    baseHero.y,
-    collisionCtx,
-    dataVisCtx
-  );
+  let heroCollisions
+  if (baseHero.jumpActive) {
+    heroCollisions = checkGreenCollision(
+      baseHero.colBox,
+      baseHero.x,
+      baseHero.y,
+      collisionCtx,
+      dataVisCtx
+    );
+  } else {
+    heroCollisions = checkCollision(
+      baseHero.colBox,
+      baseHero.x,
+      baseHero.y,
+      collisionCtx,
+      dataVisCtx
+    );
+  }
   const col0 = heroCollisions[0];
   const col1 = heroCollisions[1];
   const col2 = heroCollisions[2];

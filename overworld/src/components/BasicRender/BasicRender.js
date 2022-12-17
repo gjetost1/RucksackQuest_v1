@@ -60,8 +60,10 @@ let frameRateCounter = 0;
 document.addEventListener("mousemove", (action) => {});
 onmousemove = (event) => {
   // console.log('moving', event)
-  cursorX = event.layerX;
-  cursorY = event.layerY;
+  // cursorX = event.layerX - globalVars.windowSpacerWidth;
+  // cursorY = event.layerY - globalVars.windowSpacerHeight;
+  cursorX = event.x
+  cursorY = event.y
   // cursorX = event.x - globalVars.windowSpacerWidth
   // cursorY = event.y - globalVars.windowSpacerHeight
 };
@@ -132,26 +134,26 @@ const BasicRender = () => {
       x: 700,
       y: 500,
     },
-    // {
-    //   base: wolfen,
-    //   x: 700,
-    //   y: 500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 500,
-    //   y: 500,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 572,
-    //   y: 664,
-    // },
-    // {
-    //   base: wolfen,
-    //   x: 500,
-    //   y: 464,
-    // },
+    {
+      base: wolfen,
+      x: 700,
+      y: 500,
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 500,
+    },
+    {
+      base: wolfen,
+      x: 572,
+      y: 664,
+    },
+    {
+      base: wolfen,
+      x: 500,
+      y: 464,
+    },
 
   ];
 

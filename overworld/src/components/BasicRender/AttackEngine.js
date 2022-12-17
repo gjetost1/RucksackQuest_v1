@@ -2,40 +2,14 @@ import globalVars from "./GlobalVars";
 import checkBoxCollision from "./CheckBoxCollision";
 // handles hits on enemy or on hero
 
-const collisionCheck = (attacker, target, tempCMasks, dataVisCtx) => {
+const collisionCheck = (attacker, tempCMasks, dataVisCtx) => {
   return (
     checkBoxCollision(
       attacker.eventX,
       attacker.eventY,
-      target.hitColBox,
       tempCMasks,
-      0,
       dataVisCtx
-      ) &&
-      checkBoxCollision(
-        attacker.eventX,
-        attacker.eventY,
-        target.hitColBox,
-        tempCMasks,
-        1,
-        dataVisCtx
-      ) &&
-      checkBoxCollision(
-        attacker.eventX,
-        attacker.eventY,
-        target.hitColBox,
-        tempCMasks,
-        2,
-        dataVisCtx
-    ) &&
-    checkBoxCollision(
-      attacker.eventX,
-      attacker.eventY,
-      target.hitColBox,
-      tempCMasks,
-      3,
-      dataVisCtx
-    )
+      )
   );
 };
 
@@ -51,7 +25,9 @@ const attackEngine = (attacker, target, dataVisCtx) => {
   ];
 
 
-  let collision = collisionCheck(attacker, target, tempCMasks, dataVisCtx);
+  let collision = collisionCheck(attacker, tempCMasks, dataVisCtx);
+
+
   // console.log(collision)
   // uncomment to show corners of collisionMask where a hit will register on enemy
   // spriteCtx.fillRect(tempCMasks[0].tl[0], tempCMasks[0].tl[1], 4, 4)
@@ -92,7 +68,7 @@ const attackEngine = (attacker, target, dataVisCtx) => {
     const damageRange = Math.round(Math.random() * tempDamageRange)
     // console.log(tempBaseDamage + damageRange)
     target.currentVitality -= tempBaseDamage + damageRange; // deals damage to target
-    // target.currentVitality -= 200;
+    target.currentVitality -= 200;
     target.takeDamage = true;
     target.damageActive = true;
     target.damageAnim.active = true;

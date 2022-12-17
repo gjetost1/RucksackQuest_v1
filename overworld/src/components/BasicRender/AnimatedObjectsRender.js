@@ -208,35 +208,9 @@ const animatedObjectsRender = (
           checkBoxCollision(
             baseHero.eventX,
             baseHero.eventY,
-            colBox,
             tempCMasks,
-            0,
             dataVisCtx
-          ) &&
-          checkBoxCollision(
-            baseHero.eventX,
-            baseHero.eventY,
-            colBox,
-            tempCMasks,
-            1,
-            dataVisCtx
-          ) &&
-          checkBoxCollision(
-            baseHero.eventX,
-            baseHero.eventY,
-            colBox,
-            tempCMasks,
-            2,
-            dataVisCtx
-          ) &&
-          checkBoxCollision(
-            baseHero.eventX,
-            baseHero.eventY,
-            colBox,
-            tempCMasks,
-            3,
-            dataVisCtx
-          );
+          ) ;
 
         // renders to collisionCanvas if the object is solid and not destroyed or breaking
         if (el.img.solid && !el.img.destroyed && !el.img.breaking) {

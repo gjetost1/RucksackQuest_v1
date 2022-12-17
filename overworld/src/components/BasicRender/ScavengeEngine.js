@@ -133,7 +133,9 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
               scavengedItem.data.startX = target.data.x + target.data.blockSize / 2
               scavengedItem.data.startY = target.data.y + target.data.blockSize / 2
 
-              dropItemArr.push(scavengedItem)
+              setTimeout(() => {
+                dropItemArr.push(scavengedItem)
+              }, 100)
               // console.log(dropItemArr)
               return [target, baseHero, dropItemArr]
           }
