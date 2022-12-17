@@ -125,6 +125,7 @@ export const wolfen = {
   moveFrames: 6,
   attackFrames: 4,
   dyingFrames: 3,
+  deadFrame: 14,
   bloodlessFrame: 15,
   scavengedFrame: 16,
   baseAnimSpeed: 2,

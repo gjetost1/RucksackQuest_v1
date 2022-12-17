@@ -3,7 +3,7 @@ import { animateDyingAndBloodDrain } from "./Animate";
 const bloodDrain = (target, baseHero, enemyCollision) => {
   if (
     baseHero.bloodDrainActive &&
-    !enemyCollision &&
+    // !enemyCollision &&
     target.data.dead &&
     target.data.currentBloodLevel > 0 &&
     baseHero.equipment.bloodTanks.currentFillTank

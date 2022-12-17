@@ -58,8 +58,8 @@ const attackEngine = (attacker, target, dataVisCtx) => {
   // spriteCtx.fillRect(tempCMasks[0].tr[0], tempCMasks[0].tr[1], 4, 4)
   // spriteCtx.fillRect(tempCMasks[0].bl[0], tempCMasks[0].bl[1], 4, 4)
   // spriteCtx.fillRect(tempCMasks[0].br[0], tempCMasks[0].br[1], 4, 4)
-  dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
-  dataVisCtx.fillRect(attacker.eventX, attacker.eventY, 14, 14)
+  // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+  // dataVisCtx.fillRect(attacker.eventX, attacker.eventY, 14, 14)
 
   if (attacker.attackActive && !collision && !target.takeDamage) {
     // different effects if target is enemy or hero

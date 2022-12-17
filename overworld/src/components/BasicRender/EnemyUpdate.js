@@ -7,7 +7,6 @@ import checkRadius, { getDistance } from "./CheckRadius";
 import pixelPerfect from "./PixelPerfect";
 
 import bloodDrain from "./BloodDrain";
-import { animateDyingAndBloodDrain } from "./Animate";
 import scavengeEngine from "./ScavengeEngine";
 
 let enemyCollision = false;
@@ -74,19 +73,10 @@ const enemyUpdate = (
       el.data.x < globalVars.width &&
       el.data.y > 0 &&
       el.data.y < globalVars.height &&
-      !el.data.dead
+      !el.data.dead &&
+      !el.data.dying
     ) {
-      // runs dying animation on death
-      if (el.data.dying && !el.data.dead) {
-        // console.log(el.data.animCounter)
-        const dyingAnimation = animateDyingAndBloodDrain(el);
-        el.data.dead = !dyingAnimation[0];
-        if (el.data.dead) {
-          // el.data.dying = false
-        }
-        el = dyingAnimation[1];
-        continue;
-      }
+
 
       // console.log(globalVars.heroCenterX, globalVars.heroCenterY, el.data.x, el.data.y, el.data.attackRadius, el.data.aggroRadius, el.data.fleeingRadius)
 
@@ -354,16 +344,16 @@ const enemyUpdate = (
     }
     // if vitality drops below zero this sets up and starts the dying animation
     // also plays the dying sound
-    if (el.data.currentVitality <= 0 && !el.data.dead) {
+    if (el.data.currentVitality <= 0 && !el.data.dying && !el.data.dead) {
+      // console.log('dying')
       el.data.dying = true;
       el.data.dyingSound.play();
       el.data.animCounter = 0;
       el.crop.x =
-        el.data.blockSize * (el.data.attackFrames + el.data.moveFrames) -
-        el.data.blockSize;
+        el.data.blockSize * (el.data.attackFrames + el.data.moveFrames - 1)
       el.data.animFrames =
         el.data.moveFrames + el.data.attackFrames + el.data.dyingFrames;
-      el.data.spriteAnimSpeed = 22;
+      el.data.spriteAnimSpeed = 15;
     }
 
     // uncomment to show enemy attack hitbox
