@@ -21,6 +21,7 @@ import sword_upleft from "../../assets/sprites/hero_sword/hero_sword_upleft.png"
 import sword_upright from "../../assets/sprites/hero_sword/hero_sword_upright.png";
 import sword_icon from "../../assets/sprites/hero_sword/sword_icon.png";
 
+import hero_shadow_src from "../../assets/sprites/hero_sprite_sheets/hero_shadow.png";
 import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter_64.png";
 
 import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
@@ -47,6 +48,9 @@ class damageSprite {
     };
   }
 }
+
+const hero_shadow = new Image();
+hero_shadow.src = hero_shadow_src;
 
 const blood_splatter = new Image();
 blood_splatter.src = blood_splatter_64;
@@ -106,6 +110,9 @@ export const baseHeroTemplate = {
   middleY: globalVars.heroCenterY + blockSize / 2,
   targetHeroX: globalVars.heroCenterX,
   targetHeroY: globalVars.heroCenterY,
+  shadowX: 0,
+  shadowY: 0,
+  shadowYChange: 0,
   frameXChange: 0,
   frameYChange: 0,
   bonusFrameXChange: 0,
@@ -127,6 +134,7 @@ export const baseHeroTemplate = {
   moveFrames: 7,
   attackFrames: 3,
   scavengeFrames: 9,
+  jumpFrame: 11,
   animFrames: 7,
   cropX: 0,
   cropY: 0,
@@ -141,6 +149,7 @@ export const baseHeroTemplate = {
     upright,
     scavenge,
     blood_drain,
+    hero_shadow
   },
   currentHeroSprite: down,
   equipment: {
@@ -185,8 +194,8 @@ export const baseHeroTemplate = {
   attackCooldownOff: true,
   attackActive: false,
   jumpActive: false,
-  currentJumpFrames: 14,
-  baseJumpFrames: 14,
+  currentJumpFrames: 10,
+  baseJumpFrames: 10,
   jumpCounter: 0,
   bloodDrainActive: false,
   bloodDrainPause: false,

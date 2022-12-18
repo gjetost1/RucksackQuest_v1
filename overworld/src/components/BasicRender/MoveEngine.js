@@ -122,17 +122,24 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   // jumps if space is pressed
   if (baseHero.jumpActive) {
     baseHero.moveSpeed = baseHero.dashSpeed * 2;
+    baseHero.shadowX = baseHero.x;
+    console.log(baseHero.shadowYChange)
+    // baseHero.shadowY = baseHero.targetCameraY + baseHero.shadowYChange;
     if (baseHero.jumpCounter <= baseHero.currentJumpFrames / 2) {
       baseHero.targetCameraY -= baseHero.currentYVel;
       baseHero.frameYChange += baseHero.currentYVel;
-    } else if (baseHero.jumpCounter >= baseHero.currentJumpFrames) {
+      baseHero.shadowYChange += baseHero.currentYVel;
+    } else if (baseHero.jumpCounter >= baseHero.currentJumpFrames + 1) {
       baseHero.jumpActive = false;
       baseHero.jumpCounter = 0;
       baseHero.moveSpeed = baseHero.baseMoveSpeed;
+      baseHero.shadowYChange = 0;
     } else if (baseHero.jumpCounter > baseHero.currentJumpFrames / 2) {
       baseHero.targetCameraY += baseHero.currentYVel;
       baseHero.frameYChange -= baseHero.currentYVel;
+      baseHero.shadowYChange -= baseHero.currentYVel;
     }
+    baseHero.shadowY = baseHero.y + baseHero.shadowYChange;
     baseHero.jumpCounter++;
     // console.log(baseHero.moveSpeed, baseHero.baseMoveSpeed)
   }

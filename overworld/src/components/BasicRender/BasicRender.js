@@ -129,31 +129,31 @@ const BasicRender = () => {
   const comboCanvas = useRef(null); // only visible canvas, combines all the other asset canvases and renders them except the collision canvas
 
   const wolfenGroupCreator = [
-    {
-      base: wolfen,
-      x: 700,
-      y: 500,
-    },
-    {
-      base: wolfen,
-      x: 700,
-      y: 500,
-    },
-    {
-      base: wolfen,
-      x: 500,
-      y: 500,
-    },
-    {
-      base: wolfen,
-      x: 572,
-      y: 664,
-    },
-    {
-      base: wolfen,
-      x: 500,
-      y: 464,
-    },
+    // {
+    //   base: wolfen,
+    //   x: 700,
+    //   y: 500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 700,
+    //   y: 500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 500,
+    //   y: 500,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 572,
+    //   y: 664,
+    // },
+    // {
+    //   base: wolfen,
+    //   x: 500,
+    //   y: 464,
+    // },
 
   ];
 

@@ -34,7 +34,7 @@ const animateHero = (renderArr, spriteCtx) => {
       el.blocksize,
       el.blocksize
     );
-    spriteCtx.fillRect(el.position.x, el.position.y, el.blockSize, el.blockSize)
+    // spriteCtx.fillRect(el.position.x, el.position.y, el.blockSize, el.blockSize)
 
   }
 
@@ -44,8 +44,24 @@ const animateHero = (renderArr, spriteCtx) => {
 const heroRender = (baseHeroObj, baseHeroSprite, swordSprite, spriteCtx) => {
   let baseHero = baseHeroObj;
 
-  // draws hero sprite and equipment in attack animation if there is an ongoing attack
-  if (baseHero.attackAnimation) {
+  if (baseHero.jumpActive) {
+    baseHero.cropX = (baseHero.jumpFrame - 1) * baseHero.blockSize
+    // swordSprite.cropChange(0, 0);
+    // console.log(baseHero.targetCameraX, baseHero.shadowX, baseHero.targetCameraY, baseHero.shadowY)
+    spriteCtx.drawImage(
+      baseHero.spriteSheets.hero_shadow,
+      0,
+      0,
+      baseHero.blockSize,
+      baseHero.blockSize,
+      baseHero.shadowX,
+      baseHero.shadowY,
+      baseHero.blockSize,
+      baseHero.blockSize
+    );
+    // console.log('jumping')
+  }
+  if (baseHero.attackAnimation) { // draws hero sprite and equipment in attack animation if there is an ongoing attack
     // console.log('running attack animation')
     baseHero.spriteAnimSpeed = 12;
     baseHero = attackAnimate(baseHero);
