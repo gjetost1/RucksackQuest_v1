@@ -10,14 +10,17 @@ const heroUpdate = (
   dropItemArr,
   collisionCtx,
   dataVisCtx,
-  spriteCtx
+  spriteCtx,
+  cursorX,
+  cursorY
 ) => {
+
   let baseHero = baseHeroObj;
   // moveEngine runs less than every frame to keep the hero sprite slower
   if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
     baseHero.frameCountLimiter = 0;
     // moveEngine handles inputs and collisions for hero sprite
-    baseHero = moveEngine(baseHero, collisionCtx, dataVisCtx);
+    baseHero = moveEngine(baseHero, collisionCtx, dataVisCtx, cursorX, cursorY);
 
     // this handles an attack/ability usage by user - sets vars that will trigger attack/ability animation and
     // puts ability on cooldown. Current cooldown is set manually, but once there are other abilities

@@ -56,6 +56,8 @@ let cursorY = -400;
 const frameRatePeak = 3;
 let frameRateCounter = 0;
 
+let gamepad
+
 // this gets the coordinates of the cursor so it can be rendered on the canvas
 document.addEventListener("mousemove", (action) => {});
 onmousemove = (event) => {
@@ -64,9 +66,13 @@ onmousemove = (event) => {
   // cursorY = event.layerY - globalVars.windowSpacerHeight;
   cursorX = event.x
   cursorY = event.y
+  globalVars.mouseMove = true
+  setTimeout(() => {
+    globalVars.mouseMove = false
+  }, 800)
   // cursorX = event.x - globalVars.windowSpacerWidth
   // cursorY = event.y - globalVars.windowSpacerHeight
-};
+}
 
 // const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
 // const grassPatch = generatePatch(920, 300, 7, 6, [grass_1, grass_2, grass_3])
@@ -164,14 +170,14 @@ const BasicRender = () => {
 
   // sets an interval to re-load sprites since they flicker if they have been
   // de-loaded by the browser after not being used for a while
-  if (bufferIntervalSet) {
-    bufferIntervalSet = false;
-    spriteBuffer(baseHeroObj, wolfenGroup);
-    setInterval(() => {
-      console.log("buffering");
-      spriteBuffer(baseHeroObj, wolfenGroup);
-    }, 3000);
-  }
+  // if (bufferIntervalSet) {
+  //   bufferIntervalSet = false;
+  //   spriteBuffer(baseHeroObj, wolfenGroup);
+  //   setInterval(() => {
+  //     console.log("buffering");
+  //     spriteBuffer(baseHeroObj, wolfenGroup);
+  //   }, 3000);
+  // }
 
 
 
@@ -203,9 +209,7 @@ const BasicRender = () => {
     // makes foreground transparent so you can see sprites under it
     foregroundCtx.globalAlpha = 0.85;
 
-    // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
-    // for inputs. returns keys object which is checked for what keys are currently pressed each frame
-    baseHeroObj.keys = inputEngine(baseHeroObj.keys);
+
 
     // Sprite is the main class for hero and enemy sprites
     // image is the .png for the spritesheet you are rendering
@@ -232,6 +236,25 @@ const BasicRender = () => {
 
     const animate = () => {
 
+      if(!gamepad) {
+        let gamepads = navigator.getGamepads()
+        for (let el of gamepads) {
+          if (el?.id.startsWith('Xbox 360 Controller')) {
+            gamepad = el
+            console.log('new gamepad', gamepad)
+          }
+        }
+      }
+
+      if (gamepad && gamepad.connected) {
+        gamepad = navigator.getGamepads()[gamepad.index]
+        console.log(gamepad.axes)
+      }
+
+      // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
+      // for inputs. returns keys object which is checked for what keys are currently pressed each frame
+      baseHeroObj.keys = inputEngine(baseHeroObj.keys, gamepad);
+
 
 
       // console.log(baseHeroObj.bloodDrainActive, baseHeroObj.bloodDrainAnimation)
@@ -244,7 +267,7 @@ const BasicRender = () => {
 
 
       // handles hero inputs, actions, and movement
-      const heroUpdateRet = heroUpdate(baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx)
+      const heroUpdateRet = heroUpdate(baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx, cursorX, cursorY)
       baseHeroObj = heroUpdateRet[0]
       enemyArr = heroUpdateRet[1]
       dropItemArr = heroUpdateRet[2]

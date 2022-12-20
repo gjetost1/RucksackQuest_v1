@@ -15,6 +15,7 @@ const middleX = pixelPerfect(Math.round(width / 2), 'down', 'x', upscale)
 const middleY = pixelPerfect(Math.round(height / 2), 'down', 'x', upscale)
 const heroStartXCoord = 1000
 const heroStartYCoord = 400
+let mouseMove = false
 const windowSpacerHeight = (((window.innerHeight || document.documentElement.clientHeight||
   document.body.clientHeight) - height) / 2) + offscreenBoundarySide
 const windowSpacerWidth = (((window.innerWidth || document.documentElement.clientWidth ||

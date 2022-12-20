@@ -2,6 +2,7 @@ import pixelPerfect from "./PixelPerfect";
 // import baseHero from './BaseHero'
 import globalVars from "./GlobalVars";
 import checkCollision, { checkGreenCollision } from "./CheckCollision";
+import triangleCheck from "./TriangleCheck";
 
 // const baseAnimSpeed = 2;
 // let spriteAnimSpeed = baseAnimSpeed; // after how many frames the sprite frame will progress for walking animation
@@ -13,7 +14,9 @@ const horzBuffer = 14;
 const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
-const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
+let mouseAreas;
+
+const moveEngine = (baseHero, collisionCtx, dataVisCtx, cursorX, cursorY) => {
   if (!baseHero) return;
 
   const lastTargetCameraX = baseHero.targetCameraX;
@@ -123,7 +126,7 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   if (baseHero.jumpActive) {
     baseHero.moveSpeed = baseHero.dashSpeed * 2;
     baseHero.shadowX = baseHero.x;
-    console.log(baseHero.shadowYChange)
+    // console.log(baseHero.shadowYChange)
     // baseHero.shadowY = baseHero.targetCameraY + baseHero.shadowYChange;
     if (baseHero.jumpCounter <= baseHero.currentJumpFrames / 2) {
       baseHero.targetCameraY -= baseHero.currentYVel;
@@ -173,6 +176,98 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   } else if (baseHero.currentVitality >= baseHero.maxVitality) {
     baseHero.currentVitality = baseHero.maxVitality;
   }
+
+  // console.log(globalVars.mouseMove)
+
+  let mouseZone
+
+  if (globalVars.mouseMove || baseHero.attackActive || baseHero.attackAnimation) {
+
+    if (!mouseAreas) {
+      mouseAreas = [
+        {
+          zone: "a",
+          x1: globalVars.offscreenBoundarySide,
+          y1: globalVars.offscreenBoundarySide,
+          x2: globalVars.width / 2.8,
+          y2: 0,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "b",
+          x1: globalVars.width / 2.8,
+          y1: 0,
+          x2: (globalVars.width  / 3.2) * 2,
+          y2: 0,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "c",
+          x1: (globalVars.width / 3.2) * 2,
+          y1: 0,
+          x2: globalVars.width - globalVars.offscreenBoundarySide,
+          y2: globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "d",
+          x1: globalVars.width - globalVars.offscreenBoundarySide,
+          y1: globalVars.offscreenBoundarySide,
+          x2: globalVars.width - globalVars.offscreenBoundarySide,
+          y2: globalVars.height - globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "e",
+          x1: globalVars.width - globalVars.offscreenBoundarySide,
+          y1: globalVars.height - globalVars.offscreenBoundarySide,
+          x2: (globalVars.width / 3.2) * 2,
+          y2: globalVars.height,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "f",
+          x1: (globalVars.width / 3.2) * 2,
+          y1: globalVars.height,
+          x2: globalVars.width / 2.8,
+          y2: globalVars.height,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "g",
+          x1: globalVars.width / 2.8,
+          y1: globalVars.height,
+          x2: globalVars.offscreenBoundarySide,
+          y2: globalVars.height - globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "h",
+          x1: globalVars.offscreenBoundarySide,
+          y1: globalVars.height - globalVars.offscreenBoundarySide,
+          x2: globalVars.offscreenBoundarySide,
+          y2: globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+      ]
+    }
+
+
+  // console.log(triangleCheck(cursorX, cursorY, mouseAreas))
+
+    mouseZone = triangleCheck(cursorX, cursorY, mouseAreas, dataVisCtx)
+  } else {
+    mouseZone = false
+  }
+
 
   // big if/else chain moves hero based on input
   if (baseHero.keys.ArrowUp.pressed) {
@@ -340,6 +435,61 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
       baseHero.equipment.weapon.spriteSheets.right;
     baseHero.direction = "right";
   }
+
+  switch(mouseZone) {
+    case 'a':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.upleft;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.upleft;
+      baseHero.direction = "upleft";
+    break;
+    case 'b':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.up;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.up;
+      baseHero.direction = "up";
+    break;
+    case 'c':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.upright;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.upright;
+      baseHero.direction = "upright";
+    break;
+    case 'd':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.right;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.right;
+      baseHero.direction = "right";
+    break;
+    case 'e':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.downright;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.downright;
+      baseHero.direction = "downright";
+    break;
+    case 'f':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.down;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.down;
+      baseHero.direction = "down";
+    break;
+    case 'g':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.downleft;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.downleft;
+      baseHero.direction = "downleft";
+    break;
+    case 'h':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.left;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.left;
+      baseHero.direction = "left";
+    break;
+    default:
+      // return;
+  }
+
+
   if (
     !keysPressed &&
     !baseHero.attackAnimation &&
