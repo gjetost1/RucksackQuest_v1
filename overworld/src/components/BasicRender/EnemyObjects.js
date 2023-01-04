@@ -12,13 +12,14 @@ import wolfen_upright from "../../assets/sprites/enemy_sprites/wolfen/wolfen_upr
 
 import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter_64.png";
 
-import beast_bone from '../../assets/sprites/pickups/beast_bone.png'
-import beast_gland from '../../assets/sprites/pickups/beast_gland.png'
-import beast_guts from '../../assets/sprites/pickups/beast_guts.png'
-import beast_heart from '../../assets/sprites/pickups/beast_heart.png'
+import beast_bone from "../../assets/sprites/pickups/beast_bone.png";
+import beast_gland from "../../assets/sprites/pickups/beast_gland.png";
+import beast_guts from "../../assets/sprites/pickups/beast_guts.png";
+import beast_heart from "../../assets/sprites/pickups/beast_heart.png";
 
 import wolf_yelp_src from "../../assets/sounds/enemy/wolf_snarl.mp3";
 import wolf_howl_src from "../../assets/sounds/enemy/wolf_howl_sad.mp3";
+import sword_hit_fx from "../../assets/sounds/sword/flesh_hit.mp3";
 
 // const beast_bone = new Image();
 // beast_bone.src = beast_bone_src;
@@ -33,6 +34,8 @@ const wolf_yelp = new Audio(wolf_yelp_src);
 wolf_yelp.volume = 0.5;
 const wolf_howl = new Audio(wolf_howl_src);
 wolf_howl.volume = 0.2;
+const swordHitFx = new Audio(sword_hit_fx);
+swordHitFx.volume = 0.3;
 
 // creates the sprite for enemy damage effects
 class damageSprite {
@@ -77,12 +80,12 @@ const bloodSplatter = new damageSprite({
 // used to create the collision box colBox
 const colBuffer = 12; // number of pixels away from hero that detectors sit
 const cornerBuffer = 4;
-const horzBuffer = 0;
-const vertBuffer = 0;
+const horzBuffer = -1; // negative value places the hit detector outside the render box, which prevents the enemy from colliding with it's own collision element
+const vertBuffer = -1;
 const blockSize = globalVars.blockSize;
 
 export const wolfen = {
-  type: 'enemy',
+  type: "enemy",
   x: globalVars.heroCenterX,
   y: globalVars.heroCenterY,
   cropX: 0,
@@ -122,15 +125,17 @@ export const wolfen = {
     upleft: wolfen_upleft,
     upright: wolfen_upright,
   },
-  movementFrames: 6,
+  moveFrames: 6,
   attackFrames: 4,
   dyingFrames: 3,
+  deadFrame: 14,
   bloodlessFrame: 15,
   scavengedFrame: 16,
   baseAnimSpeed: 2,
   spriteAnimSpeed: 2,
   spriteAnimCounter: 0,
   attackAnimCooldown: false,
+  attackAnimation: false,
   animFrames: 6,
   baseMoveSpeed: 200,
   moveSpeed: 200,
@@ -144,7 +149,7 @@ export const wolfen = {
   scavenged: false,
   scavengeTable: [
     {
-      name: 'Nothing',
+      name: "Nothing",
       image: null,
       dropPercent: 20,
       blockSize: 40,
@@ -152,7 +157,7 @@ export const wolfen = {
       cropY: 0,
     },
     {
-      name: 'Beast Guts',
+      name: "Beast Guts",
       image: beast_guts,
       dropPercent: 30,
       blockSize: 40,
@@ -160,7 +165,7 @@ export const wolfen = {
       cropY: 0,
     },
     {
-      name: 'Beast Bone',
+      name: "Beast Bone",
       image: beast_bone,
       dropPercent: 30,
       blockSize: 40,
@@ -168,7 +173,7 @@ export const wolfen = {
       cropY: 0,
     },
     {
-      name: 'Beast Gland',
+      name: "Beast Gland",
       image: beast_gland,
       dropPercent: 15,
       blockSize: 40,
@@ -176,14 +181,14 @@ export const wolfen = {
       cropY: 0,
     },
     {
-      name: 'Wolf Heart',
+      name: "Wolf Heart",
       image: beast_heart,
       dropPercent: 5,
       blockSize: 40,
       cropX: 0,
       cropY: 0,
     },
-],
+  ],
   colBox: {
     0: [horzBuffer, colBuffer + vertBuffer],
     1: [horzBuffer + cornerBuffer, vertBuffer + cornerBuffer],
@@ -245,6 +250,7 @@ export const wolfen = {
   dying: false,
   damageSound: wolf_yelp,
   dyingSound: wolf_howl,
+  hitSound: swordHitFx,
   damageAnim: bloodSplatter,
   damageActive: false,
   solid: true,

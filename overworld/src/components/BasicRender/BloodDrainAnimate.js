@@ -1,21 +1,19 @@
-
-
 const bloodDrainAnimate = (baseHero) => {
-  // baseHero.heroCropX = baseHero.blockSize * 2
+  // baseHero.cropX = baseHero.blockSize * 2
   // console.log('scavenge animation')
-  baseHero.spriteAnimCounter++
+  baseHero.spriteAnimCounter++;
   if (baseHero.spriteAnimCounter >= baseHero.spriteAnimSpeed) {
-    // console.log(baseHero.heroCropX, baseHero.blockSize * baseHero.bloodDrainFrames)
-    baseHero.heroCropX += baseHero.blockSize;
-    // console.log(baseHero.heroCropX, baseHero.blockSize * baseHero.bloodDrainFrames)
-    if (baseHero.heroCropX >= baseHero.blockSize * baseHero.bloodDrainFrames) {
-      baseHero.heroCropX = baseHero.blockSize * 2
+    // console.log(baseHero.cropX, baseHero.blockSize * baseHero.bloodDrainFrames)
+    baseHero.cropX += baseHero.blockSize;
+    // console.log(baseHero.cropX, baseHero.blockSize * baseHero.bloodDrainFrames)
+    if (baseHero.cropX >= baseHero.blockSize * baseHero.bloodDrainFrames) {
+      baseHero.cropX = baseHero.blockSize * 2;
       // baseHero.spriteAnimCounter = 0
       // baseHero.scavengeAnimate = false
     }
     baseHero.spriteAnimCounter = 0;
   }
-  return baseHero
-}
+  return baseHero;
+};
 
-export default bloodDrainAnimate
+export default bloodDrainAnimate;

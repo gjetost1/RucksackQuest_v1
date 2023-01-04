@@ -4,35 +4,41 @@ import eventEngine from "./EventEngine";
 import globalVars from "./GlobalVars";
 import pixelPerfect from "./PixelPerfect";
 
+const heroUpdate = (
+  baseHeroObj,
+  enemyArr,
+  dropItemArr,
+  collisionCtx,
+  dataVisCtx,
+  spriteCtx,
+  cursorX,
+  cursorY
+) => {
 
-
-const heroUpdate = (baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx) => {
-  let baseHero = baseHeroObj
+  let baseHero = baseHeroObj;
   // moveEngine runs less than every frame to keep the hero sprite slower
   if (baseHero.frameCountLimiter >= baseHero.maxFrameCountLimiter) {
     baseHero.frameCountLimiter = 0;
     // moveEngine handles inputs and collisions for hero sprite
-    baseHero = moveEngine(baseHero, collisionCtx, dataVisCtx);
-
+    baseHero = moveEngine(baseHero, collisionCtx, dataVisCtx, cursorX, cursorY);
 
     // this handles an attack/ability usage by user - sets vars that will trigger attack/ability animation and
     // puts ability on cooldown. Current cooldown is set manually, but once there are other abilities
     // we will use their specific attributes to set the cooldown and effect duration
     // activates if there is enough stamina for attack
     if (
-      baseHero.currentFatigue >= baseHero.fatigueDrain * baseHero.fatigueAttack &&
+      baseHero.currentFatigue >=
+        baseHero.fatigueDrain * baseHero.fatigueAttack &&
       baseHero.keys.mouse1.pressed &&
       baseHero.attackCooldownOff
     ) {
-
       baseHero.attackCooldownOff = false;
       baseHero.attackActive = true;
       baseHero.attackAnimation = true;
-      baseHero.heroCropX = baseHero.moveFrames * baseHero.blockSize
-      baseHero.animCounter = 0
+      baseHero.cropX = baseHero.moveFrames * baseHero.blockSize;
+      baseHero.animCounter = 0;
 
-      baseHero.equipment.weapon.attackSound.play()
-
+      baseHero.equipment.weapon.attackSound.play();
 
       baseHero = eventEngine(baseHero, "attack");
       // cooldown setTimeout sets the cooldown on an event ability - eventObj.eventTimeout determines the length in seconds
@@ -54,12 +60,12 @@ const heroUpdate = (baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx
     }
 
     if (baseHero.keys.Space.pressed) {
-      console.log('jump!')
-      baseHero.jumpActive = true
+      console.log("jump!");
+      baseHero.jumpActive = true;
     }
 
     if (baseHero.keys.mouse2.pressed) {
-      console.log('right mouse button!')
+      console.log("right mouse button!");
     }
     // starts blood draining
     if (baseHero.keys.e.pressed) {
@@ -77,9 +83,8 @@ const heroUpdate = (baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx
 
     // console.log(baseHero.keys.q.pressed, baseHero.scavengeActive, baseHero.scavengeAnimation)
     if (baseHero.keys.q.pressed) {
-
       // console.log('pushed')
-      baseHero.scavengeActive = true
+      baseHero.scavengeActive = true;
       baseHero = eventEngine(baseHero, "drain");
     } else {
       // if (baseHero.scavengeActive) {
@@ -87,7 +92,7 @@ const heroUpdate = (baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx
       //   baseHero.eventY = -400;
       // }
 
-      baseHero.scavengeAnimation = false
+      baseHero.scavengeAnimation = false;
       // console.log(baseHero.scavengeAnimate)
       baseHero.scavengeActive = false;
     }
@@ -95,38 +100,35 @@ const heroUpdate = (baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx
 
     // coordinateChange moves elements in relation to the hero to keep them at the right coordinates
     for (let element of enemyArr) {
-
       element = coordinateChange(baseHero, element); // this is all of the enemy groups
 
       // this part is for the offScreen coordinates which handle clipping for off screen enemies
       for (let el of element) {
-        if ((el.data.offScreenX || el.data.offScreenY)){
+        if (el.data.offScreenX || el.data.offScreenY) {
           el.data.offScreenX = pixelPerfect(
             el.data.offScreenX + baseHero.frameXChange,
-            'down',
-            'x',
+            "down",
+            "x",
             globalVars.upscale
-            )
+          );
           el.data.offScreenY = pixelPerfect(
             el.data.offScreenY + baseHero.frameYChange,
-            'down',
-            'y',
+            "down",
+            "y",
             globalVars.upscale
-            )
+          );
           // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
           // dataVisCtx.fillRect(el.data.offScreenX, el.data.offScreenY, el.data.blockSize, el.data.blockSize)
         }
       }
     }
     if (dropItemArr.length) {
-        dropItemArr = coordinateChange(baseHero, dropItemArr);
+      dropItemArr = coordinateChange(baseHero, dropItemArr);
     }
-
-
   }
   baseHero.frameCountLimiter += baseHero.moveSpeed;
 
-  return [baseHero, enemyArr, dropItemArr]
-}
+  return [baseHero, enemyArr, dropItemArr];
+};
 
-export default heroUpdate
+export default heroUpdate;

@@ -1,6 +1,8 @@
-const inputEngine = (keys) => {
+const inputEngine = (keys, gamepad) => {
   // console.log(keys)
   let lastKeyDown = ''; // use to determine which sprite to display once movement animation is over (once sprite anims are implemented)
+
+  
 
 
   // event listener for directional movement input

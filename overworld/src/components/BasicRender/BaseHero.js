@@ -21,11 +21,13 @@ import sword_upleft from "../../assets/sprites/hero_sword/hero_sword_upleft.png"
 import sword_upright from "../../assets/sprites/hero_sword/hero_sword_upright.png";
 import sword_icon from "../../assets/sprites/hero_sword/sword_icon.png";
 
+import hero_shadow_src from "../../assets/sprites/hero_sprite_sheets/hero_shadow.png";
 import blood_splatter_64 from "../../assets/sprites/enemy_sprites/blood_splatter_64.png";
 
 import { bloodTank_1, bloodTank_2, bloodTank_3 } from "./HudObjects";
 
-import sword_fx from "../../assets/sounds/sword/damage_sound.wav";
+import sword_swing_fx from "../../assets/sounds/sword/damage_sound.wav";
+import sword_hit_fx from "../../assets/sounds/sword/flesh_hit.mp3";
 import blood_pour_src from "../../assets/sounds/hero/blood_pour.mp3";
 import damage_grunt_src from "../../assets/sounds/hero/man_grunt.mp3";
 import scavenge_splat_src from "../../assets/sounds/hero/scavenge_splat.mp3";
@@ -46,6 +48,9 @@ class damageSprite {
     };
   }
 }
+
+const hero_shadow = new Image();
+hero_shadow.src = hero_shadow_src;
 
 const blood_splatter = new Image();
 blood_splatter.src = blood_splatter_64;
@@ -70,19 +75,21 @@ const bloodSplatter = new damageSprite({
   },
 });
 
-const swordFx = new Audio(sword_fx);
-swordFx.volume = 0.05;
+const swordSwingFx = new Audio(sword_swing_fx);
+swordSwingFx.volume = 0.05;
 
+const swordHitFx = new Audio(sword_hit_fx);
+swordHitFx.volume = 0.3;
 
 const blood_pour = new Audio(blood_pour_src);
 blood_pour.volume = 1;
 blood_pour.loop = true;
 
 const damage_grunt = new Audio(damage_grunt_src);
-damage_grunt.volume = .4;
+damage_grunt.volume = 0.4;
 
 const scavenge_splat = new Audio(scavenge_splat_src);
-scavenge_splat.volume = .3;
+scavenge_splat.volume = 0.3;
 
 // used to create the collision box colBox for hero
 const colBuffer = 12; // number of pixels away from hero that detectors sit
@@ -92,15 +99,20 @@ const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
 export const baseHeroTemplate = {
-  type: 'hero',
+  type: "hero",
   cameraX: globalVars.heroStartXCoord,
   cameraY: globalVars.heroStartYCoord,
   targetCameraX: globalVars.heroStartXCoord,
   targetCameraY: globalVars.heroStartYCoord,
   x: globalVars.heroCenterX,
   y: globalVars.heroCenterY,
+  middleX: globalVars.heroCenterX + blockSize / 2,
+  middleY: globalVars.heroCenterY + blockSize / 2,
   targetHeroX: globalVars.heroCenterX,
   targetHeroY: globalVars.heroCenterY,
+  shadowX: 0,
+  shadowY: 0,
+  shadowYChange: 0,
   frameXChange: 0,
   frameYChange: 0,
   bonusFrameXChange: 0,
@@ -122,9 +134,10 @@ export const baseHeroTemplate = {
   moveFrames: 7,
   attackFrames: 3,
   scavengeFrames: 9,
+  jumpFrame: 11,
   animFrames: 7,
-  heroCropX: 0,
-  heroCropY: 0,
+  cropX: 0,
+  cropY: 0,
   spriteSheets: {
     up,
     down,
@@ -135,13 +148,15 @@ export const baseHeroTemplate = {
     upleft,
     upright,
     scavenge,
-    blood_drain
+    blood_drain,
+    hero_shadow
   },
   currentHeroSprite: down,
   equipment: {
     weapon: {
-      type: 'sword',
-      attackSound: swordFx,
+      type: "sword",
+      attackSound: swordSwingFx,
+      hitSound: swordHitFx,
       baseDamage: 20, // attack always does this amount of damage
       damageRange: 14, // attack may also do between 0 and this much additional damage
       knockBack: globalVars.upscale * 4, // amount enemy is knocked back if hit by attack
@@ -158,11 +173,7 @@ export const baseHeroTemplate = {
       },
     },
     bloodTanks: {
-      inventory: [
-        bloodTank_1,
-        bloodTank_2,
-        bloodTank_3,
-      ],
+      inventory: [bloodTank_1, bloodTank_2, bloodTank_3],
       allTanksEmpty: false,
       currentTank: false,
       currentFillTank: false,
@@ -183,8 +194,8 @@ export const baseHeroTemplate = {
   attackCooldownOff: true,
   attackActive: false,
   jumpActive: false,
-  currentJumpFrames: 14,
-  baseJumpFrames: 14,
+  currentJumpFrames: 10,
+  baseJumpFrames: 10,
   jumpCounter: 0,
   bloodDrainActive: false,
   bloodDrainPause: false,
@@ -314,7 +325,6 @@ class Sprite {
   // }
 }
 
-
 // we create the sprite, background, and foreground instances we will be rendering
 const playerImage = new Image();
 playerImage.src = baseHeroTemplate.currentHeroSprite;
@@ -326,8 +336,8 @@ export const baseHeroSprite = new Sprite({
     y: globalVars.heroCenterY,
   },
   crop: {
-    x: baseHeroTemplate.heroCropX,
-    y: baseHeroTemplate.heroCropY,
+    x: baseHeroTemplate.cropX,
+    y: baseHeroTemplate.cropY,
   },
   blockSize: baseHeroTemplate.blockSize,
 });
@@ -342,8 +352,8 @@ export const swordSprite = new Sprite({
     y: globalVars.heroCenterY,
   },
   crop: {
-    x: baseHeroTemplate.heroCropX,
-    y: baseHeroTemplate.heroCropY,
+    x: baseHeroTemplate.cropX,
+    y: baseHeroTemplate.cropY,
   },
   blockSize: baseHeroTemplate.blockSize,
 });

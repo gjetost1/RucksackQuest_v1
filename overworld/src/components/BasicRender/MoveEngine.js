@@ -1,7 +1,8 @@
 import pixelPerfect from "./PixelPerfect";
 // import baseHero from './BaseHero'
 import globalVars from "./GlobalVars";
-import checkCollision from "./CheckCollision";
+import checkCollision, { checkGreenCollision } from "./CheckCollision";
+import triangleCheck from "./TriangleCheck";
 
 // const baseAnimSpeed = 2;
 // let spriteAnimSpeed = baseAnimSpeed; // after how many frames the sprite frame will progress for walking animation
@@ -13,8 +14,9 @@ const horzBuffer = 14;
 const vertBuffer = 12;
 const blockSize = globalVars.blockSize;
 
-const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
+let mouseAreas;
 
+const moveEngine = (baseHero, collisionCtx, dataVisCtx, cursorX, cursorY) => {
   if (!baseHero) return;
 
   const lastTargetCameraX = baseHero.targetCameraX;
@@ -25,8 +27,8 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   baseHero.frameXChange = baseHero.bonusFrameXChange;
   baseHero.frameYChange = baseHero.bonusFrameYChange;
 
-  baseHero.bonusFrameXChange = 0
-  baseHero.bonusFrameYChange = 0
+  baseHero.bonusFrameXChange = 0;
+  baseHero.bonusFrameYChange = 0;
 
   // keysPressed is true if any directional input was given this frame, otherwise false.
   const keysPressed =
@@ -41,12 +43,13 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   // we can use this to see if the collision canvas is transparent or not, and also check for specific colors
   // this is fed to the collision detector function with an object of the pixel coordinates we want to check.
   // heroColBox above is an example of the format for this, but pretty much it is sub-arrays with [x, y] coordinates
-  const imgData = collisionCtx.getImageData(
-    baseHero.targetHeroX,
-    baseHero.targetHeroY,
-    baseHero.targetHeroX + globalVars.blockSize,
-    baseHero.targetHeroY + globalVars.blockSize
-  );
+
+  // const imgData = collisionCtx.getImageData(
+  //   baseHero.targetHeroX,
+  //   baseHero.targetHeroY,
+  //   baseHero.targetHeroX + globalVars.blockSize,
+  //   baseHero.targetHeroY + globalVars.blockSize
+  // );
 
   // console.log(baseHero.targetHeroX, baseHero.targetHeroY)
 
@@ -66,14 +69,30 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   // by the colBuffer, cornerBuffer, horzeBuffer, and vertBuffer variables
   // in each respective hero object or enemy object file.
 
-
-
-  let heroCollisions = checkCollision(
-    imgData,
-    baseHero.colBox,
-    collisionCtx,
-    dataVisCtx
-  );
+  // let heroCollisions = checkCollision(
+  //   imgData,
+  //   baseHero.colBox,
+  //   collisionCtx,
+  //   dataVisCtx
+  // );
+  let heroCollisions
+  if (baseHero.jumpActive) {
+    heroCollisions = checkGreenCollision(
+      baseHero.colBox,
+      baseHero.x,
+      baseHero.y,
+      collisionCtx,
+      dataVisCtx
+    );
+  } else {
+    heroCollisions = checkCollision(
+      baseHero.colBox,
+      baseHero.x,
+      baseHero.y,
+      collisionCtx,
+      dataVisCtx
+    );
+  }
   const col0 = heroCollisions[0];
   const col1 = heroCollisions[1];
   const col2 = heroCollisions[2];
@@ -105,19 +124,26 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
 
   // jumps if space is pressed
   if (baseHero.jumpActive) {
-    baseHero.moveSpeed = baseHero.dashSpeed * 2
+    baseHero.moveSpeed = baseHero.dashSpeed * 2;
+    baseHero.shadowX = baseHero.x;
+    // console.log(baseHero.shadowYChange)
+    // baseHero.shadowY = baseHero.targetCameraY + baseHero.shadowYChange;
     if (baseHero.jumpCounter <= baseHero.currentJumpFrames / 2) {
       baseHero.targetCameraY -= baseHero.currentYVel;
       baseHero.frameYChange += baseHero.currentYVel;
-    } else if (baseHero.jumpCounter >= baseHero.currentJumpFrames) {
-      baseHero.jumpActive = false
-      baseHero.jumpCounter = 0
-      baseHero.moveSpeed = baseHero.baseMoveSpeed
+      baseHero.shadowYChange += baseHero.currentYVel;
+    } else if (baseHero.jumpCounter >= baseHero.currentJumpFrames + 1) {
+      baseHero.jumpActive = false;
+      baseHero.jumpCounter = 0;
+      baseHero.moveSpeed = baseHero.baseMoveSpeed;
+      baseHero.shadowYChange = 0;
     } else if (baseHero.jumpCounter > baseHero.currentJumpFrames / 2) {
       baseHero.targetCameraY += baseHero.currentYVel;
       baseHero.frameYChange -= baseHero.currentYVel;
+      baseHero.shadowYChange -= baseHero.currentYVel;
     }
-    baseHero.jumpCounter++
+    baseHero.shadowY = baseHero.y + baseHero.shadowYChange;
+    baseHero.jumpCounter++;
     // console.log(baseHero.moveSpeed, baseHero.baseMoveSpeed)
   }
 
@@ -150,6 +176,98 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   } else if (baseHero.currentVitality >= baseHero.maxVitality) {
     baseHero.currentVitality = baseHero.maxVitality;
   }
+
+  // console.log(globalVars.mouseMove)
+
+  let mouseZone
+
+  if (globalVars.mouseMove || baseHero.attackActive || baseHero.attackAnimation) {
+
+    if (!mouseAreas) {
+      mouseAreas = [
+        {
+          zone: "a",
+          x1: globalVars.offscreenBoundarySide,
+          y1: globalVars.offscreenBoundarySide,
+          x2: globalVars.width / 2.8,
+          y2: 0,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "b",
+          x1: globalVars.width / 2.8,
+          y1: 0,
+          x2: (globalVars.width  / 3.2) * 2,
+          y2: 0,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "c",
+          x1: (globalVars.width / 3.2) * 2,
+          y1: 0,
+          x2: globalVars.width - globalVars.offscreenBoundarySide,
+          y2: globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "d",
+          x1: globalVars.width - globalVars.offscreenBoundarySide,
+          y1: globalVars.offscreenBoundarySide,
+          x2: globalVars.width - globalVars.offscreenBoundarySide,
+          y2: globalVars.height - globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "e",
+          x1: globalVars.width - globalVars.offscreenBoundarySide,
+          y1: globalVars.height - globalVars.offscreenBoundarySide,
+          x2: (globalVars.width / 3.2) * 2,
+          y2: globalVars.height,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "f",
+          x1: (globalVars.width / 3.2) * 2,
+          y1: globalVars.height,
+          x2: globalVars.width / 2.8,
+          y2: globalVars.height,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "g",
+          x1: globalVars.width / 2.8,
+          y1: globalVars.height,
+          x2: globalVars.offscreenBoundarySide,
+          y2: globalVars.height - globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+        {
+          zone: "h",
+          x1: globalVars.offscreenBoundarySide,
+          y1: globalVars.height - globalVars.offscreenBoundarySide,
+          x2: globalVars.offscreenBoundarySide,
+          y2: globalVars.offscreenBoundarySide,
+          x3: baseHero.middleX,
+          y3: baseHero.middleY,
+        },
+      ]
+    }
+
+
+  // console.log(triangleCheck(cursorX, cursorY, mouseAreas))
+
+    mouseZone = triangleCheck(cursorX, cursorY, mouseAreas, dataVisCtx)
+  } else {
+    mouseZone = false
+  }
+
 
   // big if/else chain moves hero based on input
   if (baseHero.keys.ArrowUp.pressed) {
@@ -231,52 +349,43 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
   }
 
   if (baseHero.keys.ArrowUp.pressed && baseHero.keys.ArrowLeft.pressed) {
-
     if (col0 && col1 && col2) {
       baseHero.targetCameraX = lastTargetCameraX;
       baseHero.targetCameraY = lastTargetCameraY;
       baseHero.frameXChange = 0;
       baseHero.frameYChange = 0;
-
     }
   } else if (
     baseHero.keys.ArrowUp.pressed &&
     baseHero.keys.ArrowRight.pressed
   ) {
-
     if (col3 && col4 && col5) {
       baseHero.targetCameraX = lastTargetCameraX;
       baseHero.targetCameraY = lastTargetCameraY;
       baseHero.frameXChange = 0;
       baseHero.frameYChange = 0;
-
     }
   } else if (
     baseHero.keys.ArrowDown.pressed &&
     baseHero.keys.ArrowLeft.pressed
   ) {
-
     if (col9 && col10 && col11) {
       baseHero.targetCameraX = lastTargetCameraX;
       baseHero.targetCameraY = lastTargetCameraY;
       baseHero.frameXChange = 0;
       baseHero.frameYChange = 0;
-
     }
   } else if (
     baseHero.keys.ArrowDown.pressed &&
     baseHero.keys.ArrowRight.pressed
   ) {
-
     if (col6 && col7 && col8) {
       baseHero.targetCameraX = lastTargetCameraX;
       baseHero.targetCameraY = lastTargetCameraY;
       baseHero.frameXChange = 0;
       baseHero.frameYChange = 0;
-
     }
   }
-
 
   //sets appropriate sprite for direction of movement
   if (xVel < 0 && yVel < 0) {
@@ -326,10 +435,69 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
       baseHero.equipment.weapon.spriteSheets.right;
     baseHero.direction = "right";
   }
-  if (!keysPressed && !baseHero.attackAnimation && !baseHero.scavengeAnimation && !baseHero.bloodDrainAnimation) {
-    baseHero.heroCropX = 0;
+
+  switch(mouseZone) {
+    case 'a':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.upleft;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.upleft;
+      baseHero.direction = "upleft";
+    break;
+    case 'b':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.up;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.up;
+      baseHero.direction = "up";
+    break;
+    case 'c':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.upright;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.upright;
+      baseHero.direction = "upright";
+    break;
+    case 'd':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.right;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.right;
+      baseHero.direction = "right";
+    break;
+    case 'e':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.downright;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.downright;
+      baseHero.direction = "downright";
+    break;
+    case 'f':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.down;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.down;
+      baseHero.direction = "down";
+    break;
+    case 'g':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.downleft;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.downleft;
+      baseHero.direction = "downleft";
+    break;
+    case 'h':
+      baseHero.currentHeroSprite = baseHero.spriteSheets.left;
+      baseHero.currentEquipmentSprite =
+      baseHero.equipment.weapon.spriteSheets.left;
+      baseHero.direction = "left";
+    break;
+    default:
+      // return;
   }
 
+
+  if (
+    !keysPressed &&
+    !baseHero.attackAnimation &&
+    !baseHero.scavengeAnimation &&
+    !baseHero.bloodDrainAnimation
+  ) {
+    baseHero.cropX = 0;
+  }
 
   // console.log(baseHero.targetCameraX)
 
@@ -359,19 +527,17 @@ const moveEngine = (baseHero, collisionCtx, dataVisCtx) => {
     globalVars.upscale
   );
 
-
   // iterates through the sprite sheet images to animate sprite - spriteAnimSpeed sets how fast this happens
   if (keysPressed) {
     if (baseHero.spriteAnimCounter >= baseHero.spriteAnimSpeed) {
-      baseHero.heroCropX += baseHero.blockSize;
-      if (baseHero.heroCropX > baseHero.blockSize * (baseHero.moveFrames - 1)) {
-        baseHero.heroCropX = baseHero.blockSize;
+      baseHero.cropX += baseHero.blockSize;
+      if (baseHero.cropX > baseHero.blockSize * (baseHero.moveFrames - 1)) {
+        baseHero.cropX = baseHero.blockSize;
       }
       baseHero.spriteAnimCounter = 0;
     }
     baseHero.spriteAnimCounter++;
   }
-
 
   // console.log('x:', baseHero.targetCameraX, baseHero.targetHeroX, 'y', baseHero.targetCameraY, baseHero.targetHeroY)
 

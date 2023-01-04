@@ -1,5 +1,7 @@
-import enemyMoveEngine from "./EnemyMoveEngine";
 import globalVars from "./GlobalVars";
+import attackAnimate from "./AttackAnimate";
+import { animateDyingAndBloodDrain } from "./Animate";
+
 
 // animates damage effects
 const animate = (element) => {
@@ -16,6 +18,24 @@ const animate = (element) => {
   }
   return [true, element];
 };
+
+const animateEnemy = (renderArr, spriteCtx) => {
+  // console.log('running')
+  for (let el of renderArr) {
+    spriteCtx.drawImage(
+      el.image,
+      el.crop.x,
+      el.crop.y,
+      el.data.blockSize,
+      el.data.blockSize,
+      el.position.x,
+      el.position.y,
+      el.data.blockSize,
+      el.data.blockSize
+    );
+  }
+  return renderArr
+}
 
 const frameCropLimit = 20
 let frameCropCounter = 0
@@ -74,7 +94,8 @@ const enemyRender = (enemyArr, baseHeroObj, spriteCtx, renderType) => {
 
     // use 2 render instances so the enemy is in front of the hero when it's y value is less
     // and behind when the y value is more
-    if (
+    // console.log(el.data.attackAnimation)
+   if (
       (el.data.y + el.data.blockSize / (globalVars.upscale * 2) <= baseHero.y &&
         renderType !== "front" &&
         !el.data.dead) ||
@@ -83,18 +104,34 @@ const enemyRender = (enemyArr, baseHeroObj, spriteCtx, renderType) => {
         !el.data.dead) ||
       (el.data.dead && renderType === "back")
     ) {
-      spriteCtx.drawImage(
-        el.image,
-        el.crop.x,
-        el.crop.y,
-        el.data.blockSize,
-        el.data.blockSize,
-        el.position.x,
-        el.position.y,
-        el.data.blockSize,
-        el.data.blockSize
-      );
 
+      // runs dying animation on death
+      if (el.data.dying && !el.data.dead) {
+        // console.log('dying from render')
+        // console.log(el.data.animCounter)
+        const dyingAnimation = animateDyingAndBloodDrain(el);
+        el.data.dead = !dyingAnimation[0];
+        if (el.data.dead) {
+          // el.data.dying = false
+        }
+        el = dyingAnimation[1];
+        // continue;
+        // el.cropChange(el.data.cropX, el.data.cropY);
+        // baseHero = heroRender([baseHeroObj, swordSprite], baseHero, spriteCtx);
+        animateEnemy([el], spriteCtx)
+      } else if (el.data.attackAnimation) {
+        // console.log('attack animation')
+        el.data.spriteAnimSpeed = 4
+        el.data = attackAnimate(el.data);
+        // console.log(el.data)
+        // el.cropChange(el.data.cropX, el.data.cropY);
+        // baseHero = heroRender([baseHeroObj, swordSprite], baseHero, spriteCtx);
+        animateEnemy([el], spriteCtx)
+      } else {
+        // console.log('moving animation')
+        animateEnemy([el], spriteCtx)
+        // el.cropChange(el.data.cropX, el.data.cropY);
+      }
       if (el.data.damageActive) {
         spriteCtx.drawImage(
           el.data.damageAnim.image,
@@ -102,8 +139,8 @@ const enemyRender = (enemyArr, baseHeroObj, spriteCtx, renderType) => {
           el.data.damageAnim.crop.y,
           el.data.damageAnim.data.blockSize,
           el.data.damageAnim.data.blockSize,
-          el.position.x,
-          el.position.y,
+          el.data.x,
+          el.data.y,
           el.data.damageAnim.data.blockSize,
           el.data.damageAnim.data.blockSize
         );

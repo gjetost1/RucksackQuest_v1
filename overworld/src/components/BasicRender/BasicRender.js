@@ -7,7 +7,7 @@ import enemyRender from "./EnemyRender";
 import enemyGenerator from "./EnemyGenerator";
 // import coordinateChange from "./CoordinateChange";
 // import eventEngine from "./EventEngine";
-// import spriteBuffer from "./SpriteBuffer";
+import spriteBuffer from "./SpriteBuffer";
 // import pixelator from "./Pixelator";
 import { backgroundSprite, foregroundSprite, collisionSprite, cursor } from "./SpriteClasses";
 
@@ -56,15 +56,23 @@ let cursorY = -400;
 const frameRatePeak = 3;
 let frameRateCounter = 0;
 
+let gamepad
+
 // this gets the coordinates of the cursor so it can be rendered on the canvas
 document.addEventListener("mousemove", (action) => {});
 onmousemove = (event) => {
   // console.log('moving', event)
-  cursorX = event.layerX;
-  cursorY = event.layerY;
+  // cursorX = event.layerX - globalVars.windowSpacerWidth;
+  // cursorY = event.layerY - globalVars.windowSpacerHeight;
+  cursorX = event.x
+  cursorY = event.y
+  globalVars.mouseMove = true
+  setTimeout(() => {
+    globalVars.mouseMove = false
+  }, 800)
   // cursorX = event.x - globalVars.windowSpacerWidth
   // cursorY = event.y - globalVars.windowSpacerHeight
-};
+}
 
 // const grassPatch = generatePatch(-16, 0, 47, 28, [grass_1, grass_2, grass_3])
 // const grassPatch = generatePatch(920, 300, 7, 6, [grass_1, grass_2, grass_3])
@@ -127,56 +135,32 @@ const BasicRender = () => {
   const comboCanvas = useRef(null); // only visible canvas, combines all the other asset canvases and renders them except the collision canvas
 
   const wolfenGroupCreator = [
-    {
-      base: wolfen,
-      x: 700,
-      y: 500,
-    },
-    {
-      base: wolfen,
-      x: 700,
-      y: 500,
-    },
-    {
-      base: wolfen,
-      x: 500,
-      y: 500,
-    },
-    {
-      base: wolfen,
-      x: 572,
-      y: 664,
-    },
-    {
-      base: wolfen,
-      x: 500,
-      y: 464,
-    },
     // {
     //   base: wolfen,
-    //   x: 192,
-    //   y: 192,
+    //   x: 700,
+    //   y: 500,
     // },
     // {
     //   base: wolfen,
-    //   x: 1564,
-    //   y: 1500,
+    //   x: 700,
+    //   y: 500,
     // },
     // {
     //   base: wolfen,
-    //   x: 1500,
-    //   y: 1564,
+    //   x: 500,
+    //   y: 500,
     // },
     // {
     //   base: wolfen,
-    //   x: 372,
-    //   y: 564,
+    //   x: 572,
+    //   y: 664,
     // },
     // {
     //   base: wolfen,
-    //   x: 300,
+    //   x: 500,
     //   y: 464,
     // },
+
   ];
 
   // creates an enemy group
@@ -192,7 +176,7 @@ const BasicRender = () => {
   //   setInterval(() => {
   //     console.log("buffering");
   //     spriteBuffer(baseHeroObj, wolfenGroup);
-  //   }, 1000);
+  //   }, 3000);
   // }
 
 
@@ -225,9 +209,7 @@ const BasicRender = () => {
     // makes foreground transparent so you can see sprites under it
     foregroundCtx.globalAlpha = 0.85;
 
-    // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
-    // for inputs. returns keys object which is checked for what keys are currently pressed each frame
-    baseHeroObj.keys = inputEngine(baseHeroObj.keys);
+
 
     // Sprite is the main class for hero and enemy sprites
     // image is the .png for the spritesheet you are rendering
@@ -236,19 +218,6 @@ const BasicRender = () => {
     // crop is the upper lefthand corner where the spritesheet is being
     // cropped - crop size is based on rectWidth and rectHeight which is
     // currently set globally
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     // const collisionSprite = new Collisions({
@@ -267,6 +236,25 @@ const BasicRender = () => {
 
     const animate = () => {
 
+      if(!gamepad) {
+        let gamepads = navigator.getGamepads()
+        for (let el of gamepads) {
+          if (el?.id.startsWith('Xbox 360 Controller')) {
+            gamepad = el
+            console.log('new gamepad', gamepad)
+          }
+        }
+      }
+
+      if (gamepad && gamepad.connected) {
+        gamepad = navigator.getGamepads()[gamepad.index]
+        console.log(gamepad.axes)
+      }
+
+      // this next function sends the keys object of the hero to the inputEngine where all the event listeners live
+      // for inputs. returns keys object which is checked for what keys are currently pressed each frame
+      baseHeroObj.keys = inputEngine(baseHeroObj.keys, gamepad);
+
 
 
       // console.log(baseHeroObj.bloodDrainActive, baseHeroObj.bloodDrainAnimation)
@@ -277,11 +265,13 @@ const BasicRender = () => {
       cursorCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
 
+
       // handles hero inputs, actions, and movement
-      const heroUpdateRet = heroUpdate(baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx)
+      const heroUpdateRet = heroUpdate(baseHeroObj, enemyArr, dropItemArr, collisionCtx, dataVisCtx, spriteCtx, cursorX, cursorY)
       baseHeroObj = heroUpdateRet[0]
       enemyArr = heroUpdateRet[1]
       dropItemArr = heroUpdateRet[2]
+
 
       // SHOULD MOVE THIS INTO HEROUPDATE ONCE HERO IS A CONTAINED CLASS LIKE ENEMIES
       // sets hero and equipment positions based on moveEngine output
@@ -294,11 +284,12 @@ const BasicRender = () => {
 
       collisionCtx.clearRect(0, 0, globalVars.width, globalVars.height);
 
+
+
       backgroundSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundaryTotal, baseHeroObj.cameraY + globalVars.offscreenBoundaryTotal);
       foregroundSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundaryTotal, baseHeroObj.cameraY + globalVars.offscreenBoundaryTotal);
       collisionSprite.cropChange(baseHeroObj.cameraX + globalVars.offscreenBoundarySide, baseHeroObj.cameraY + globalVars.offscreenBoundarySide);
       // collisionSprite.cropChange(baseHeroObj.cameraX, baseHeroObj.cameraY);
-
 
 
       // makes the canvases render a frame
@@ -307,6 +298,9 @@ const BasicRender = () => {
       // renders collision sprite, which is behind the background and not visible on canvas
       // you can change the z-index of the collision div in the css if you want to see it visualized
       // collisionSprite.draw();
+
+
+
       collisionCtx.drawImage(
             collisionSprite.image,
             collisionSprite.crop.x,
@@ -333,6 +327,7 @@ const BasicRender = () => {
       );
 
       foregroundCtx.globalAlpha = 1;
+
 
       animatedObjectsRender(
         grassPatch1.definition(),
@@ -369,26 +364,37 @@ const BasicRender = () => {
       foregroundCtx.globalAlpha = 0.85;
       // console.log('after animated objects render', baseHeroObj)
 
+
+
+      // let startTime = performance.now()
+      // let endTime = performance.now()
+      // console.log(`took ${endTime - startTime} milliseconds`)
+
+
       const enemyUpdateArr = enemyUpdate(
         wolfenGroup,
         baseHeroObj,
         dropItemArr,
         collisionCtx,
         dataVisCtx
-      );
-      // console.log('enemy update arr', enemyUpdateArr[1])
-      wolfenGroup = enemyUpdateArr[0];
-      baseHeroObj = enemyUpdateArr[1];
-      // console.log('enemy update arr', baseHeroObj)
-      dropItemArr = enemyUpdateArr[2];
+        );
+        // console.log('enemy update arr', enemyUpdateArr[1])
+        wolfenGroup = enemyUpdateArr[0];
+        baseHeroObj = enemyUpdateArr[1];
+        // console.log('enemy update arr', baseHeroObj)
+        dropItemArr = enemyUpdateArr[2];
 
-      enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
+
+
+      wolfenGroup = enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "back");
+
       dropItemArr = dropItemRender(dropItemArr, spriteCtx, {x: cursorX, y: cursorY}) // renders items that are on the ground
 
 
       baseHeroObj = heroRender(baseHeroObj, baseHeroSprite, swordSprite, spriteCtx)
 
-      enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "front");
+
+      wolfenGroup = enemyRender(wolfenGroup, baseHeroObj, spriteCtx, "front");
 
       // this renders foreground objects with opacity so that you can see the hero behind them
       // foregroundSprite.draw();
@@ -451,10 +457,13 @@ const BasicRender = () => {
         frameRateCounter = 0;
       }
       frameRateCounter++;
+
+
     };
 
-
     animate();
+
+
   }, []);
 
   return (

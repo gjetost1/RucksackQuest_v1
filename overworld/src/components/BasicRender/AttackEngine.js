@@ -2,40 +2,14 @@ import globalVars from "./GlobalVars";
 import checkBoxCollision from "./CheckBoxCollision";
 // handles hits on enemy or on hero
 
-const collisionCheck = (attacker, target, tempCMasks, dataVisCtx) => {
+const collisionCheck = (attacker, tempCMasks, dataVisCtx) => {
   return (
     checkBoxCollision(
       attacker.eventX,
       attacker.eventY,
-      target.hitColBox,
       tempCMasks,
-      0,
       dataVisCtx
-      ) &&
-      checkBoxCollision(
-        attacker.eventX,
-        attacker.eventY,
-        target.hitColBox,
-        tempCMasks,
-        1,
-        dataVisCtx
-      ) &&
-      checkBoxCollision(
-        attacker.eventX,
-        attacker.eventY,
-        target.hitColBox,
-        tempCMasks,
-        2,
-        dataVisCtx
-    ) &&
-    checkBoxCollision(
-      attacker.eventX,
-      attacker.eventY,
-      target.hitColBox,
-      tempCMasks,
-      3,
-      dataVisCtx
-    )
+      )
   );
 };
 
@@ -51,13 +25,17 @@ const attackEngine = (attacker, target, dataVisCtx) => {
   ];
 
 
-  let collision = collisionCheck(attacker, target, tempCMasks, dataVisCtx);
+  let collision = collisionCheck(attacker, tempCMasks, dataVisCtx);
+
+
   // console.log(collision)
   // uncomment to show corners of collisionMask where a hit will register on enemy
   // spriteCtx.fillRect(tempCMasks[0].tl[0], tempCMasks[0].tl[1], 4, 4)
   // spriteCtx.fillRect(tempCMasks[0].tr[0], tempCMasks[0].tr[1], 4, 4)
   // spriteCtx.fillRect(tempCMasks[0].bl[0], tempCMasks[0].bl[1], 4, 4)
   // spriteCtx.fillRect(tempCMasks[0].br[0], tempCMasks[0].br[1], 4, 4)
+  // dataVisCtx.fillStyle = 'rgba(255, 0, 0, 1)'
+  // dataVisCtx.fillRect(attacker.eventX, attacker.eventY, 14, 14)
 
   if (attacker.attackActive && !collision && !target.takeDamage) {
     // different effects if target is enemy or hero
@@ -68,6 +46,7 @@ const attackEngine = (attacker, target, dataVisCtx) => {
     let tempKnockBack
     let tempXRef = tempX // used to set x and y frame changes from knockback if enemy hits hero
     let tempYRef = tempY
+    let hitSound
     if (target.type === 'enemy') {
       tempX = target.x
       tempY = target.y
@@ -78,6 +57,8 @@ const attackEngine = (attacker, target, dataVisCtx) => {
       // console.log(target.fleeing)
       target.moving = true;
       target.dashing = true;
+      hitSound = attacker.equipment.weapon.hitSound
+
     } else if (target.type === 'hero') {
       tempX = target.targetCameraX
       tempY = target.targetCameraY
@@ -86,23 +67,25 @@ const attackEngine = (attacker, target, dataVisCtx) => {
       tempKnockBack = attacker.knockBack
       tempXRef = tempX
       tempYRef = tempY
+      hitSound = attacker.hitSound
+
     }
     const damageRange = Math.round(Math.random() * tempDamageRange)
     // console.log(tempBaseDamage + damageRange)
     target.currentVitality -= tempBaseDamage + damageRange; // deals damage to target
-    target.currentVitality -= 200;
+    // target.currentVitality -= 200;
     target.takeDamage = true;
     target.damageActive = true;
     target.damageAnim.active = true;
     // console.log(target.currentVitality)
     collision = false;
     // plays enemy damage sound if hit doesn't kill
+    hitSound.play();
     if (target.currentVitality > 0) {
       target.damageSound.play();
     } else if (target.currentVitality <= 0) {
       target.currentVitality = 0
     }
-
 
     if (attacker.direction === "down") {
       tempY += tempKnockBack;

@@ -42,12 +42,6 @@ let randomScavengeTime = 0
 let currentTarget = null
 
 const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
-  // console.log('in scavenge engine', target, baseHero, dropItemArr, enemyCollision)
-  // if (genRandomFrames) {
-  //   randomScavengeTime = Math.floor(Math.random() * 200) // variable scavenging time
-  //   genRandomFrames = false
-  //   scavengeCounter = 0
-  // }
 
   if (currentTarget !== target) {
     scavengeCounter = 0
@@ -72,7 +66,7 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
 
       // }
 
-      console.log(scavengeCounter, scavengeFrames)
+      // console.log(scavengeCounter, scavengeFrames)
       // once scavenging is complete we roll to find out what item is returned
       if (scavengeCounter >= scavengeFrames) {
         baseHero.scavengeFx.play()
@@ -139,7 +133,9 @@ const scavengeEngine = (target, baseHero, dropItemArr, enemyCollision) => {
               scavengedItem.data.startX = target.data.x + target.data.blockSize / 2
               scavengedItem.data.startY = target.data.y + target.data.blockSize / 2
 
-              dropItemArr.push(scavengedItem)
+              setTimeout(() => {
+                dropItemArr.push(scavengedItem)
+              }, 100)
               // console.log(dropItemArr)
               return [target, baseHero, dropItemArr]
           }
