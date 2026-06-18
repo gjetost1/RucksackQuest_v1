@@ -95,6 +95,7 @@ const grassPatch3 = new Patch(
   0.05
 );
 const barrelPatch = new Patch(100, 500, 4, 4, [barrel_1, barrel_2], 0.2);
+const barrelPatch2 = new Patch(120, 600, 4, 4, [barrel_1, barrel_2], 0.2);
 
 let dropItemArr = [] // array that stores all items that are on the ground
 
@@ -102,7 +103,7 @@ let bufferIntervalSet = true; // makes sure that the sprite buffer interval is s
 
 const BasicRender = () => {
   // let eventObj = {}
-
+console.log("basic render")
 
   // declare the 3 (current) canvases. background is rendered first, then sprite, then foreground on top
   // foregroundCanvas is for scenery and objects that the hero or other sprites can go behind
@@ -201,7 +202,7 @@ const BasicRender = () => {
   // updates positions and animations, and then renders the frame using
   // the animate() function
   useEffect(() => {
-
+    console.log()
     // creates context for each canvas. Invoke all drawing/rendering to canvas
     // using the context for the layer you want to render to
     // const backgroundCtx = backgroundCanvas.current.getContext('2d', { alpha: false })
@@ -302,7 +303,9 @@ const BasicRender = () => {
 
 
       // makes the canvases render a frame
-      window.requestAnimationFrame(animate);
+      setTimeout(() => {
+        window.requestAnimationFrame(animate);
+      }, 10)
 
       // renders collision sprite, which is behind the background and not visible on canvas
       // you can change the z-index of the collision div in the css if you want to see it visualized
@@ -360,6 +363,14 @@ const BasicRender = () => {
       );
       animatedObjectsRender(
         barrelPatch.definition(),
+        baseHeroObj,
+        backgroundCtx,
+        foregroundCtx,
+        collisionCtx,
+        dataVisCtx
+      );
+      animatedObjectsRender(
+        barrelPatch2.definition(),
         baseHeroObj,
         backgroundCtx,
         foregroundCtx,
@@ -453,8 +464,7 @@ const BasicRender = () => {
       frameRateCounter++;
     };
 
-
-    animate();
+      animate();
   }, []);
 
   return (
